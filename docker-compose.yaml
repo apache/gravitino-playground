@@ -29,6 +29,7 @@ services:
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
+      - "9001:9001"
     container_name: playground-gravitino
     depends_on:
       hive :
