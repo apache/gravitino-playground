@@ -6,8 +6,6 @@
 CREATE SCHEMA HR;
 -- HR.departments definition
 
--- Drop table
-DROP TABLE HR.departments;
 CREATE TABLE HR.departments (
     department_id int4 NULL,
     department_name varchar(100) NULL
@@ -16,8 +14,6 @@ CREATE TABLE HR.departments (
 
 -- HR.employee_address definition
 
--- Drop table
-DROP TABLE HR.employee_address;
 CREATE TABLE HR.employee_address (
     address_id int4 NULL,
     employee_id int4 NULL,
@@ -31,8 +27,6 @@ CREATE TABLE HR.employee_address (
 
 -- HR.employee_contacts definition
 
--- Drop table
-DROP TABLE HR.employee_contacts;
 CREATE TABLE HR.employee_contacts (
     contact_id int4 NULL,
     employee_id int4 NULL,
@@ -42,8 +36,6 @@ CREATE TABLE HR.employee_contacts (
 
 -- HR.employee_performance definition
 
--- Drop table
-DROP TABLE HR.employee_performance;
 CREATE TABLE HR.employee_performance (
     employee_id int4 NULL,
     evaluation_date date NULL,
@@ -53,8 +45,6 @@ COMMENT ON TABLE hr.employee_performance IS 'comment';
 
 -- HR.employee_roles definition
 
--- Drop table
-DROP TABLE HR.employee_roles;
 CREATE TABLE HR.employee_roles (
     role_id int4 NULL,
     employee_id int4 NULL,
@@ -65,8 +55,6 @@ COMMENT ON TABLE hr.employee_roles IS 'comment';
 
 -- HR.employee_training definition
 
--- Drop table
-DROP TABLE HR.employee_training;
 CREATE TABLE HR.employee_training (
     training_id int4 NULL,
     employee_id int4 NULL,
@@ -78,8 +66,6 @@ COMMENT ON TABLE hr.employee_training IS 'comment';
 
 -- HR.employees definition
 
--- Drop table
-DROP TABLE HR.employees;
 CREATE TABLE HR.employees (
     employee_id int4 NULL,
     department_id int4 NULL,
@@ -93,8 +79,6 @@ COMMENT ON TABLE hr.employees IS 'comment';
 
 -- HR.salaries definition
 
--- Drop table
-DROP TABLE HR.salaries;
 CREATE TABLE HR.salaries (
     salary_id int4 NULL,
     employee_id int4 NULL,
@@ -102,3 +86,21 @@ CREATE TABLE HR.salaries (
     effective_date date NULL
 );
 COMMENT ON TABLE hr.salaries IS 'comment';
+
+insert into hr.departments (department_id, department_name) values (1,'Sales');
+insert into hr.departments (department_id, department_name) values (2,'IT');
+insert into hr.departments (department_id, department_name) values (3,'Accounting');
+insert into hr.departments (department_id, department_name) values (4,'Customer Service');
+
+insert into hr.employees (employee_id, department_id, job_title, given_name,family_name, birth_date, hire_date) values (1,1,'Manager','Gregory','Smith','1968-Apr-15','2014-Jun-04');
+insert into hr.employee_address (address_id, employee_id, address_line1, address_line2, city, state, postal_code) values (1,1,'P.O. Box 502, 6281 Arcu. St.','','Detroit','23674','United States');
+insert into hr.employee_contacts (contact_id, employee_id, phone_number, email) values (1,1,'1-572-573-9795','Gregory.Smith@acme.com');
+insert into hr.salaries (salary_id, employee_id, effective_date, amount) values (1,1,'2019-01-14',130500.0);
+insert into hr.employee_performance (employee_id, rating, evaluation_date) values (1,4.0,'2018-02-24');
+insert into hr.employee_performance (employee_id, rating, evaluation_date) values (1,7.0,'2016-12-25');
+insert into hr.employee_performance (employee_id, rating, evaluation_date) values (1,3.5,'2023-04-07');
+
+insert into hr.employee_training (training_id, employee_id, training_name, start_date, end_date) values (1,1,'Training','2020-06-24','2020-06-26');
+insert into hr.employee_training (training_id, employee_id, training_name, start_date, end_date) values (2,1,'Training','2023-05-06','2023-05-06');
+insert into hr.employee_training (training_id, employee_id, training_name, start_date, end_date) values (3,1,'Training','2022-09-27','2022-09-30');
+insert into hr.employee_training (training_id, employee_id, training_name, start_date, end_date) values (4,1,'Training','2016-08-02','2016-08-05');
