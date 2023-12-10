@@ -19,4 +19,4 @@ cd ${playground_dir}
 docker-compose up
 
 # Clean Docker containers when you quit this script
-# docker-compose down
+docker-compose down

@@ -45,7 +45,7 @@ services:
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
-      timeout: 10s
+      timeout: 60s
       retries: 5
 
   trino:
