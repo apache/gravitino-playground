@@ -7,7 +7,7 @@ license: "Copyright 2023 Datastrato Pvt Ltd. This software is licensed under the
 
 # Playground
 
-This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` Server. just execute the `./launch-playground.sh` script.
+This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` Server.
 
 Depending on your network, the startup may take 3-5 minutes.
 
