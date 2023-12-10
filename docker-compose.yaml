@@ -13,16 +13,19 @@ services:
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
+    volumes:
+      - ./init/hive:/tmp/hive
+    entrypoint:  /bin/bash /tmp/hive/init.sh
     healthcheck:
       test: ["CMD", "/tmp/check-status.sh"]
       interval: 10s
-      timeout: 60s
+      timeout: 120s
       retries: 5
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 1G
+          cpus: "3"
+          memory: 3G
 
   gravitino:
     image: datastrato/gravitino:0.3.0-SNAPSHOT

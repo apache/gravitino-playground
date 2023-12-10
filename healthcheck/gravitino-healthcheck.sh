@@ -27,6 +27,20 @@ fi
 # Create Hive catalog for experience Gravitino service
 curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_demo","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://hive:9083"}}' http://127.0.0.1:8090/api/metalakes/metalake_demo/catalogs
 
+# Create Postgresql catalog for experience Gravitino service
+curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{
+    "name":"catalog_pg1",
+    "type":"RELATIONAL",
+    "provider":"jdbc-postgresql",
+    "comment":"comment",
+    "properties":{
+        "jdbc-url":"jdbc:postgresql://postgresql/db",
+        "jdbc-user":"postgres",
+        "jdbc-password":"postgres",
+        "jdbc-database":"db",
+        "gravitino.bypass.driverClassName":"org.postgresql.Driver"
+    }
+}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
 # Check catalog if created
 response=$(curl -X GET -H "Content-Type: application/json" http://127.0.0.1:8090/api/metalakes/metalake_demo/catalogs)
 if echo "$response" | grep -q "catalog_demo"; then

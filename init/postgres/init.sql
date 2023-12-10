@@ -2,6 +2,8 @@
  * Copyright 2023 Datastrato.
  * This software is licensed under the Apache License version 2.
  */
+CREATE DATABASE  db;
+\c db;
 
 CREATE SCHEMA HR;
 -- HR.departments definition
@@ -93,7 +95,10 @@ insert into hr.departments (department_id, department_name) values (3,'Accountin
 insert into hr.departments (department_id, department_name) values (4,'Customer Service');
 
 insert into hr.employees (employee_id, department_id, job_title, given_name,family_name, birth_date, hire_date) values (1,1,'Manager','Gregory','Smith','1968-Apr-15','2014-Jun-04');
+insert into hr.employees (employee_id, department_id, job_title, given_name,family_name, birth_date, hire_date) values (2,1,'Sales Assistant','Owen','Rivers','1988-Aug-13','2021-Feb-05');
 insert into hr.employee_address (address_id, employee_id, address_line1, address_line2, city, state, postal_code) values (1,1,'P.O. Box 502, 6281 Arcu. St.','','Detroit','23674','United States');
+insert into hr.employee_address (address_id, employee_id, address_line1, address_line2, city, state, postal_code) values (2,2,'Ap #469-5929 Dapibus Ave','','Metairie','55765','United States');
+
 insert into hr.employee_contacts (contact_id, employee_id, phone_number, email) values (1,1,'1-572-573-9795','Gregory.Smith@acme.com');
 insert into hr.salaries (salary_id, employee_id, effective_date, amount) values (1,1,'2019-01-14',130500.0);
 insert into hr.employee_performance (employee_id, rating, evaluation_date) values (1,4.0,'2018-02-24');
