@@ -13,13 +13,10 @@ services:
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
-    volumes:
-      - ./init/hive:/tmp/hive
-    entrypoint:  /bin/bash /tmp/hive/init.sh
     healthcheck:
       test: ["CMD", "/tmp/check-status.sh"]
       interval: 10s
-      timeout: 120s
+      timeout: 60s
       retries: 5
     deploy:
       resources:
@@ -62,6 +59,9 @@ services:
       - GRAVITINO_HOST_PORT=8090
       - GRAVITINO_METALAKE_NAME=metalake_demo
       - HIVE_HOST_IP=hive
+    entrypoint:  /bin/bash /tmp/trino/init.sh
+    volumes:
+      - ./init/trino:/tmp/trino
     depends_on:
       hive :
         condition: service_healthy
