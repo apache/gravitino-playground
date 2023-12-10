@@ -1,13 +1,20 @@
-<!--
-  Copyright 2023 Datastrato Pvt Ltd.
-  This software is licensed under the Apache License version 2.
--->
+---
+title: "How to use the playground"
+slug: /how-to-use-the-playground
+keyword: playground
+license: "Copyright 2023 Datastrato Pvt Ltd. This software is licensed under the Apache License version 2."
+---
+
 # Playground
-This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, and `Gravitno` Server. just execute the `./launch-playground.sh` script.
+
+This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` Server. just execute the `./launch-playground.sh` script.
+
 Depending on your network, the startup may take 3-5 minutes.
+
 Once the playground environment has started, you can open http://localhost:8090 to access the Gravitino Web UI.
 
 ## Startup playground
+
 ```shell
 ./launch-playground.sh
 ```
@@ -26,7 +33,11 @@ docker exec -it playground-trino bash
 trino@d2bbfccc7432:/$ trino
 ```
 
-3. Use follow SQL to test in the Trino CLI.
+## Example
+
+### Simple queries
+
+Use simple queries to test in the Trino CLI.
 
 ```SQL
 SHOW CATALOGS;
@@ -49,3 +60,49 @@ INSERT INTO "metalake_demo.catalog_demo".db1.table_001 (name, salary) VALUES ('s
 
 SELECT * FROM "metalake_demo.catalog_demo".db1.table_001;
 ```
+
+### Cross-catalog queries
+
+In companies, there may be different departments using different data stacks. 
+
+In this sample, HR department uses Apache Hive to store its data.
+
+Sales department uses Postgresql to store its data.
+
+This sample have generated some data for two departments.
+
+You can queries some interesting results use Gravitino. 
+
+If you want to know which employee has the largest sales amount.
+
+You can run the SQL.
+
+```SQL
+WITH salesscores AS (
+  SELECT
+    employee_id,
+    SUM(total_amount) AS sales_amount
+  FROM "metalake_demo.catalog_demo".sales.sales
+  GROUP BY
+    employee_id
+), rankedemployees AS (
+  SELECT
+    employee_id,
+    sales_amount,
+    RANK() OVER (ORDER BY sales_amount DESC) AS sales_rank
+  FROM salesscores
+)
+SELECT
+  e.employee_id,
+  given_name,
+  family_name,
+  job_title,
+  sales_amount
+FROM rankedemployees AS r
+JOIN "metalake_demo.catalog_pg1".hr.employees AS e
+  ON r.employee_id = e.employee_id
+WHERE
+  sales_rank = 1;
+```
+
+
