@@ -1,13 +1,12 @@
----
-title: "How to use the playground"
-slug: /how-to-use-the-playground
-keyword: playground
-license: "Copyright 2023 Datastrato Pvt Ltd. This software is licensed under the Apache License version 2."
----
+
+<!--
+  Copyright 2023 Datastrato Pvt Ltd.
+  This software is licensed under the Apache License version 2.
+-->
 
 # Playground
 
-This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` Server.
+This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` server.
 
 Depending on your network, the startup may take 3-5 minutes.
 
