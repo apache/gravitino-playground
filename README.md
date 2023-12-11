@@ -66,7 +66,7 @@ In companies, there may be different departments using different data stacks.
 
 In this sample, HR department uses Apache Hive to store its data.
 
-Sales department uses Postgresql to store its data.
+Sales department uses PostgreSQL to store its data.
 
 This sample have generated some data for two departments.
 
