@@ -64,11 +64,11 @@ SELECT * FROM "metalake_demo.catalog_demo".db1.table_001;
 
 In companies, there may be different departments using different data stacks. 
 
-In this sample, HR department uses Apache Hive to store its data.
+In this example, HR department uses Apache Hive to store its data.
 
 Sales department uses PostgreSQL to store its data.
 
-This sample have generated some data for two departments.
+This example have generated some data for two departments.
 
 You can queries some interesting results use Gravitino. 
 
