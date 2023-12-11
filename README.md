@@ -1,20 +1,25 @@
-
 <!--
   Copyright 2023 Datastrato Pvt Ltd.
   This software is licensed under the Apache License version 2.
 -->
 
-# Playground
+## Playground introduction
 
-This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `MySQL`, `PostgreSQL`, and `Gravitno` server.
+Playground is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `MySQL`, `PostgreSQL`, and `Gravitno` server.
 
 Depending on your network, the startup may take 3-5 minutes.
 
 Once the playground environment has started, you can open http://localhost:8090 to access the Gravitino Web UI.
 
-## Startup playground
+## Prerequisite
+
+You should install git and docker-compose.
+
+## Start playground
 
 ```shell
+git clone git@github.com:datastrato/gravitino-playground.git
+cd gravitino-playground
 ./launch-playground.sh
 ```
 
@@ -62,14 +67,13 @@ SELECT * FROM "metalake_demo.catalog_demo".db1.table_001;
 
 ### Cross-catalog queries
 
-In companies, there may be different departments using different data stacks. 
+In companies, there may be different departments using different data stacks.
 In this example, HR department uses Apache Hive to store its data.
 Sales department uses PostgreSQL to store its data.
-
 This example has generated some data for two departments.
-You can queries some interesting results use Gravitino. 
-If you want to know which employee has the largest sales amount.
+You can query some interesting results with Gravitino.
 
+If you want to know which employee has the largest sales amount.
 You can run the SQL.
 
 ```SQL
@@ -101,7 +105,6 @@ WHERE
 ```
 
 If you want to know top 10 customers who bought the most by state.
-
 You run the SQL.
 
 ```SQL
@@ -146,8 +149,7 @@ ORDER BY
     customer_rank;
 ```
 
-If you want to know that employees average performance rating and total sales
-
+If you want to know that employees average performance rating and total sales.
 You run the SQL.
 
 ```SQL
