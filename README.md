@@ -6,7 +6,7 @@
 
 # Playground
 
-This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `Mysql`, `Postgresql`, and `Gravitno` server.
+This is a complete Gravitino Docker runtime environment with `Hive`, `Hdfs`, `Trino`, `MySQL`, `PostgreSQL`, and `Gravitno` server.
 
 Depending on your network, the startup may take 3-5 minutes.
 
