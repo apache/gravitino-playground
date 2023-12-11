@@ -21,8 +21,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: 1G
+          cpus: "3"
+          memory: 3G
 
   gravitino:
     image: datastrato/gravitino:0.3.0-SNAPSHOT
@@ -45,7 +45,7 @@ services:
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
-      timeout: 10s
+      timeout: 60s
       retries: 5
 
   trino:
@@ -59,6 +59,9 @@ services:
       - GRAVITINO_HOST_PORT=8090
       - GRAVITINO_METALAKE_NAME=metalake_demo
       - HIVE_HOST_IP=hive
+    entrypoint:  /bin/bash /tmp/trino/init.sh
+    volumes:
+      - ./init/trino:/tmp/trino
     depends_on:
       hive :
         condition: service_healthy
@@ -80,6 +83,8 @@ services:
       ALLOW_IP_RANGE: 0.0.0.0/0
     ports:
       - "5432:5432"
+    volumes:
+      - ./init/postgres:/docker-entrypoint-initdb.d/
     deploy:
       resources:
         limits:
