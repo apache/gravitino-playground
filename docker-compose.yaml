@@ -7,7 +7,7 @@ services:
   hive:
     image: datastrato/hive:2.7.3-no-yarn
     ports:
-      - "3306:3306"
+      - "3307:3306"
       - "9000:9000"
       - "9083:9083"
     container_name: playground-hive
@@ -75,7 +75,7 @@ services:
 
   postgresql:
     image: postgres:13
-    container_name: postgresql
+    container_name: playground-postgresql
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -93,9 +93,9 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: playground-mysql
     ports:
-      - "3307:3306"
+      - "3306:3307"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:
