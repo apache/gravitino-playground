@@ -15,6 +15,18 @@ else
   exit
 fi
 
+echo "Checking if MySQL is runing"
+if lsof -Pi :3306 -sTCP:LISTEN -t >/dev/null ; then
+    echo "MySQL may allready be running on port 3306. Please shut down MySQL before launching the playground."
+    exit
+fi
+
+echo "Checking if Postgres is runing"
+if lsof -Pi :5432 -sTCP:LISTEN -t >/dev/null ; then
+    echo "Postgres may allready be running on port 5432. Please shut down Postgres before launching the playground."
+    exit -1
+fi
+
 cd ${playground_dir}
 docker-compose up
 

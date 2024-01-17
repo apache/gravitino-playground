@@ -75,7 +75,6 @@ services:
 
   postgresql:
     image: postgres:13
-    entrypoint: /bin/bash /tmp/postgres/init.sh
     container_name: playground-postgresql
     restart: always
     environment:
@@ -94,7 +93,6 @@ services:
 
   mysql:
     image: mysql:8.0
-    entrypoint: /bin/bash /tmp/mysql/init.sh
     container_name: playground-mysql
     ports:
       - "3306:3307"
