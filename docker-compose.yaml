@@ -25,7 +25,7 @@ services:
           memory: 3G
 
   gravitino:
-    image: datastrato/gravitino:0.3.1
+    image: datastrato/gravitino:0.4.0-rc1
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
