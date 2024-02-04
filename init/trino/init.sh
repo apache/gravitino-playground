@@ -58,6 +58,30 @@ else
   exit 1
 fi
 
+# Create Iceberg catalog for experience Gravitino service
+curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{
+    "name":"catalog_iceberg",
+    "type":"RELATIONAL",
+    "provider":"lakehouse-iceberg",
+    "comment":"comment",
+    "properties":{
+        "uri":"jdbc:mysql://mysql:3306/db",
+        "catalog-backend":"jdbc",
+        "warehouse":"hdfs://hive:9000/user/hive/warehouse/",
+        "jdbc-user":"mysql",
+        "jdbc-password":"mysql",
+        "jdbc-driver":"com.mysql.cj.jdbc.Driver"
+    }
+}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
+
+response=$(curl -X GET -H "Content-Type: application/json" http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+if echo "$response" | grep -q "catalog_iceberg"; then
+  echo "Catalog catalog_iceberg successfully created"
+else
+  echo "Catalog catalog_iceberg create failed"
+  exit 1
+fi
+
 /etc/trino/update-trino-conf.sh
 nohup /usr/lib/trino/bin/run-trino &
 

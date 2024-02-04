@@ -71,7 +71,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 1G
+          memory: 2G
 
   postgresql:
     image: postgres:13
@@ -89,7 +89,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 1G
+          memory: 500M
 
   mysql:
     image: mysql:8.0
@@ -113,6 +113,20 @@ services:
       resources:
         limits:
           cpus: "1"
+          memory: 500M
+
+  spark:
+    image: spark:3.4.1-scala2.12-java11-ubuntu
+    container_name: playground-spark
+    entrypoint: /bin/bash /tmp/spark/init.sh
+    environment:
+      - HADOOP_USER_NAME=root
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./init/spark:/tmp/spark
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
           memory: 1G
-
-
