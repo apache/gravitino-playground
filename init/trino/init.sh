@@ -46,7 +46,7 @@ curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: ap
         "jdbc-user":"postgres",
         "jdbc-password":"postgres",
         "jdbc-database":"db",
-        "gravitino.bypass.driverClassName":"org.postgresql.Driver"
+        "jdbc-driver": "org.postgresql.Driver"
     }
 }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
 
