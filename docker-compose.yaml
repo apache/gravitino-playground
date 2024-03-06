@@ -13,6 +13,9 @@ services:
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
+    entrypoint: /bin/bash /tmp/hive/init.sh
+    volumes:
+      - ./init/hive:/tmp/hive
     healthcheck:
       test: ["CMD", "/tmp/check-status.sh"]
       interval: 10s
