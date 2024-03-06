@@ -98,7 +98,7 @@ services:
     image: mysql:8.0
     container_name: playground-mysql
     ports:
-      - "3306:3307"
+      - "3306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:
