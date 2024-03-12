@@ -13,6 +13,9 @@ services:
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
+    entrypoint: /bin/bash /tmp/hive/init.sh
+    volumes:
+      - ./init/hive:/tmp/hive
     healthcheck:
       test: ["CMD", "/tmp/check-status.sh"]
       interval: 10s
@@ -95,7 +98,7 @@ services:
     image: mysql:8.0
     container_name: playground-mysql
     ports:
-      - "3306:3307"
+      - "3306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:

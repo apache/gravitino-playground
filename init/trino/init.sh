@@ -67,7 +67,7 @@ curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: ap
     "properties":{
         "uri":"jdbc:mysql://mysql:3306/db",
         "catalog-backend":"jdbc",
-        "warehouse":"hdfs://hive:9000/user/hive/warehouse/",
+        "warehouse":"hdfs://hive:9000/user/iceberg/warehouse/",
         "jdbc-user":"mysql",
         "jdbc-password":"mysql",
         "jdbc-driver":"com.mysql.cj.jdbc.Driver"
