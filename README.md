@@ -55,12 +55,12 @@ You can use simple queries to test in the Trino CLI.
 ```SQL
 SHOW CATALOGS;
 
-CREATE SCHEMA "metalake_demo.catalog_hive".company
+CREATE SCHEMA catalog_hive.company
   WITH (location = 'hdfs://hive:9000/user/hive/warehouse/company.db');
 
-SHOW CREATE SCHEMA "metalake_demo.catalog_hive".company;
+SHOW CREATE SCHEMA catalog_hive.company;
 
-CREATE TABLE "metalake_demo.catalog_hive".company.employees
+CREATE TABLE catalog_hive.company.employees
 (
   name varchar,
   salary decimal(10,2)
@@ -69,15 +69,15 @@ WITH (
   format = 'TEXTFILE'
 );
 
-INSERT INTO "metalake_demo.catalog_hive".company.employees (name, salary) VALUES ('Sam Evans', 55000);
+INSERT INTO catalog_hive.company.employees (name, salary) VALUES ('Sam Evans', 55000);
 
-SELECT * FROM "metalake_demo.catalog_hive".company.employees;
+SELECT * FROM catalog_hive.company.employees;
 
-SHOW SCHEMAS from "metalake_demo.catalog_hive";
+SHOW SCHEMAS from catalog_hive;
 
-DESCRIBE "metalake_demo.catalog_hive".company.employees;
+DESCRIBE catalog_hive.company.employees;
 
-SHOW TABLES from "metalake_demo.catalog_hive".company;
+SHOW TABLES from catalog_hive.company;
 ```
 
 ### Cross-catalog queries
@@ -88,8 +88,8 @@ If you want to know which employee has the largest sales amount, you can run thi
 
 ```SQL
 SELECT given_name, family_name, job_title, sum(total_amount) AS total_sales
-FROM "metalake_demo.catalog_hive".sales.sales as s,
-  "metalake_demo.catalog_postgres".hr.employees AS e
+FROM catalog_hive.sales.sales as s,
+  catalog_postgres.hr.employees AS e
 where s.employee_id = e.employee_id
 GROUP BY given_name, family_name, job_title
 ORDER BY total_sales DESC
@@ -100,9 +100,9 @@ If you want to know the top customers who bought the most by state, you can run 
 
 ```SQL
 SELECT customer_name, location, SUM(total_amount) AS total_spent
-FROM "metalake_demo.catalog_hive".sales.sales AS s,
-  "metalake_demo.catalog_hive".sales.stores AS l,
-  "metalake_demo.catalog_hive".sales.customers AS c
+FROM catalog_hive.sales.sales AS s,
+  catalog_hive.sales.stores AS l,
+  catalog_hive.sales.customers AS c
 WHERE s.store_id = l.store_id AND s.customer_id = c.customer_id
 GROUP BY location, customer_name
 ORDER BY location, SUM(total_amount) DESC;
@@ -112,9 +112,9 @@ If you want to know the employee's average performance rating and total sales, y
 
 ```SQL
 SELECT e.employee_id, given_name, family_name, AVG(rating) AS average_rating,  SUM(total_amount) AS total_sales
-FROM "metalake_demo.catalog_postgres".hr.employees AS e,
-  "metalake_demo.catalog_postgres".hr.employee_performance AS p,
-  "metalake_demo.catalog_hive".sales.sales AS s
+FROM catalog_postgres.hr.employees AS e,
+  catalog_postgres.hr.employee_performance AS p,
+  catalog_hive.sales.sales AS s
 WHERE e.employee_id = p.employee_id AND p.employee_id = s.employee_id
 GROUP BY e.employee_id,  given_name, family_name;
 ```
@@ -167,7 +167,7 @@ trino@d2bbfccc7432:/$ trino
 ```
 
 ```SQL
-select * from "metalake_demo.catalog_hive".sales.customers
+select * from catalog_hive.sales.customers
 union
-select * from "metalake_demo.catalog_iceberg".sales.customers;
+select * from catalog_iceberg.sales.customers;
 ```
