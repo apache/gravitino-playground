@@ -119,7 +119,7 @@ services:
           memory: 500M
 
   spark:
-    image: spark:3.4.1-scala2.12-java11-ubuntu
+    image: datastrato/spark-connector:0.1.0
     container_name: playground-spark
     entrypoint: /bin/bash /tmp/spark/init.sh
     environment:
