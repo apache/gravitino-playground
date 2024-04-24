@@ -88,7 +88,7 @@ nohup /usr/lib/trino/bin/run-trino &
 counter=0
 while [ $counter -le 240 ]; do
   counter=$((counter + 1))
-  trino_ready=$(trino --execute  "SHOW CATALOGS LIKE 'metalake_demo.catalog_hive'"| grep "metalake_demo.catalog_hive" | wc -l)
+  trino_ready=$(trino --execute  "SHOW CATALOGS LIKE 'catalog_hive'"| grep "catalog_hive" | wc -l)
   if [ "$trino_ready" -eq 0 ];
   then
     echo "Wait for the initialization of services"

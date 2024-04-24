@@ -6,8 +6,8 @@
 set -ex
 
 # Because trino-connector must first synchronize a default metalake from the Gravitino server
-response=$(trino --execute "SHOW CATALOGS LIKE 'metalake_demo.catalog_hive'")
-if echo "$response" | grep -q "metalake_demo.catalog_hive"; then
+response=$(trino --execute "SHOW CATALOGS LIKE 'catalog_hive'")
+if echo "$response" | grep -q catalog_hive; then
   echo "Gravitino Trino connector has finished synchronizing metadata"
 else
   echo "Gravitino Trino connector is not yet finished synchronizing metadata"
