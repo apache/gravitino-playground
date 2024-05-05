@@ -10,6 +10,7 @@ services:
       - "3307:3306"
       - "9000:9000"
       - "9083:9083"
+      - "50070:50070"
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
@@ -133,3 +134,22 @@ services:
         limits:
           cpus: "1"
           memory: 1G
+
+  jupyter:
+    image: jupyter/minimal-notebook 
+    container_name: playground-jupyter
+    ports:
+      - 8888:8888
+    volumes:
+      - ./init/jupyter:/tmp/gravitino
+    entrypoint: /bin/bash /tmp/gravitino/init.sh
+    depends_on:
+      hive :
+        condition: service_healthy
+      gravitino :
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M

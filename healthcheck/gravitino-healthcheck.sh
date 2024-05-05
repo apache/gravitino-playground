@@ -5,11 +5,26 @@
 #
 set -ex
 
-response=$(curl -X GET -H "Content-Type: application/json" http://127.0.0.1:8090/api/version)
+max_attempts=3
+attempt=0
+success=false
 
-if echo "$response" | grep -q "\"code\":0"; then
+while [ $attempt -lt $max_attempts ]; do
+  response=$(curl -X GET -H "Content-Type: application/json" http://127.0.0.1:8090/api/version)
+  
+  if echo "$response" | grep -q "\"code\":0"; then
+    success=true
+    break
+  else
+    echo "Attempt $((attempt + 1)) failed..."
+    sleep 1
+  fi
+  
+  ((attempt++))
+done
+
+if [ "$success" = true ]; then
   exit 0
 else
-  echo "Metalake metalake_demo create failed"
   exit 1
 fi
