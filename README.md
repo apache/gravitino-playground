@@ -17,14 +17,14 @@ Install Git and Docker Compose.
 
 The playground runs a number of services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
 
-| Docker container      | Ports used     |
-|-----------------------|----------------|
-| playground-gravitino  | 8090 9001      |
-| playground-hive       | 3307 9000 9083 |
-| playground-mysql      | 3306           |
-| playground-postgresql | 5342           |
-| playground-trino      | 8080           |
-| playground-jupyter    | 8888           |
+| Docker container      | Ports used           |
+|-----------------------|----------------------|
+| playground-gravitino  | 8090 9001            |
+| playground-hive       | 3307 9000 9083 50070 |
+| playground-mysql      | 3306                 |
+| playground-postgresql | 5342                 |
+| playground-trino      | 8080                 |
+| playground-jupyter    | 8888                 |
 
 ## Start playground
 
