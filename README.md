@@ -62,6 +62,8 @@ cd gravitino-playground
 
 ## Experiencing Gravitino with Trino SQL
 
+### Using Trino CLI in Docker Container
+
 1. Log in to the Gravitino playground Trino Docker container using the following command:
 
 ```shell
@@ -73,6 +75,14 @@ docker exec -it playground-trino bash
 ```shell
 trino@container_id:/$ trino
 ```
+
+### Using Jupiter Notebook
+
+1. Open the Jupyter Notebook in the browser at [http://localhost:8888](http://localhost:8888).
+
+2. Open the `gravitino-trino-example.ipynb` notebook.
+
+3. Start the notebook and run the cells.
 
 ## Example
 
