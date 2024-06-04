@@ -29,7 +29,7 @@ services:
           memory: 3G
 
   gravitino:
-    image: datastrato/gravitino:0.5.0
+    image: datastrato/gravitino:0.5.1
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -53,7 +53,7 @@ services:
       retries: 5
 
   trino:
-    image: datastrato/trino:426-gravitino-0.5.0
+    image: datastrato/trino:435-gravitino-0.5.1
     ports:
       - "8080:8080"
     container_name: playground-trino
