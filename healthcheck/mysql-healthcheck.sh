@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,16 +17,14 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-cp -r /tmp/gravitino/*.ipynb /home/jovyan
-export HADOOP_USER_NAME=root
+set -ex
 
-# This needs to be downloaded as root user
-wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.5.2/iceberg-spark-runtime-3.4_2.12-1.5.2.jar  -O $SPARK_HOME/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
-wget https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.0-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar -O $SPARK_HOME/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar
-
-# in pyspark-notebook, SPARK_HOME is at /usr/local/spark, we need to link it back to /opt/spark 
-ln -s $SPARK_HOME /opt/spark
-
-su - jovyan
-
-start-notebook.sh --NotebookApp.token=''
+HOST_IP=${MYSQL_HOST_IP:-localhost}
+mysqladmin ping -h ${HOST_IP} -p${MYSQL_ROOT_PASSWORD}
+if [ $? -eq 0 ]; then
+  echo "MySQL container started successfully."
+  exit 0
+else
+  echo "MySQL container has not started yet."
+  exit 1
+fi

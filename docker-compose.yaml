@@ -44,10 +44,13 @@ services:
       - "8090:8090"
       - "9001:9001"
     container_name: playground-gravitino
+    environment:
+      - MYSQL_HOST_IP=mysql
+      - HIVE_HOST_IP=hive
     depends_on:
-      hive :
+      hive:
         condition: service_healthy
-      mysql :
+      mysql:
         condition: service_healthy
     volumes:
       - ./healthcheck:/tmp/healthcheck
@@ -70,15 +73,17 @@ services:
       - GRAVITINO_HOST_PORT=8090
       - GRAVITINO_METALAKE_NAME=metalake_demo
       - HIVE_HOST_IP=hive
-    entrypoint:  /bin/bash /tmp/trino/init.sh
+      - MYSQL_HOST_IP=mysql
+      - POSTGRES_HOST_IP=postgresql
+    entrypoint: /bin/bash /tmp/trino/init.sh
     volumes:
       - ./init/trino:/tmp/trino
       - ./init/common:/tmp/common
       - ./healthcheck:/tmp/healthcheck
     depends_on:
-      hive :
+      hive:
         condition: service_healthy
-      gravitino :
+      gravitino:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/trino-healthcheck.sh"]
@@ -112,14 +117,15 @@ services:
       - "13306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
-    command:
+      - ./healthcheck:/tmp/healthcheck
+    command: 
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -pmysql"]
+      test: ["CMD", "/bin/bash", "/tmp/healthcheck/mysql-healthcheck.sh"]
       interval: 5s
       timeout: 60s
       retries: 5
@@ -131,6 +137,10 @@ services:
     entrypoint: /bin/bash /tmp/spark/init.sh
     environment:
       - HADOOP_USER_NAME=root
+      - GRAVITINO_HOST_IP=gravitino
+      - GRAVITINO_HOST_PORT=8090
+      - HIVE_HOST_IP=hive
+      - TRINO_HOST_IP=trino
     ports:
       - "14040:4040"
     volumes:
@@ -140,15 +150,20 @@ services:
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1
     container_name: playground-jupyter
+    environment:
+      - GRAVITINO_HOST_IP=gravitino
+      - HIVE_HOST_IP=hive
+      - TRINO_HOST_IP=trino
+      - POSTGRES_HOST_IP=postgresql
     ports:
       - "18888:8888"
     volumes:
       - ./init/jupyter:/tmp/gravitino
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     depends_on:
-      hive :
+      hive:
         condition: service_healthy
-      gravitino :
+      gravitino:
         condition: service_healthy
 
   prometheus:

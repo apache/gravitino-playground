@@ -18,6 +18,11 @@
 #
 mkdir -p /opt/spark/conf
 cp /tmp/spark/spark-defaults.conf /opt/spark/conf
+
+# inject host information
+sed -i 's/__GRAVITINO_HOST_IP__/'"$GRAVITINO_HOST_IP"'/g' /opt/spark/conf/spark-defaults.conf
+sed -i 's/__HIVE_HOST_IP__/'"$HIVE_HOST_IP"'/g' /opt/spark/conf/spark-defaults.conf
+
 cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.5.2.jar /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
 cp /tmp/spark/packages/gravitino-spark-connector-runtime-3.4_2.12-0.6.1-incubating.jar /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.1-incubating.jar
 cp /tmp/spark/packages/mysql-connector-java-8.0.27.jar /opt/spark/jars/mysql-connector-java-8.0.27.jar

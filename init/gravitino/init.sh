@@ -25,6 +25,12 @@ cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /roo
 cp /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.2.7.jar /root/gravitino/iceberg-rest-server/libs
 cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /root/gravitino/iceberg-rest-server/libs
 cp /tmp/gravitino/gravitino.conf /root/gravitino/conf
+
+# set env var 
+sed -i 's/__MYSQL_HOST_IP__/'"$MYSQL_HOST_IP"'/g' /root/gravitino/conf/gravitino.conf
+sed -i 's/__HIVE_HOST_IP__/'"$HIVE_HOST_IP"'/g' /root/gravitino/conf/gravitino.conf
 echo "Finish downloading"
 echo "Start the Gravitino Server"
-/bin/bash /root/gravitino/bin/gravitino.sh start
+/bin/bash /root/gravitino/bin/gravitino.sh start &
+sleep 3
+tail -f /root/gravitino/logs/gravitino-server.log

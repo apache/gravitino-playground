@@ -1,0 +1,9 @@
+apiVersion: v2
+name: gravitino-playground
+description: A Helm chart for Gravitino Playground
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Your Name
+    email: your.email@example.com

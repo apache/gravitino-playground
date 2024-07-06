@@ -1,0 +1,110 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gravitino.serviceName }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.gravitino.serviceName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.gravitino.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gravitino.serviceName }}
+    spec:
+      containers:
+      - name: gravitino
+        image: "{{ .Values.gravitino.image.repository }}:{{ .Values.gravitino.image.tag }}"
+        ports:
+        - containerPort: 8090
+        - containerPort: 9001
+        command: ["/bin/bash", "/tmp/gravitino/init.sh"]
+        env:
+          {{- toYaml .Values.gravitino.env | nindent 12 }}
+        volumeMounts:
+        - name: init-script
+          mountPath: /tmp/gravitino
+        - name: healthcheck-script
+          mountPath: /tmp/healthcheck
+        - name: artifacts
+          mountPath: /tmp/gravitino/data/pdfs
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - /tmp/healthcheck/gravitino-healthcheck.sh
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.gravitino.resources | nindent 12 }}
+      initContainers:
+      - name: wait-for-hive
+        image: "{{ .Values.gravitino.image.repository }}:{{ .Values.gravitino.image.tag }}"
+        command: ["/bin/bash", "/tmp/healthcheck/hive-healthcheck.sh"]
+        env:
+          {{- toYaml .Values.gravitino.env | nindent 12 }}
+        volumeMounts:
+        - name: healthcheck-script
+          mountPath: /tmp/healthcheck
+      - name: wait-for-mysql
+        image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+        command: ["/bin/bash", "/tmp/healthcheck/mysql-healthcheck.sh"]
+        env:
+          {{- toYaml .Values.mysql.env | nindent 12 }}
+        volumeMounts:
+        - name: healthcheck-script
+          mountPath: /tmp/healthcheck
+      volumes:
+      - name: init-script
+        configMap:
+          name: gravitino-init-script
+          defaultMode: 0755
+      - name: artifacts
+        hostPath:
+          path: {{ printf "%s/init/gravitino/" .Values.projectRoot }}
+          type: DirectoryOrCreate
+      - name: healthcheck-script
+        configMap:
+          name: gravitino-healthcheck-script
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gravitino.serviceName }}
+spec:
+  selector:
+    app: {{ .Values.gravitino.serviceName }}
+  ports:
+  - port: 8090
+    targetPort: 8090
+    name: api
+  - port: 9001
+    targetPort: 9001
+    name: debug
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gravitino-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/gravitino/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gravitino-healthcheck-script
+data:
+  {{- range $path, $_ := .Files.Glob "healthcheck/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}

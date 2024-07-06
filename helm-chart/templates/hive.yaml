@@ -1,0 +1,81 @@
+# templates/hive.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.hive.serviceName }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.hive.serviceName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.hive.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.hive.serviceName }}
+    spec:
+      containers:
+      - name: hive
+        image: "{{ .Values.hive.image.repository }}:{{ .Values.hive.image.tag }}"
+        ports:
+        - containerPort: 3306
+        - containerPort: 9000
+        - containerPort: 9083
+        - containerPort: 10000
+        - containerPort: 50070
+        readinessProbe:
+          exec:
+            command: ["/tmp/check-status.sh"]
+          periodSeconds: 10
+          timeoutSeconds: 60
+          failureThreshold: 5
+        env:
+          {{- toYaml .Values.hive.env | nindent 12 }}
+        volumeMounts:
+        - name: hive-init-script
+          mountPath: /tmp/hive
+        resources:
+          {{- toYaml .Values.hive.resources | nindent 12 }}
+        command: ["/bin/bash", "/tmp/hive/init.sh"]
+      volumes:
+      - name: hive-init-script
+        configMap:
+          name: hive-init-script
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.hive.serviceName }}
+spec:
+  selector:
+    app: {{ .Values.hive.serviceName }}
+  ports:
+  - port: 3306
+    targetPort: 3306
+    name: mysql
+  - port: 9000
+    targetPort: 9000
+    name: hdfs
+  - port: 9083
+    targetPort: 9083
+    name: metastore
+  - port: 10000
+    targetPort: 10000
+    name: hiveserver2
+  - port: 50070
+    targetPort: 50070
+    name: namenode
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hive-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/hive/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
