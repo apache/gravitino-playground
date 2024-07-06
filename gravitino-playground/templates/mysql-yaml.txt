@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-mysql
-  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.global.namespace }}
   labels:
     app: {{ .Release.Name }}-mysql
 spec:

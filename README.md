@@ -32,7 +32,7 @@ Install Git and Docker Compose.
 The playground runs a number of services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
 
 | Docker container      | Ports used           |
-|-----------------------|----------------------|
+| --------------------- | -------------------- |
 | playground-gravitino  | 8090 9001            |
 | playground-hive       | 3307 9000 9083 50070 |
 | playground-mysql      | 3306                 |
@@ -229,3 +229,9 @@ select * from catalog_iceberg.sales.customers;
 Apache Gravitino is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
 
 <sub>Apache®, Apache Gravitino&trade;, Apache Hive&trade;, Apache Iceberg&trade;, and Apache Spark&trade; are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries.</sub>
+
+## Kubernetes
+
+```
+$ helm upgrade --install gravitino-playground ./gravitino-playground --create-namespace --namespace gravitino-playground
+```
