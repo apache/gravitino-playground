@@ -1,0 +1,56 @@
+# templates/spark.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-spark
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-spark
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-spark
+    spec:
+      containers:
+      - name: spark
+        image: "{{ .Values.spark.image.repository }}:{{ .Values.spark.image.tag }}"
+        ports:
+        - containerPort: 4040
+        env:
+        - name: HADOOP_USER_NAME
+          value: root
+        volumeMounts:
+        - name: init-script
+          mountPath: /tmp/spark
+        resources:
+          {{- toYaml .Values.spark.resources | nindent 12 }}
+      volumes:
+      - name: init-script
+        configMap:
+          name: {{ .Release.Name }}-spark-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-spark
+spec:
+  selector:
+    app: {{ .Release.Name }}-spark
+  ports:
+  - port: 4040
+    targetPort: 4040
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-spark-init-script
+data:
+  init.sh: |
+    #!/bin/bash
+    # Add your Spark init script content here

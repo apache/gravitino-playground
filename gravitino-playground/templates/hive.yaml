@@ -1,0 +1,73 @@
+# templates/hive.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-hive
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-hive
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-hive
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-hive
+    spec:
+      containers:
+      - name: hive
+        image: "{{ .Values.hive.image.repository }}:{{ .Values.hive.image.tag }}"
+        ports:
+        - containerPort: 3306
+        - containerPort: 9000
+        - containerPort: 9083
+        - containerPort: 50070
+        env:
+        - name: HADOOP_USER_NAME
+          value: root
+        volumeMounts:
+        - name: init-script
+          mountPath: /tmp/hive
+        resources:
+          {{- toYaml .Values.hive.resources | nindent 12 }}
+      volumes:
+      - name: init-script
+        configMap:
+          name: {{ .Release.Name }}-hive-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-hive
+spec:
+  selector:
+    app: {{ .Release.Name }}-hive
+  ports:
+  - port: 3306
+    targetPort: 3306
+    name: mysql
+  - port: 9000
+    targetPort: 9000
+    name: hdfs
+  - port: 9083
+    targetPort: 9083
+    name: metastore
+  - port: 50070
+    targetPort: 50070
+    name: namenode
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-hive-init-script
+data:
+  init.sh: |
+    #!/bin/bash
+    # Add your Hive init script content here
+    # For example:
+    # /opt/hive/bin/schematool -dbType mysql -initSchema
+    # /opt/hadoop/sbin/start-dfs.sh
+    # /opt/hive/bin/hiveserver2 --hiveconf hive.server2.enable.doAs=false

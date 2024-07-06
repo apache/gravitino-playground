@@ -1,0 +1,150 @@
+# Global settings
+global:
+  storageClass: ""
+  namespace: gravitino-playground
+
+# Hive settings
+hive:
+  image:
+    repository: datastrato/hive
+    tag: 2.7.3-no-yarn
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 3
+      memory: 3Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+
+# Gravitino settings
+gravitino:
+  image:
+    repository: datastrato/gravitino
+    tag: 0.5.1
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 200m
+      memory: 200Mi
+
+# Trino settings
+trino:
+  image:
+    repository: datastrato/trino
+    tag: 435-gravitino-0.5.1
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+# PostgreSQL settings
+postgresql:
+  image:
+    repository: postgres
+    tag: "13"
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1
+      memory: 500Mi
+    requests:
+      cpu: 200m
+      memory: 200Mi
+  persistence:
+    enabled: true
+    size: 1Gi
+
+# MySQL settings
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1
+      memory: 500Mi
+    requests:
+      cpu: 200m
+      memory: 200Mi
+  persistence:
+    enabled: true
+    size: 1Gi
+
+# Spark settings
+spark:
+  image:
+    repository: spark
+    tag: 3.4.1-scala2.12-java11-ubuntu
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+
+# Jupyter settings
+jupyter:
+  image:
+    repository: jupyter/minimal-notebook
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 200m
+      memory: 200Mi
+  persistence:
+    enabled: true
+    size: 1Gi
+
+# Service specific settings
+service:
+  type: ClusterIP
+  # If you want to expose services externally, you can use LoadBalancer
+  # type: LoadBalancer
+
+# Ingress settings
+ingress:
+  enabled: false
+  # If you want to use ingress, uncomment and adjust the following:
+  # annotations: {}
+  # hosts:
+  #   - host: chart-example.local
+  #     paths: []
+  # tls: []
+
+# Persistence settings
+persistence:
+  enabled: true
+  # storageClass: ""
+
+# Security settings
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

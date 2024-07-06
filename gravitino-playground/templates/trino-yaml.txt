@@ -1,0 +1,65 @@
+# templates/trino.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-trino
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-trino
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-trino
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-trino
+    spec:
+      containers:
+      - name: trino
+        image: "{{ .Values.trino.image.repository }}:{{ .Values.trino.image.tag }}"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HADOOP_USER_NAME
+          value: root
+        - name: GRAVITINO_HOST_IP
+          value: "{{ .Release.Name }}-gravitino"
+        - name: GRAVITINO_HOST_PORT
+          value: "8090"
+        - name: GRAVITINO_METALAKE_NAME
+          value: metalake_demo
+        - name: HIVE_HOST_IP
+          value: "{{ .Release.Name }}-hive"
+        volumeMounts:
+        - name: init-script
+          mountPath: /tmp/trino
+        resources:
+          {{- toYaml .Values.trino.resources | nindent 12 }}
+      volumes:
+      - name: init-script
+        configMap:
+          name: {{ .Release.Name }}-trino-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-trino
+spec:
+  selector:
+    app: {{ .Release.Name }}-trino
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-trino-init-script
+data:
+  init.sh: |
+    #!/bin/bash
+    # Add your Trino init script content here

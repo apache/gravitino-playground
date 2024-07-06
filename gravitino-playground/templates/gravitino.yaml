@@ -1,0 +1,58 @@
+# templates/gravitino.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-gravitino
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-gravitino
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-gravitino
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-gravitino
+    spec:
+      containers:
+      - name: gravitino
+        image: "{{ .Values.gravitino.image.repository }}:{{ .Values.gravitino.image.tag }}"
+        ports:
+        - containerPort: 8090
+        - containerPort: 9001
+        volumeMounts:
+        - name: init-script
+          mountPath: /tmp/gravitino
+        resources:
+          {{- toYaml .Values.gravitino.resources | nindent 12 }}
+      volumes:
+      - name: init-script
+        configMap:
+          name: {{ .Release.Name }}-gravitino-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-gravitino
+spec:
+  selector:
+    app: {{ .Release.Name }}-gravitino
+  ports:
+  - port: 8090
+    targetPort: 8090
+    name: api
+  - port: 9001
+    targetPort: 9001
+    name: debug
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-gravitino-init-script
+data:
+  init.sh: |
+    #!/bin/bash
+    # Add your Gravitino init script content here

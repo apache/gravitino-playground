@@ -1,0 +1,59 @@
+# templates/postgresql.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgresql
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-postgresql
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: ALLOW_IP_RANGE
+          value: 0.0.0.0/0
+        volumeMounts:
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          {{- toYaml .Values.postgresql.resources | nindent 12 }}
+      volumes:
+      - name: init-script
+        configMap:
+          name: {{ .Release.Name }}-postgresql-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgresql
+spec:
+  selector:
+    app: {{ .Release.Name }}-postgresql
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-postgresql-init-script
+data:
+  init.sql: |
+    -- Add your PostgreSQL init script content here
