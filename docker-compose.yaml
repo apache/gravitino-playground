@@ -119,6 +119,7 @@ services:
       - "13306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
+      - ./healthcheck:/tmp/healthcheck
     environment:
       MYSQL_ROOT_PASSWORD: mysql
       MYSQL_USER: mysql
@@ -136,7 +137,7 @@ services:
           cpus: "1"
           memory: 500M
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p ${MYSQL_ROOT_PASSWORD}"]
+      test: ["/bin/bash", "/tmp/healthcheck/mysql-healthcheck.sh"]
       interval: 5s
       timeout: 60s
       retries: 5

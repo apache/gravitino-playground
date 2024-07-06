@@ -17,8 +17,6 @@
  * under the License.
  */
 
-create schema catalog_hive.sales with (location = 'hdfs://hive:9000/user/hive/warehouse/sales.db');
-
 CREATE TABLE  catalog_hive.sales.categories (category_id int,category_name varchar(100));
 
 CREATE TABLE catalog_hive.sales.customers (customer_id int, customer_name varchar(100), customer_email varchar(100));

@@ -1,0 +1,108 @@
+# templates/trino.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.trino.serviceName }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.trino.serviceName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.trino.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.trino.serviceName }}
+    spec:
+      containers:
+      - name: trino
+        image: "{{ .Values.trino.image.repository }}:{{ .Values.trino.image.tag }}"
+        ports:
+        - containerPort: 8080
+        command: ["/bin/bash", "/tmp/trino/init.sh"]
+        env:
+          {{- toYaml .Values.trino.env | nindent 12 }}
+        volumeMounts:
+        - name: trino-init-script
+          mountPath: /tmp/trino
+        - name: trino-common-init-script
+          mountPath: /tmp/common
+        resources:
+          {{- toYaml .Values.trino.resources | nindent 12 }}
+      initContainers:
+      - name: wait-for-hive
+        image: "{{ .Values.hive.image.repository }}:{{ .Values.hive.image.tag }}"
+        command: ["/bin/bash", "/tmp/healthcheck/hive-healthcheck.sh"]
+        env:
+          {{- toYaml .Values.trino.env | nindent 12 }}
+        volumeMounts:
+        - name: healthcheck-script
+          mountPath: /tmp/healthcheck
+      - name: wait-for-gravitino
+        image: "{{ .Values.gravitino.image.repository }}:{{ .Values.gravitino.image.tag }}"
+        command: ["/bin/bash", "/tmp/healthcheck/gravitino-healthcheck.sh"]
+        env:
+          {{- toYaml .Values.trino.env | nindent 12 }}
+        volumeMounts:
+        - name: healthcheck-script
+          mountPath: /tmp/healthcheck
+      volumes:
+      - name: trino-init-script
+        configMap:
+          name: trino-init-script
+          defaultMode: 0755
+      - name: trino-common-init-script
+        configMap:
+          name: trino-common-init-script
+          defaultMode: 0755
+      - name: healthcheck-script
+        configMap:
+          name: trino-healthcheck-script
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.trino.serviceName }}
+spec:
+  selector:
+    app: {{ .Values.trino.serviceName }}
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/trino/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-common-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/common/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-healthcheck-script
+data:
+  {{- range $path, $_ := .Files.Glob "healthcheck/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
