@@ -64,10 +64,5 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-hive-init-script
 data:
-  init.sh: |
-    #!/bin/bash
-    # Add your Hive init script content here
-    # For example:
-    # /opt/hive/bin/schematool -dbType mysql -initSchema
-    # /opt/hadoop/sbin/start-dfs.sh
-    # /opt/hive/bin/hiveserver2 --hiveconf hive.server2.enable.doAs=false
+  init.sh: |-
+{{ .Files.Get "../../healthcheck/gravitino-healthcheck.sh" | indent 4 }}
