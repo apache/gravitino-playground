@@ -25,6 +25,12 @@ spec:
         - containerPort: 9000
         - containerPort: 9083
         - containerPort: 50070
+        readinessProbe:
+          exec:
+            command: ["/tmp/check-status.sh"]
+          periodSeconds: 10
+          timeoutSeconds: 60
+          failureThreshold: 5
         env:
         - name: HADOOP_USER_NAME
           value: root
@@ -37,6 +43,7 @@ spec:
       - name: init-script
         configMap:
           name: {{ .Release.Name }}-hive-init-script
+          defaultMode: 0755
 ---
 apiVersion: v1
 kind: Service
@@ -65,4 +72,4 @@ metadata:
   name: {{ .Release.Name }}-hive-init-script
 data:
   init.sh: |-
-{{ .Files.Get "../../healthcheck/gravitino-healthcheck.sh" | indent 4 }}
+{{ .Files.Get "init/hive/init.sh" | indent 4 }}
