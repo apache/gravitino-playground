@@ -238,9 +238,9 @@ The scenario of this demo is that basic structured city statistics data is store
 detailed city introductions are stored in PDF files. The user wants to know the answers to the
 cities both in the structured data and the PDF files.
 
-In this demo, we will use Gravitino to manage the MySQL table using relational catalog, pdf
+In this demo, you will use Gravitino to manage the MySQL table using relational catalog, pdf
 files using fileset catalog, treated Gravitino as a unified data source for LlamaIndex to build
-indexes on both tabular and non-tabular data. Then we will use LLM to query the data with natural
+indexes on both tabular and non-tabular data. Then you will use LLM to query the data with natural
 language queries.
 
 Note: to run this demo, you need to set `OPENAI_API_KEY` in the `gravitino_llama_index_demo.ipynb`,
