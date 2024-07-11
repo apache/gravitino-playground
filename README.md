@@ -224,6 +224,35 @@ union
 select * from catalog_iceberg.sales.customers;
 ```
 
+### Using Gravitino with LlamaIndex
+
+Gravitino playground also provides a simple RAG demo with LlamaIndex. This demo will show you the
+ability of using Gravitino to manage both tabular and non-tabular dataset, connecting to
+LlamaIndex as a unified data source, then use LlamaIndex and LLM to query both tabular and
+non-tabular data with one natural language query.
+
+The demo is located in the `jupyter` folder, you can open the `gravitino_llama_index_demo.ipynb`
+demo via Jupyter Notebook by [http://localhost:8888](http://localhost:8888).
+
+The scenario of this demo is that basic structured city statistics data is stored in MySQL, and
+detailed city introductions are stored in PDF files. The user wants to know the answers to the
+cities both in the structured data and the PDF files.
+
+In this demo, we will use Gravitino to manage the MySQL table using relational catalog, pdf
+files using fileset catalog, treated Gravitino as a unified data source for LlamaIndex to build
+indexes on both tabular and non-tabular data. Then we will use LLM to query the data with natural
+language queries.
+
+Note: to run this demo, you need to set `OPENAI_API_KEY` in the `gravitino_llama_index_demo.ipynb`,
+like below, `OPENAI_API_BASE` is optional.
+
+```python
+import os
+
+os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_API_BASE"] = ""
+```
+
 ## ASF Incubator disclaimer
 
 Apache Gravitino is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
