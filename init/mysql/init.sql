@@ -18,3 +18,12 @@
  */
 GRANT ALL PRIVILEGES on *.* to 'mysql'@'%';
 FLUSH PRIVILEGES;
+CREATE DATABASE IF NOT EXISTS `demo_llamaindex`;
+CREATE TABLE IF NOT EXISTS `demo_llamaindex`.`city_stats`  (
+  `city_name` text,
+  `population` int DEFAULT NULL,
+  `country` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Toronto", 2930000, "Canada");
+INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Tokyo", 13960000, "Japan");
+INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Berlin", 3645000, "Germany");
