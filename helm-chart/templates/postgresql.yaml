@@ -55,5 +55,5 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-postgresql-init-script
 data:
-  init.sql: |
-    -- Add your PostgreSQL init script content here
+  init.sql: |-
+{{ .Files.Get "init/postgres/init.sql" | indent 4 }}
