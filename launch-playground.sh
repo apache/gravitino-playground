@@ -31,12 +31,6 @@ fi
 
 components=""
 case "${1}" in
-  bigdata)
-    components="hive gravitino trino postgresql mysql spark"
-    ;;
-  ai)
-    components="hive gravitino mysql jupyter"
-    ;;
   *)
     components=$@
 esac

@@ -49,30 +49,15 @@ cd gravitino-playground
 ./launch-playground.sh
 ```
 
-### Launch BigData components of playground
-```shell
-git clone git@github.com:datastrato/gravitino-playground.git
-cd gravitino-playground
-./launch-playground.sh bigdata
-# equivalent to
-./launch-playground.sh hive gravitino trino postgresql mysql spark
-```
-
-### Launch AI components of playground
-```shell
-git clone git@github.com:datastrato/gravitino-playground.git
-cd gravitino-playground
-./launch-playground.sh ai
-# equivalent to
-./launch-playground.sh hive gravitino mysql jupyter
-```
-
 ### Launch special component or components of playground
 ```shell
 git clone git@github.com:datastrato/gravitino-playground.git
 cd gravitino-playground
 ./launch-playground.sh hive|gravitino|trino|postgresql|mysql|spark|jupyter
 ```
+
+Note. Components have dependencies, only launching one or several components cannot experience
+the full functionality of the playground.
 
 ## Experiencing Apache Gravitino with Trino SQL
 
