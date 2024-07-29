@@ -71,5 +71,4 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-hive-init-script
 data:
-  init.sh: |-
-{{ .Files.Get "init/hive/init.sh" | indent 4 }}
+{{ (.Files.Glob "init/hive/*").AsConfig | indent 4 }}

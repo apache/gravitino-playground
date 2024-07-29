@@ -68,8 +68,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-gravitino-init-script
 data:
-  init.sh: |-
-{{ .Files.Get "init/gravitino/init.sh" | indent 4 }}
+{{ (.Files.Glob "init/gravitino/*").AsConfig | indent 4 }}
 ---
 apiVersion: v1
 kind: ConfigMap

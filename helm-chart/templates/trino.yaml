@@ -42,6 +42,11 @@ spec:
       - name: init-script
         configMap:
           name: {{ .Release.Name }}-trino-init-script
+          defaultMode: 0755
+      - name: healthcheck-script
+        configMap:
+          name: {{ .Release.Name }}-trino-healthcheck-script
+          defaultMode: 0755
 ---
 apiVersion: v1
 kind: Service
@@ -60,6 +65,12 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-trino-init-script
 data:
-  init.sh: |
-    #!/bin/bash
-    # Add your Trino init script content here
+{{ (.Files.Glob "init/trino/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-trino-healthcheck-script
+data:
+  trino-healthcheck.sh: |-
+{{ .Files.Get "healthcheck/trino-healthcheck.sh" | indent 4 }}

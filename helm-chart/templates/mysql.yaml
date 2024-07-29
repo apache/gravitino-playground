@@ -63,5 +63,4 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-mysql-init-script
 data:
-  init.sql: |-
-{{ .Files.Get "init/mysql/init.sql" | indent 4 }}
+{{ (.Files.Glob "init/mysql/*").AsConfig | indent 4 }}
