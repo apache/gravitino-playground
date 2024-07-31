@@ -19,7 +19,8 @@
 
 # Since trino-connector needs to connect Gravitino service, get the default metalake
 # Create metalake
-response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"metalake_demo","comment":"comment","properties":{}}' http://gravitino:8090/api/metalakes)
+
+response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"metalake_demo","comment":"comment","properties":{}}' http://${GRAVITINO_HOST_IP}:8090/api/metalakes)
 if echo "$response" | grep -q "\"code\":0"; then
   true # Placeholder, do nothing
 else
@@ -28,7 +29,7 @@ else
 fi
 
 # Check metalake if created
-response=$(curl -X GET -H "Content-Type: application/json" http://gravitino:8090/api/metalakes)
+response=$(curl -X GET -H "Content-Type: application/json" http://${GRAVITINO_HOST_IP}:8090/api/metalakes)
 if echo "$response" | grep -q "metalake_demo"; then
   echo "Metalake metalake_demo successfully created"
 else
@@ -37,11 +38,11 @@ else
 fi
 
 # Create Hive catalog for experience Gravitino service
-curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://hive:9083"}}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
+curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://hive:9083"}}' http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs
 
 
 # Check catalog if created
-response=$(curl -X GET -H "Content-Type: application/json" http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+response=$(curl -X GET -H "Content-Type: application/json" http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs)
 if echo "$response" | grep -q "catalog_hive"; then
   echo "Catalog catalog_hive successfully created"
 else
@@ -62,9 +63,9 @@ curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: ap
         "jdbc-database":"db",
         "jdbc-driver": "org.postgresql.Driver"
     }
-}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
+}' http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs
 
-response=$(curl -X GET -H "Content-Type: application/json" http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+response=$(curl -X GET -H "Content-Type: application/json" http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs)
 if echo "$response" | grep -q "catalog_postgres"; then
   echo "Catalog catalog_postgres successfully created"
 else
@@ -86,9 +87,9 @@ curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: ap
         "jdbc-password":"mysql",
         "jdbc-driver":"com.mysql.cj.jdbc.Driver"
     }
-}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs
+}' http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs
 
-response=$(curl -X GET -H "Content-Type: application/json" http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+response=$(curl -X GET -H "Content-Type: application/json" http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs)
 if echo "$response" | grep -q "catalog_iceberg"; then
   echo "Catalog catalog_iceberg successfully created"
 else
