@@ -52,6 +52,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-mysql
 spec:
+  type: ExternalName
+  externalName: mysql
   selector:
     app: {{ .Release.Name }}-mysql
   ports:

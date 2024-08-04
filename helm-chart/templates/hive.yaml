@@ -50,6 +50,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-hive
 spec:
+  type: ExternalName
+  externalName: hive
   selector:
     app: {{ .Release.Name }}-hive
   ports:

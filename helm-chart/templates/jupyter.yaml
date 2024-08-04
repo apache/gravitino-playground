@@ -37,6 +37,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-jupyter
 spec:
+  type: ExternalName
+  externalName: jupyter
   selector:
     app: {{ .Release.Name }}-jupyter
   ports:

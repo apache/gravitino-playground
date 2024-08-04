@@ -41,6 +41,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-spark
 spec:
+  type: ExternalName
+  externalName: spark
   selector:
     app: {{ .Release.Name }}-spark
   ports:

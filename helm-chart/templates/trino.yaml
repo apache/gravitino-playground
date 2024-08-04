@@ -53,6 +53,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-trino
 spec:
+  type: ExternalName
+  externalName: trino
   selector:
     app: {{ .Release.Name }}-trino
   ports:
