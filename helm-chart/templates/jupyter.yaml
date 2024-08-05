@@ -33,14 +33,16 @@ spec:
         - name: init-script
           configMap:
             name: {{ .Release.Name }}-jupyter-init-script
+        - name: jupyter-notebook-files
+          configMap:
+            name: {{ .Release.Name }}-jupyter-notebook-files
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-jupyter
 spec:
-  type: ExternalName
-  externalName: jupyter
   selector:
     app: {{ .Release.Name }}-jupyter
   ports:
@@ -52,4 +54,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-jupyter-init-script
 data:
-  {{- (.Files.Glob "init/jupyter/*").AsConfig | nindent 2 }}
+  {{- range $path, $_ := .Files.Glob "init/jupyter/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}

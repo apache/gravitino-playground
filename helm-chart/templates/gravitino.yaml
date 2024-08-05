@@ -53,8 +53,6 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-gravitino
 spec:
-  type: ExternalName
-  externalName: gravitino
   selector:
     app: {{ .Release.Name }}-gravitino
   ports:

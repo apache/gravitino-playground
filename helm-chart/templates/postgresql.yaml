@@ -45,8 +45,6 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-postgresql
 spec:
-  type: ExternalName
-  externalName: postgresql
   selector:
     app: {{ .Release.Name }}-postgresql
   ports:

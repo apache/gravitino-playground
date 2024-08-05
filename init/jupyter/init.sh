@@ -16,5 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-cp -r /tmp/gravitino/*.ipynb /home/jovyan
+
+# We use ln because in k8s, config map might not be there before running this script
+ln -s /tmp/gravitino/*.ipynb /home/jovyan
 start-notebook.sh --NotebookApp.token=''
