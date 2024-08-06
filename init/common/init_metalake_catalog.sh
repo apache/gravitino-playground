@@ -45,6 +45,21 @@ else
   fi
 fi
 
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_mysql)
+if echo "$response" | grep -q "\"code\":0"; then
+  true
+else
+  # Create Postgresql catalog for experience Gravitino service
+  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_mysql", "type":"RELATIONAL", "provider":"jdbc-mysql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:mysql://mysql:3306", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver": "com.mysql.cj.jdbc.Driver" } }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+  
+  if echo "$response" | grep -q "catalog_mysql"; then
+    echo "Catalog catalog_mysql successfully created"
+  else
+    echo "Catalog catalog_mysql create failed"
+    exit 1
+  fi
+fi
+
 response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_iceberg)
 if echo "$response" | grep -q "\"code\":0"; then
   true
