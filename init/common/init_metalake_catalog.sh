@@ -1,6 +1,20 @@
 #
-# Copyright 2024 Datastrato Pvt Ltd.
-# This software is licensed under the Apache License version 2.
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 #
 
 response=$(curl http://gravitino:8090/api/metalakes/metalake_demo)
@@ -49,11 +63,11 @@ response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catal
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
-  # Create Postgresql catalog for experience Gravitino service
+  # Create Mysql catalog for experience Gravitino service
   response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_mysql", "type":"RELATIONAL", "provider":"jdbc-mysql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:mysql://mysql:3306", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver": "com.mysql.cj.jdbc.Driver" } }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   
   if echo "$response" | grep -q "catalog_mysql"; then
-    echo "Catalog catalog_mysql successfully created"
+    true # Placeholder, do nothing
   else
     echo "Catalog catalog_mysql create failed"
     exit 1
