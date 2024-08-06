@@ -75,7 +75,7 @@ docker exec -it playground-trino bash
 trino@container_id:/$ trino
 ```
 
-### Using Jupiter Notebook
+## Using Jupiter Notebook
 
 1. Open the Jupyter Notebook in the browser at [http://localhost:18888](http://localhost:18888).
 
@@ -83,9 +83,23 @@ trino@container_id:/$ trino
 
 3. Start the notebook and run the cells.
 
+## Using Spark client
+
+1. Log in to the Gravitino playground Spark Docker container using the following command:
+
+```shell
+docker exec -it playground-spark bash
+````
+
+2. Open the Spark SQL client in the container.
+
+```shell
+spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql 
+```
+
 ## Example
 
-### Simple queries
+### Simple Trino queries
 
 You can use simple queries to test in the Trino CLI.
 
@@ -156,6 +170,38 @@ WHERE e.employee_id = p.employee_id AND p.employee_id = s.employee_id
 GROUP BY e.employee_id,  given_name, family_name;
 ```
 
+### Using Spark and Trino
+
+You might consider generating data with SparkSQL and then querying this data using Trino. Give it a try with Gravitino:
+
+1. login Spark container and execute the SQLs:
+
+```sql
+// using Hive catalog to create Hive table
+USE catalog_hive;
+CREATE DATABASE product;
+USE product;
+
+CREATE TABLE IF NOT EXISTS employees (
+    id INT,
+    name STRING,
+    age INT
+)
+PARTITIONED BY (department STRING)
+STORED AS PARQUET;
+DESC TABLE EXTENDED employees;
+
+INSERT OVERWRITE TABLE employees PARTITION(department='Engineering') VALUES (1, 'John Doe', 30), (2, 'Jane Smith', 28);
+INSERT OVERWRITE TABLE employees PARTITION(department='Marketing') VALUES (3, 'Mike Brown', 32);
+```
+
+2. login Trino container and execute SQLs:
+
+```sql
+SELECT * FROM catalog_hive.product.employees WHERE department = 'Engineering';
+```
+
+
 ### Using Apache Iceberg REST service
 
 If you want to migrate your business from Hive to Iceberg. Some tables will use Hive, and the other tables will use Iceberg.
@@ -166,9 +212,9 @@ Then, you can use Trino to read the data from the Hive table joining the Iceberg
 
 ```text
 spark.sql.extensions org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
-spark.sql.catalog.catalog_iceberg org.apache.iceberg.spark.SparkCatalog
-spark.sql.catalog.catalog_iceberg.type rest
-spark.sql.catalog.catalog_iceberg.uri http://gravitino:9001/iceberg/
+spark.sql.catalog.catalog_rest org.apache.iceberg.spark.SparkCatalog
+spark.sql.catalog.catalog_rest.type rest
+spark.sql.catalog.catalog_rest.uri http://gravitino:9001/iceberg/
 spark.locality.wait.node 0
 ```
 
@@ -176,14 +222,14 @@ spark.locality.wait.node 0
 
 ```shell
 docker exec -it playground-spark bash
-```
+````
 
 ```shell
 spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
 ```SQL
-use catalog_iceberg;
+use catalog_rest;
 create database sales;
 use sales;
 create table customers (customer_id int, customer_name varchar(100), customer_email varchar(100));
