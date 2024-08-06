@@ -80,6 +80,7 @@ services:
     entrypoint:  /bin/bash /tmp/trino/init.sh
     volumes:
       - ./init/trino:/tmp/trino
+      - ./init/common:/tmp/common
     depends_on:
       hive :
         condition: service_healthy
@@ -143,6 +144,7 @@ services:
       - "4040:4040"
     volumes:
       - ./init/spark:/tmp/spark
+      - ./init/common:/tmp/common
     deploy:
       resources:
         limits:
