@@ -222,7 +222,7 @@ spark.locality.wait.node 0
 
 ```shell
 docker exec -it playground-spark bash
-````
+```
 
 ```shell
 spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql

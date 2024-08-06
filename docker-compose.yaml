@@ -65,8 +65,8 @@ services:
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
-      timeout: 600s
-      retries: 500
+      timeout: 60s
+      retries: 5
 
   trino:
     image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating-rc4
