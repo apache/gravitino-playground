@@ -52,6 +52,8 @@ services:
     depends_on:
       hive :
         condition: service_healthy
+      mysql :
+        condition: service_healthy
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
@@ -132,6 +134,11 @@ services:
         limits:
           cpus: "1"
           memory: 500M
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p ${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
 
   spark:
     image: spark:3.4.1-scala2.12-java11-ubuntu
