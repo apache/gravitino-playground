@@ -217,7 +217,7 @@ LlamaIndex as a unified data source, then use LlamaIndex and LLM to query both t
 non-tabular data with one natural language query.
 
 The demo is located in the `jupyter` folder, you can open the `gravitino_llama_index_demo.ipynb`
-demo via Jupyter Notebook by [http://localhost:8888](http://localhost:8888).
+demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 The scenario of this demo is that basic structured city statistics data is stored in MySQL, and
 detailed city introductions are stored in PDF files. The user wants to know the answers to the
