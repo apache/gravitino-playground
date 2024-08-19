@@ -34,11 +34,11 @@ The playground runs a number of services. The TCP ports used may clash with exis
 | Docker container      | Ports used           |
 |-----------------------|----------------------|
 | playground-gravitino  | 8090 9001            |
-| playground-hive       | 3307 9000 9083 50070 |
-| playground-mysql      | 3306                 |
-| playground-postgresql | 5342                 |
-| playground-trino      | 8080                 |
-| playground-jupyter    | 8888                 |
+| playground-hive       | 3307 9003 9084 50071 |
+| playground-mysql      | 13306                |
+| playground-postgresql | 15342                |
+| playground-trino      | 18080                |
+| playground-jupyter    | 18888                |
 
 ## Start playground
 
@@ -77,7 +77,7 @@ trino@container_id:/$ trino
 
 ### Using Jupiter Notebook
 
-1. Open the Jupyter Notebook in the browser at [http://localhost:8888](http://localhost:8888).
+1. Open the Jupyter Notebook in the browser at [http://localhost:18888](http://localhost:18888).
 
 2. Open the `gravitino-trino-example.ipynb` notebook.
 

@@ -22,9 +22,9 @@ services:
     image: datastrato/hive:2.7.3-no-yarn
     ports:
       - "3307:3306"
-      - "9000:9000"
-      - "9083:9083"
-      - "50070:50070"
+      - "9003:9000"
+      - "9084:9083"
+      - "50071:50070"
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
@@ -71,7 +71,7 @@ services:
   trino:
     image: datastrato/trino:435-gravitino-0.5.1
     ports:
-      - "8080:8080"
+      - "18080:8080"
     container_name: playground-trino
     environment:
       - HADOOP_USER_NAME=root
@@ -102,7 +102,7 @@ services:
       POSTGRES_PASSWORD: postgres
       ALLOW_IP_RANGE: 0.0.0.0/0
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - ./init/postgres:/docker-entrypoint-initdb.d/
     deploy:
@@ -115,7 +115,7 @@ services:
     image: mysql:8.0
     container_name: playground-mysql
     ports:
-      - "3306:3306"
+      - "13306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:
@@ -147,7 +147,7 @@ services:
     environment:
       - HADOOP_USER_NAME=root
     ports:
-      - "4040:4040"
+      - "14040:4040"
     volumes:
       - ./init/spark:/tmp/spark
     deploy:
@@ -160,7 +160,7 @@ services:
     image: jupyter/minimal-notebook 
     container_name: playground-jupyter
     ports:
-      - 8888:8888
+      - 18888:8888
     volumes:
       - ./init/jupyter:/tmp/gravitino
     entrypoint: /bin/bash /tmp/gravitino/init.sh
