@@ -22,9 +22,9 @@ services:
     image: datastrato/hive:2.7.3-no-yarn
     ports:
       - "3307:3306"
-      - "9003:9000"
-      - "9084:9083"
-      - "50071:50070"
+      - "19000:9000"
+      - "19083:9083"
+      - "60070:50070"
     container_name: playground-hive
     environment:
       - HADOOP_USER_NAME=root
