@@ -61,7 +61,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 500M
+          memory: 1G
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s

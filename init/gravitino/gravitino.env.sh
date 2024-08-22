@@ -1,0 +1,28 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+# Debug Gravitino server
+# export GRAVITINO_DEBUG_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000 -Dlog4j2.debug=true"
+
+# export JAVA_HOME
+# export GRAVITINO_HOME
+# export GRAVITINO_CONF_DIR
+# export GRAVITINO_LOG_DIR     # Where log files are stored.  PWD by default.
+# export GRAVITINO_MEM         # Gravitino jvm mem options Default -Xms1024m -Xmx1024m -XX:MaxMetaspaceSize=512m
+export GRAVITINO_MEM=-Xms512m -Xmx512m -XX:MaxMetaspaceSize=256m

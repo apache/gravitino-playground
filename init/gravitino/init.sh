@@ -22,6 +22,7 @@ wget https://jdbc.postgresql.org/download/postgresql-42.7.0.jar -O /root/graviti
 cp /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.7.0.jar /root/gravitino/catalogs/lakehouse-iceberg/libs
 cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /root/gravitino/catalogs/lakehouse-iceberg/libs
 cp /tmp/gravitino/gravitino.conf /root/gravitino/conf
+cp /tmp/gravitino/gravitino.env.sh /root/gravitino/conf
 echo "Finish downloading"
 echo "Start the Gravitino Server"
 /bin/bash /root/gravitino/bin/gravitino.sh start
