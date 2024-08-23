@@ -34,7 +34,7 @@ The playground runs a number of services. The TCP ports used may clash with exis
 | Docker container      | Ports used           |
 |-----------------------|----------------------|
 | playground-gravitino  | 8090 9001            |
-| playground-hive       | 3307 9003 9084 50071 |
+| playground-hive       | 3307 19000 19083 60070 |
 | playground-mysql      | 13306                |
 | playground-postgresql | 15342                |
 | playground-trino      | 18080                |
