@@ -218,6 +218,8 @@ spark.sql.catalog.catalog_rest.uri http://gravitino:9001/iceberg/
 spark.locality.wait.node 0
 ```
 
+Please note that `catalog_rest` here and `catalog_iceberg` in Gravitino share the same Iceberg JDBC backend which means they could see the same picture.
+
 1. Login Spark container and execute the steps.
 
 ```shell
