@@ -19,7 +19,7 @@
 version: '3.0'
 services:
   hive:
-    image: datastrato/hive:2.7.3-no-yarn
+    image: apache/gravitino-playground:hive-2.7.3
     ports:
       - "3307:3306"
       - "9003:9000"
@@ -43,7 +43,7 @@ services:
           memory: 3G
 
   gravitino:
-    image: datastrato/gravitino:0.5.1
+    image: apache/gravitino:0.6-incubating-SNAPSHOT
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -64,12 +64,12 @@ services:
           memory: 500M
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
-      interval: 5s
-      timeout: 60s
+      interval: 200s
+      timeout: 100s
       retries: 5
 
   trino:
-    image: datastrato/trino:435-gravitino-0.5.1
+    image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating-rc3
     ports:
       - "18080:8080"
     container_name: playground-trino
