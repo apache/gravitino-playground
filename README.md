@@ -19,7 +19,7 @@
 
 ## Playground introduction
 
-The playground is a complete Apache Gravitino Docker runtime environment with `Hive`, `HDFS`, `Trino`, `MySQL`, `PostgreSQL`, `Jupter`, and a `Gravitino` server.
+The playground is a complete Apache Gravitino Docker runtime environment with `Hive`, `HDFS`, `Trino`, `MySQL`, `PostgreSQL`, `Jupyter`, and a `Gravitino` server.
 
 Depending on your network and computer, startup time may take 3-5 minutes. Once the playground environment has started, you can open [http://localhost:8090](http://localhost:8090) in a browser to access the Gravitino Web UI.
 
@@ -156,7 +156,7 @@ WHERE e.employee_id = p.employee_id AND p.employee_id = s.employee_id
 GROUP BY e.employee_id,  given_name, family_name;
 ```
 
-### Using Iceberg REST service
+### Using Apache Iceberg REST service
 
 If you want to migrate your business from Hive to Iceberg. Some tables will use Hive, and the other tables will use Iceberg.
 Gravitino provides an Iceberg REST catalog service, too. You can use Spark to access REST catalog to write the table data.
@@ -179,7 +179,7 @@ docker exec -it playground-spark bash
 ```
 
 ```shell
-spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql 
+spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
 ```SQL
@@ -187,7 +187,7 @@ use catalog_iceberg;
 create database sales;
 use sales;
 create table customers (customer_id int, customer_name varchar(100), customer_email varchar(100));
-describe extended customers;    
+describe extended customers;
 insert into customers (customer_id, customer_name, customer_email) values (11,'Rory Brown','rory@123.com');
 insert into customers (customer_id, customer_name, customer_email) values (12,'Jerry Washington','jerry@dt.com');
 ```
@@ -200,7 +200,7 @@ docker exec -it playground-trino bash
 ```
 
 ```shell
-trino@container_id:/$ trino  
+trino@container_id:/$ trino
 ```
 
 ```SQL
