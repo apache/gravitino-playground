@@ -43,7 +43,7 @@ services:
           memory: 3G
 
   gravitino:
-    image: apache/gravitino:0.6-incubating-SNAPSHOT
+    image: apache/gravitino:0.6.0-incubating-rc4
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -64,12 +64,12 @@ services:
           memory: 500M
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
-      interval: 200s
-      timeout: 100s
+      interval: 5s
+      timeout: 60s
       retries: 5
 
   trino:
-    image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating-rc3
+    image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating-rc4
     ports:
       - "18080:8080"
     container_name: playground-trino
