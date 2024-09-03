@@ -18,8 +18,8 @@
 #
 mkdir -p /opt/spark/conf
 cp /tmp/spark/spark-defaults.conf /opt/spark/conf
-wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.5.2/iceberg-spark-runtime-3.4_2.12-1.5.2.jar  -O /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
-wget https://repository.apache.org/content/repositories/orgapachegravitino-1090/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.0-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar -O /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar
+wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.5.2/iceberg-spark-runtime-3.4_2.12-1.5.2.jar -O /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
+wget https://repository.apache.org/content/repositories/orgapachegravitino-1109/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.0-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar -O /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar
 wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar -O /opt/spark/jars/mysql-connector-java-8.0.27.jar
-sh  /tmp/common/init_metalake_catalog.sh
+sh /tmp/common/init_metalake_catalog.sh
 tail -f /dev/null
