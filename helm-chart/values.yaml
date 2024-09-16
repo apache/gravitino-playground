@@ -1,7 +1,7 @@
 # Global settings
 global:
   storageClass: ""
-  namespace: test-playground
+  namespace: gravitino-playground
   projectRoot: ""
 
 # PostgreSQL settings
