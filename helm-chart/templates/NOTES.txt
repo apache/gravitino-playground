@@ -11,12 +11,14 @@ SPARK_POD=$(kubectl get pods --namespace gravitino-playground -l app=spark -o js
 kubectl exec $SPARK_POD -n gravitino-playground -it -- /bin/bash
 ```
 
-In local minikube, access gravitino ui using the following command:
+3. Port-forwarding Gravitino Service, so that you can access it at `localhost:8090`.
 
 ```
-kubectl expose deployment gravitino -n gravitino-playground --name gravitino-ui --type=NodePort --port=8090
+kubectl port-forward svc/gravitino -n gravitino-playground 8090:8090      
 ```
 
+4. Port-forwarding Jupyter Notebook Service, so that you can access it at `localhost:8888`.
+
 ```
-minikube service gravitino-ui -n gravitino-playground --url
+kubectl port-forward svc/jupyternotebook -n gravitino-playground 8888:8888
 ```
