@@ -294,13 +294,7 @@ os.environ["OPENAI_API_BASE"] = ""
 
 ## Kubernetes
 
-
-
-Start minikube:
-
-```
-minikube start
-```
+Enable Kubernetes in Docker Desktop or Orbstack.
 
 In Project root directory, execute this command:
 
