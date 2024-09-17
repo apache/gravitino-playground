@@ -299,7 +299,7 @@ Enable Kubernetes in Docker Desktop or Orbstack.
 In Project root directory, execute this command:
 
 ```
-helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --namespace gravitino-playground --debug --set projectRoot=$(pwd)
+helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --namespace gravitino-playground --set projectRoot=$(pwd)
 ```
 
 1. Log in to the Gravitino playground Trino pod using the following command:
