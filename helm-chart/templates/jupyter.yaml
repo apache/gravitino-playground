@@ -48,6 +48,14 @@ spec:
           volumeMounts:
           - name: healthcheck-script
             mountPath: /tmp/healthcheck
+        - name: wait-for-trino
+          image: "{{ .Values.trino.image.repository }}:{{ .Values.trino.image.tag }}"
+          command: ["/bin/bash", "/tmp/healthcheck/trino-healthcheck.sh"]
+          env:
+            {{- toYaml .Values.jupyter.env | nindent 12 }}
+          volumeMounts:
+          - name: healthcheck-script
+            mountPath: /tmp/healthcheck
       volumes:
         - name: init-script
           configMap:
