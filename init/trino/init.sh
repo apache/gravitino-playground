@@ -24,19 +24,19 @@ nohup /usr/lib/trino/bin/run-trino &
 
 counter=0
 while [ $counter -le 240 ]; do
-	counter=$((counter + 1))
-	trino_ready=$(trino --execute "SHOW CATALOGS LIKE 'catalog_hive'" | grep "catalog_hive" | wc -l)
-	if [ "$trino_ready" -eq 0 ]; then
-		echo "Wait for the initialization of services"
-		sleep 5
-	else
-		echo "Import the data of the Hive warehouse"
-		trino --execute "create schema catalog_hive.sales with (location = 'hdfs://${HIVE_HOST_IP}:9000/user/hive/warehouse/sales.db');"
-		trino </tmp/trino/init.sql
-		echo "Import ends"
+  counter=$((counter + 1))
+  trino_ready=$(trino --execute  "SHOW CATALOGS LIKE 'catalog_hive'"| grep "catalog_hive" | wc -l)
+  if [ "$trino_ready" -eq 0 ];
+  then
+    echo "Wait for the initialization of services"
+    sleep 5;
+  else
+    echo "Import the data of the Hive warehouse"
+    trino < /tmp/trino/init.sql
+    echo "Import ends"
 
-		# persist the container
-		tail -f /dev/null
-	fi
+    # persist the container
+    tail -f /dev/null
+  fi
 done
 exit 1
