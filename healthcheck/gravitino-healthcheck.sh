@@ -26,21 +26,21 @@ success=false
 HOST_IP=${GRAVITINO_HOST_IP:-127.0.0.1}
 
 while [ $attempt -lt $max_attempts ]; do
-	response=$(curl -X GET -H "Content-Type: application/json" http://${HOST_IP}:8090/api/version)
+  response=$(curl -X GET -H "Content-Type: application/json" http://${HOST_IP}:8090/api/version)
 
-	if echo "$response" | grep -q "\"code\":0"; then
-		success=true
-		break
-	else
-		echo "Attempt $((attempt + 1)) failed..."
-		sleep 1
-	fi
+  if echo "$response" | grep -q "\"code\":0"; then
+    success=true
+    break
+  else
+    echo "Attempt $((attempt + 1)) failed..."
+    sleep 1
+  fi
 
-	((attempt++))
+  ((attempt++))
 done
 
 if [ "$success" = true ]; then
-	exit 0
+  exit 0
 else
-	exit 1
+  exit 1
 fi
