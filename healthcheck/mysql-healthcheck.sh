@@ -21,9 +21,9 @@ set -ex
 
 mysqladmin ping -h ${MYSQL_HOST_IP} -p${MYSQL_ROOT_PASSWORD}
 if [ $? -eq 0 ]; then
-	echo "MySQL container started successfully."
-	exit 0
+  echo "MySQL container started successfully."
+  exit 0
 else
-	echo "MySQL container has not started yet."
-	exit 1
+  echo "MySQL container has not started yet."
+  exit 1
 fi

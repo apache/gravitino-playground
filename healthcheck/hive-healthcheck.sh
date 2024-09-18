@@ -27,9 +27,9 @@ curl -s -o /dev/null -w "%{http_code}" http://${HIVE_HOST_IP}:${HIVE_PORT}
 
 # Check the HTTP status code
 if [ $? -eq 0 ]; then
-	echo "Hive connection successful"
-	exit 0
+  echo "Hive connection successful"
+  exit 0
 else
-	echo "Hive connection failed"
-	exit 1
+  echo "Hive connection failed"
+  exit 1
 fi
