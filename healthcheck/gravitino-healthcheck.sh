@@ -23,7 +23,7 @@ max_attempts=3
 attempt=0
 success=false
 
-HOST_IP=${GRAVITINO_HOST_IP:-127.0.0.1}
+HOST_IP=${GRAVITINO_HOST_IP:-localhost}
 
 while [ $attempt -lt $max_attempts ]; do
   response=$(curl -X GET -H "Content-Type: application/json" http://${HOST_IP}:8090/api/version)

@@ -49,6 +49,8 @@ services:
       - "8090:8090"
       - "9001:9001"
     container_name: playground-gravitino
+    environment:
+      - MYSQL_HOST_IP=mysql
     depends_on:
       hive :
         condition: service_healthy
@@ -137,7 +139,7 @@ services:
           cpus: "1"
           memory: 500M
     healthcheck:
-      test: ["/bin/bash", "/tmp/healthcheck/mysql-healthcheck.sh"]
+      test: ["CMD", "/bin/bash", "/tmp/healthcheck/mysql-healthcheck.sh"]
       interval: 5s
       timeout: 60s
       retries: 5
