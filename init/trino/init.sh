@@ -31,6 +31,7 @@ while [ $counter -le 240 ]; do
     echo "Wait for the initialization of services"
     sleep 5;
   else
+    sed -i 's|hdfs://__HIVE_HOST_IP__:9000|hdfs://'"$HIVE_HOST_IP"':9000|g' /tmp/trino/init.sql
     echo "Import the data of the Hive warehouse"
     trino < /tmp/trino/init.sql
     echo "Import ends"
