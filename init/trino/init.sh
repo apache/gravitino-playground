@@ -31,7 +31,7 @@ while [ $counter -le 240 ]; do
     echo "Wait for the initialization of services"
     sleep 5;
   else
-    sed -i 's|hdfs://__HIVE_HOST_IP__:9000|hdfs://'"$HIVE_HOST_IP"':9000|g' /tmp/trino/init.sql
+    trino --execute "create schema catalog_hive.sales with (location = 'hdfs://${HIVE_HOST_IP}:9000/user/hive/warehouse/sales.db');"
     echo "Import the data of the Hive warehouse"
     trino < /tmp/trino/init.sql
     echo "Import ends"
