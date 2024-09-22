@@ -82,6 +82,8 @@ services:
       - GRAVITINO_HOST_PORT=8090
       - GRAVITINO_METALAKE_NAME=metalake_demo
       - HIVE_HOST_IP=hive
+      - MYSQL_HOST_IP=mysql
+      - POSTGRES_HOST_IP=postgresql
     entrypoint:  /bin/bash /tmp/trino/init.sh
     volumes:
       - ./init/trino:/tmp/trino
