@@ -31,4 +31,6 @@ sed -i 's/__MYSQL_HOST_IP__/'"$MYSQL_HOST_IP"'/g' /root/gravitino/conf/gravitino
 sed -i 's/__HIVE_HOST_IP__/'"$HIVE_HOST_IP"'/g' /root/gravitino/conf/gravitino.conf
 echo "Finish downloading"
 echo "Start the Gravitino Server"
-/bin/bash /root/gravitino/bin/gravitino.sh start
+/bin/bash /root/gravitino/bin/gravitino.sh start &
+sleep 3
+tail -f /root/gravitino/logs/gravitino-server.log
