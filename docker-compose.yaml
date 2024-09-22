@@ -51,6 +51,7 @@ services:
     container_name: playground-gravitino
     environment:
       - MYSQL_HOST_IP=mysql
+      - HIVE_HOST_IP=hive
     depends_on:
       hive :
         condition: service_healthy
