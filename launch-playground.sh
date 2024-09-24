@@ -20,10 +20,11 @@
 # set -ex
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(cd "${playground_dir}">/dev/null; pwd)"
-isExist=`which docker-compose`
-if [ $isExist ]
-then
-  true # Placeholder, do nothing
+
+# check for either `docker-compose` or `docker compose`
+isExist=`which docker-compose || docker --help | grep compose`
+if [ $? -eq 0 ]; then
+    true # Placeholder, do nothing
 else
   echo "ERROR: No docker service environment found, please install docker-compose first."
   exit
