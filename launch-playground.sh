@@ -37,7 +37,16 @@ case "${1}" in
 esac
 
 cd ${playground_dir}
-docker-compose up ${components}
 
-# Clean Docker containers when you quit this script
-docker-compose down
+isComposeV1=`which docker-compose`
+if [ $? -eq 0 ]; then
+  docker-compose up ${components}
+
+  # Clean Docker containers when you quit this script
+  docker-compose down
+else
+  docker compose up ${components}
+
+  # Clean Docker containers when you quit this script
+  docker compose down
+fi
