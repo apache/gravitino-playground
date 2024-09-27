@@ -152,6 +152,7 @@ services:
     volumes:
       - ./init/spark:/tmp/spark
       - ./init/common:/tmp/common
+      - spark_jars:/opt/spark/jars
     deploy:
       resources:
         limits:
@@ -159,12 +160,13 @@ services:
           memory: 1G
 
   jupyter:
-    image: jupyter/minimal-notebook 
+    image: jupyter/pyspark-notebook:spark-3.4.1
     container_name: playground-jupyter
     ports:
       - 18888:8888
     volumes:
       - ./init/jupyter:/tmp/gravitino
+      - spark_jars:/opt/spark/jars
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     depends_on:
       hive :
@@ -176,3 +178,6 @@ services:
         limits:
           cpus: "0.5"
           memory: 500M
+
+volumes:
+  spark_jars:
