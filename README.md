@@ -201,6 +201,8 @@ INSERT OVERWRITE TABLE employees PARTITION(department='Marketing') VALUES (3, 'M
 SELECT * FROM catalog_hive.product.employees WHERE department = 'Engineering';
 ```
 
+The demo is located in the `jupyter` folder, you can open the `gravitino-spark-trino-example.ipynb`
+demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 ### Using Apache Iceberg REST service
 
@@ -256,6 +258,9 @@ select * from catalog_hive.sales.customers
 union
 select * from catalog_iceberg.sales.customers;
 ```
+
+The demo is located in the `jupyter` folder, you can open the `gravitino-spark-trino-example.ipynb`
+demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 ### Using Gravitino with LlamaIndex
 
