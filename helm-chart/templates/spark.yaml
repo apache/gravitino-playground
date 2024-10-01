@@ -1,0 +1,75 @@
+# templates/spark.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.spark.serviceName }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.spark.serviceName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.spark.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.spark.serviceName }}
+    spec:
+      containers:
+      - name: spark
+        image: "{{ .Values.spark.image.repository }}:{{ .Values.spark.image.tag }}"
+        ports:
+        - containerPort: 4040
+        command: ["/bin/bash", "/tmp/spark/init.sh"]
+        env:
+          {{- toYaml .Values.spark.env | nindent 12 }}
+        volumeMounts:
+        - name: spark-init-script
+          mountPath: /tmp/spark
+        - name: spark-common-init-script
+          mountPath: /tmp/common
+        resources:
+          {{- toYaml .Values.spark.resources | nindent 12 }}
+      volumes:
+      - name: spark-init-script
+        configMap:
+          name: spark-init-script
+          defaultMode: 0755
+      - name: spark-common-init-script
+        configMap:
+          name: spark-common-init-script
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.spark.serviceName }}
+spec:
+  selector:
+    app: {{ .Values.spark.serviceName }}
+  ports:
+  - port: 4040
+    targetPort: 4040
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/spark/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-common-init-script
+data:
+  {{- range $path, $_ := .Files.Glob "init/common/*" }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}

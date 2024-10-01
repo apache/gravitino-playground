@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,14 +17,14 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+set -ex
 
-spark.plugins org.apache.gravitino.spark.connector.plugin.GravitinoSparkPlugin
-spark.sql.gravitino.uri http://__GRAVITINO_HOST_IP__:8090
-spark.sql.gravitino.metalake metalake_demo
-spark.sql.gravitino.enableIcebergSupport true 
-spark.sql.extensions org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
-spark.sql.catalog.catalog_rest org.apache.iceberg.spark.SparkCatalog
-spark.sql.catalog.catalog_rest.type rest
-spark.sql.catalog.catalog_rest.uri http://__GRAVITINO_HOST_IP__:9001/iceberg/
-spark.locality.wait.node 0
-spark.sql.warehouse.dir hdfs://__HIVE_HOST_IP__:9000/user/hive/warehouse
+HOST_IP=${MYSQL_HOST_IP:-localhost}
+mysqladmin ping -h ${HOST_IP} -p${MYSQL_ROOT_PASSWORD}
+if [ $? -eq 0 ]; then
+  echo "MySQL container started successfully."
+  exit 0
+else
+  echo "MySQL container has not started yet."
+  exit 1
+fi

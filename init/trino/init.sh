@@ -17,7 +17,7 @@
 # under the License.
 #
 
-sh  /tmp/common/init_metalake_catalog.sh
+sh /tmp/common/init_metalake_catalog.sh
 
 /etc/trino/update-trino-conf.sh
 nohup /usr/lib/trino/bin/run-trino &
@@ -31,6 +31,7 @@ while [ $counter -le 240 ]; do
     echo "Wait for the initialization of services"
     sleep 5;
   else
+    trino --execute "create schema catalog_hive.sales with (location = 'hdfs://${HIVE_HOST_IP}:9000/user/hive/warehouse/sales.db');"
     echo "Import the data of the Hive warehouse"
     trino < /tmp/trino/init.sql
     echo "Import ends"
