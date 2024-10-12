@@ -43,7 +43,7 @@ services:
           memory: 3G
 
   gravitino:
-    image: apache/gravitino:0.6.0-incubating
+    image: apache/gravitino:0.6.1-incubating
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -69,7 +69,7 @@ services:
       retries: 5
 
   trino:
-    image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating
+    image: apache/gravitino-playground:trino-435-gravitino-0.6.1-incubating
     ports:
       - "18080:8080"
     container_name: playground-trino
