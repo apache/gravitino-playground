@@ -16,7 +16,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-version: '3.0'
 services:
   hive:
     image: apache/gravitino-playground:hive-2.7.3
@@ -36,11 +35,16 @@ services:
       interval: 10s
       timeout: 60s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "3"
-          memory: 3G
+    logging:
+      driver: json-file
+      options:
+        max-size: "200k"
+        max-file: "10"
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "3"
+#          memory: 3G
 
   gravitino:
     image: apache/gravitino:0.6.0-incubating
@@ -57,16 +61,17 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 500M
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.5"
+#          memory: 500M
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
       timeout: 60s
       retries: 5
+      start_period: 20s
 
   trino:
     image: apache/gravitino-playground:trino-435-gravitino-0.6.0-incubating
@@ -83,16 +88,23 @@ services:
     volumes:
       - ./init/trino:/tmp/trino
       - ./init/common:/tmp/common
+      - ./healthcheck:/tmp/healthcheck
     depends_on:
       hive :
         condition: service_healthy
       gravitino :
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 2G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 2G
+    healthcheck:
+      test: ["CMD", "/tmp/healthcheck/trino-healthcheck.sh"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 20s
 
   postgresql:
     image: postgres:13
@@ -106,11 +118,11 @@ services:
       - "15432:5432"
     volumes:
       - ./init/postgres:/docker-entrypoint-initdb.d/
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 500M
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 500M
 
   mysql:
     image: mysql:8.0
@@ -130,11 +142,11 @@ services:
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 500M
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 500M
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -p ${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
@@ -153,11 +165,11 @@ services:
       - ./init/spark:/tmp/spark
       - ./init/common:/tmp/common
       - spark_jars:/opt/spark/jars
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 1G
 
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1
@@ -173,11 +185,11 @@ services:
         condition: service_healthy
       gravitino :
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 500M
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.5"
+#          memory: 500M
 
 volumes:
   spark_jars:

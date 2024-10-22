@@ -36,7 +36,14 @@ case "${1}" in
 esac
 
 cd ${playground_dir}
-docker-compose up ${components}
 
-# Clean Docker containers when you quit this script
+./init/spark/spark-dependency.sh
+./init/gravitino/gravitino-dependency.sh
+
 docker-compose down
+logSuffix=$(date +%Y%m%d%H%m%s)
+docker-compose up ${components} --detach
+docker compose logs -f > ${playground_dir}/playground-${logSuffix}.log 2>&1 &
+echo "Check log details: tail -f ${playground_dir}/playground-${logSuffix}.log"
+echo "Check containers status: docker-compose ps"
+echo "Clean Docker containers: docker-compose down"
