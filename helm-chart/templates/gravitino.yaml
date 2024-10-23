@@ -30,6 +30,8 @@ spec:
           mountPath: /tmp/gravitino
         - name: healthcheck-script
           mountPath: /tmp/healthcheck
+        - name: artifacts
+          mountPath: /tmp/gravitino/data/pdfs
         readinessProbe:
           exec:
             command:
@@ -63,6 +65,10 @@ spec:
         configMap:
           name: gravitino-init-script
           defaultMode: 0755
+      - name: artifacts
+        hostPath:
+          path: {{ printf "%s/init/gravitino/" .Values.projectRoot }}
+          type: DirectoryOrCreate
       - name: healthcheck-script
         configMap:
           name: gravitino-healthcheck-script
