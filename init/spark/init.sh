@@ -22,5 +22,5 @@ cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.5.2.jar /opt/spark/jars/
 cp /tmp/spark/packages/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar
 cp /tmp/spark/packages/mysql-connector-java-8.0.27.jar /opt/spark/jars/mysql-connector-java-8.0.27.jar
 cp /tmp/spark/packages/kyuubi-spark-authz-shaded_2.12-1.9.2.jar /opt/spark/jars/kyuubi-spark-authz-shaded_2.12-1.9.2.jar
-sh  /tmp/common/init_metalake_catalog.sh
+sh /tmp/common/init_metalake_catalog.sh
 tail -f /dev/null

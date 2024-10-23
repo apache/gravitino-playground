@@ -17,12 +17,12 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-set -ex
-
 gravitino_dir="$(dirname "${BASH_SOURCE-$0}")"
-gravitino_dir="$(cd "${gravitino_dir}">/dev/null; pwd)"
+gravitino_dir="$(
+  cd "${gravitino_dir}" >/dev/null
+  pwd
+)"
 . "${gravitino_dir}/../common/common.sh"
-
 
 # Prepare download packages
 if [[ ! -d "${gravitino_dir}/packages" ]]; then
@@ -36,7 +36,3 @@ download_and_verify "${MYSQL_CONNECTOR_JAVA_JAR}" "${MYSQL_CONNECTOR_JAVA_MD5}" 
 POSTGRESQL_JAR="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.7/postgresql-42.2.7.jar"
 POSTGRESQL_MD5="${POSTGRESQL_JAR}.md5"
 download_and_verify "${POSTGRESQL_JAR}" "${POSTGRESQL_MD5}" "${gravitino_dir}"
-
-
-# wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar -O /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar
-# wget https://jdbc.postgresql.org/download/postgresql-42.7.0.jar -O /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.7.0.jar

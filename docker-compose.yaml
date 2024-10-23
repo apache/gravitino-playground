@@ -35,16 +35,6 @@ services:
       interval: 10s
       timeout: 60s
       retries: 5
-    logging:
-      driver: json-file
-      options:
-        max-size: "200k"
-        max-file: "10"
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "3"
-#          memory: 3G
 
   gravitino:
     image: apache/gravitino:0.6.0-incubating
@@ -61,11 +51,6 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.5"
-#          memory: 500M
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
@@ -94,11 +79,6 @@ services:
         condition: service_healthy
       gravitino :
         condition: service_healthy
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "1"
-#          memory: 2G
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/trino-healthcheck.sh"]
       interval: 10s
@@ -118,37 +98,27 @@ services:
       - "15432:5432"
     volumes:
       - ./init/postgres:/docker-entrypoint-initdb.d/
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "1"
-#          memory: 500M
 
   mysql:
     image: mysql:8.0
     container_name: playground-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_DATABASE=db
     ports:
       - "13306:3306"
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql
-      MYSQL_USER: mysql
-      MYSQL_PASSWORD: mysql
-      MYSQL_DATABASE: db
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "1"
-#          memory: 500M
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p ${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -pmysql"]
       interval: 5s
       timeout: 60s
       retries: 5
@@ -165,11 +135,6 @@ services:
       - ./init/spark:/tmp/spark
       - ./init/common:/tmp/common
       - spark_jars:/opt/spark/jars
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "1"
-#          memory: 1G
 
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1
@@ -185,11 +150,6 @@ services:
         condition: service_healthy
       gravitino :
         condition: service_healthy
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.5"
-#          memory: 500M
 
 volumes:
   spark_jars:
