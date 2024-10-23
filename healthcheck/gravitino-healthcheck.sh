@@ -25,7 +25,7 @@ success=false
 
 while [ $attempt -lt $max_attempts ]; do
   response=$(curl -X GET -H "Content-Type: application/json" http://127.0.0.1:8090/api/version)
-  
+
   if echo "$response" | grep -q "\"code\":0"; then
     success=true
     break
@@ -33,7 +33,7 @@ while [ $attempt -lt $max_attempts ]; do
     echo "Attempt $((attempt + 1)) failed..."
     sleep 1
   fi
-  
+
   ((attempt++))
 done
 
