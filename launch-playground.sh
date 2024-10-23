@@ -20,12 +20,13 @@
 # set -ex
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(cd "${playground_dir}">/dev/null; pwd)"
-isExist=`which docker-compose`
-if [ $isExist ]
-then
-  true # Placeholder, do nothing
+
+# check for `docker compose`
+isExist=`docker --help | grep compose`
+if [ $? -eq 0 ]; then
+    true # Placeholder, do nothing
 else
-  echo "ERROR: No docker service environment found, please install docker-compose first."
+  echo "ERROR: No docker service environment found, please install compose plugin first."
   exit
 fi
 
@@ -36,7 +37,7 @@ case "${1}" in
 esac
 
 cd ${playground_dir}
-docker-compose up ${components}
+docker compose up ${components}
 
 # Clean Docker containers when you quit this script
-docker-compose down
+docker compose down
