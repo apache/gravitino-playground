@@ -25,7 +25,7 @@ playground_dir="$(
 
 testDocker() {
   echo "Testing Docker environment by running hello-world..."
-  docker run hello-world >/dev/null 2>&1
+  docker run --pull always hello-world >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo "Docker is working correctly!"
   else
@@ -94,7 +94,7 @@ start)
     input="y"
   else
     echo "The playground requires 2 CPU cores, 8 GB of RAM, and 25 GB of disk storage to operate efficiently."
-    read -r -p "Please confirm the requirement is available in your OS [Y/n]:" input
+    read -r -p "Confirm the requirement is available in your OS [Y/n]:" input
   fi
   case $input in
   [yY][eE][sS] | [yY]) ;;

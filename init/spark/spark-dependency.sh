@@ -33,7 +33,7 @@ ICEBERG_SPARK_RUNTIME_JAR="https://repo1.maven.org/maven2/org/apache/iceberg/ice
 ICEBERG_SPARK_RUNTIME_MD5="${ICEBERG_SPARK_RUNTIME_JAR}.md5"
 download_and_verify "${ICEBERG_SPARK_RUNTIME_JAR}" "${ICEBERG_SPARK_RUNTIME_MD5}" "${spark_dir}"
 
-GRAVITINO_SPARK_CONNECTOR_RUNTIME_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.0-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar"
+GRAVITINO_SPARK_CONNECTOR_RUNTIME_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.1-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.1-incubating.jar"
 GRAVITINO_SPARK_CONNECTOR_RUNTIME_MD5="${GRAVITINO_SPARK_CONNECTOR_RUNTIME_JAR}.md5"
 download_and_verify "${GRAVITINO_SPARK_CONNECTOR_RUNTIME_JAR}" "${GRAVITINO_SPARK_CONNECTOR_RUNTIME_MD5}" "${spark_dir}"
 
