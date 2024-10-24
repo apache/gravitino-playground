@@ -29,7 +29,7 @@ Install Git, Docker, Docker Compose.
 
 ## System Resource Requirements
 
-2 CPU cores, 8 GB RAM, 25 GB disk storage, MacOS or Linux OS (Verified Ubuntu 22.04 Ubuntu 24.04).
+2 CPU cores, 8 GB RAM, 25 GB disk storage, MacOS or Linux OS (Verified Ubuntu22.04 Ubuntu24.04 AmazonLinux).
 
 ## TCP ports used
 
