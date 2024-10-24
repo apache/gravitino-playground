@@ -53,11 +53,6 @@ git clone git@github.com:apache/gravitino-playground.git
 cd gravitino-playground
 ./playground.sh start
 ```
-> **Note:** If you install Docker with sudo in Linux OS, please run playground.sh with sudo to ensure it can access all necessary information as root user.
-
-```shell
-sudo ./playground.sh start
-```
 
 ### Check status
 ```shell 

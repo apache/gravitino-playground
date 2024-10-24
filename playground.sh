@@ -46,8 +46,12 @@ checkCompose() {
 
 checkPortInUse() {
   local port=$1
-  lsof -i :$port >/dev/null 2>&1
-  if [ $? -eq 1 ]; then
+  if [[ "$(uname)" == "Darwin" ]]; then
+    openPort=$(lsof -i :$port)
+  elif [[ "$(uname)" == "Linux" ]]; then
+    openPort=$(sudo lsof -i :$port)
+  fi
+  if [ -z "${openPort}" ]; then
     echo "Port $port is ok."
   else
     echo "Port $port is in use. Please check it."
