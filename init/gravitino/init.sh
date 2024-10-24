@@ -19,8 +19,6 @@
 echo "Start to download the jar package of JDBC"
 cp /tmp/gravitino/packages/mysql-connector-java-8.0.27.jar /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar
 cp /tmp/gravitino/packages/postgresql-42.2.7.jar /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.2.7.jar
-# wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar -O /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar
-# wget https://jdbc.postgresql.org/download/postgresql-42.7.0.jar -O /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.7.0.jar
 cp /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.2.7.jar /root/gravitino/catalogs/lakehouse-iceberg/libs
 cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /root/gravitino/catalogs/lakehouse-iceberg/libs
 

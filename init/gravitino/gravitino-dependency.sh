@@ -24,11 +24,10 @@ gravitino_dir="$(
 )"
 . "${gravitino_dir}/../common/common.sh"
 
-# Prepare download packages
 if [[ ! -d "${gravitino_dir}/packages" ]]; then
   mkdir -p "${gravitino_dir}/packages"
 fi
-
+# Prepare download packages
 MYSQL_CONNECTOR_JAVA_JAR="https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar"
 MYSQL_CONNECTOR_JAVA_MD5="${MYSQL_CONNECTOR_JAVA_JAR}.md5"
 download_and_verify "${MYSQL_CONNECTOR_JAVA_JAR}" "${MYSQL_CONNECTOR_JAVA_MD5}" "${gravitino_dir}"

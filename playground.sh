@@ -115,7 +115,7 @@ stop)
   stop
   ;;
 *)
-  echo "Usage: $0 [start | status | stop] [-y]"
+  echo "Usage: $0 [start | status | stop]"
   exit 1
   ;;
 esac
