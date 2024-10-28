@@ -73,6 +73,7 @@ start() {
   echo "Preparing packages..."
   ./init/spark/spark-dependency.sh
   ./init/gravitino/gravitino-dependency.sh
+  ./init/jupyter/jupyter-dependency.sh
 
   logSuffix=$(date +%Y%m%d%H%m%s)
   docker-compose up --detach
