@@ -17,4 +17,5 @@
 # under the License.
 #
 cp -r /tmp/gravitino/*.ipynb /home/jovyan
+export HADOOP_USER_NAME=root
 start-notebook.sh --NotebookApp.token=''
