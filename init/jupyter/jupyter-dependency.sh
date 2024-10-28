@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -17,15 +19,16 @@
 # under the License.
 #
 
-spark.plugins org.apache.gravitino.spark.connector.plugin.GravitinoSparkPlugin
-spark.sql.gravitino.uri http://gravitino:8090
-spark.sql.gravitino.metalake metalake_demo
-spark.sql.gravitino.enableIcebergSupport true 
-spark.sql.extensions org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
-spark.sql.catalog.catalog_rest org.apache.iceberg.spark.SparkCatalog
-spark.sql.catalog.catalog_rest.type rest
-spark.sql.catalog.catalog_rest.uri http://gravitino:9001/iceberg/
-spark.locality.wait.node 0
-spark.sql.warehouse.dir hdfs://hive:9000/user/hive/warehouse
-spark.sql.hive.metastore.jars path
-spark.sql.hive.metastore.jars.path file:///opt/spark/jars/*
+jupyter_dir="$(dirname "${BASH_SOURCE-$0}")"
+jupyter_dir="$(
+  cd "${jupyter_dir}" >/dev/null
+  pwd
+)"
+. "${jupyter_dir}/../common/common.sh"
+
+# Prepare download packages
+if [[ ! -d "${jupyter_dir}/packages" ]]; then
+  mkdir "${jupyter_dir}/packages"
+  find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
+fi
+

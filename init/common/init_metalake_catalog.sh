@@ -35,7 +35,7 @@ if echo "$response" | grep -q "\"code\":0"; then
   true
 else
   # Create Hive catalog for experience Gravitino service
-  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://hive:9083", "spark.bypass.spark.sql.hive.metastore.jars":"path", "spark.bypass.spark.sql.hive.metastore.jars.path":"file:///opt/spark/jars/*" }}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
+  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://hive:9083"}}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   if echo "$response" | grep -q "\"code\":0"; then
     true # Placeholder, do nothing
   else
