@@ -26,21 +26,21 @@ spec:
         env:
           {{- toYaml .Values.spark.env | nindent 12 }}
         volumeMounts:
-        - name: spark-init-script
+        - name: spark-artifacts
           mountPath: /tmp/spark
-        - name: spark-common-init-script
+        - name: spark-common-artifacts
           mountPath: /tmp/common
         resources:
           {{- toYaml .Values.spark.resources | nindent 12 }}
       volumes:
-      - name: spark-init-script
-        configMap:
-          name: spark-init-script
-          defaultMode: 0755
-      - name: spark-common-init-script
-        configMap:
-          name: spark-common-init-script
-          defaultMode: 0755
+      - name: spark-artifacts
+        hostPath:
+          path: {{ printf "%s/init/spark/" .Values.projectRoot }}
+          type: DirectoryOrCreate
+      - name: spark-common-artifacts
+        hostPath:
+          path: {{ printf "%s/init/common/" .Values.projectRoot }}
+          type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -52,24 +52,3 @@ spec:
   ports:
   - port: 4040
     targetPort: 4040
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: spark-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/spark/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: spark-common-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/common/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}

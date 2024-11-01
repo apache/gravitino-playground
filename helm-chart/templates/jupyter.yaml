@@ -27,8 +27,8 @@ spec:
           env:
             {{- toYaml .Values.jupyter.env | nindent 12 }}
           volumeMounts:
-            - name: artifacts
-              mountPath: /tmp/gravitino/
+            - name: jupyter-artifacts
+              mountPath: /tmp/gravitino
             - name: healthcheck-script
               mountPath: /tmp/healthcheck
           resources:
@@ -59,7 +59,7 @@ spec:
             - name: healthcheck-script
               mountPath: /tmp/healthcheck
       volumes:
-        - name: artifacts
+        - name: jupyter-artifacts
           hostPath:
             path: {{ printf "%s/init/jupyter/" .Values.projectRoot }}
             type: DirectoryOrCreate

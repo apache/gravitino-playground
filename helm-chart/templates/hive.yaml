@@ -35,16 +35,16 @@ spec:
         env:
           {{- toYaml .Values.hive.env | nindent 12 }}
         volumeMounts:
-        - name: hive-init-script
+        - name: hive-artifacts
           mountPath: /tmp/hive
         resources:
           {{- toYaml .Values.hive.resources | nindent 12 }}
         command: ["/bin/bash", "/tmp/hive/init.sh"]
       volumes:
-      - name: hive-init-script
-        configMap:
-          name: hive-init-script
-          defaultMode: 0755
+      - name: hive-artifacts
+        hostPath:
+          path: {{ printf "%s/init/hive/" .Values.projectRoot }}
+          type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -69,13 +69,3 @@ spec:
   - port: 50070
     targetPort: 50070
     name: namenode
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: hive-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/hive/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}

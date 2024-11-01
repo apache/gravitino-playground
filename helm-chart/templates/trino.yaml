@@ -26,7 +26,7 @@ spec:
         env:
           {{- toYaml .Values.trino.env | nindent 12 }}
         volumeMounts:
-        - name: trino-init-script
+        - name: trino-artifacts
           mountPath: /tmp/trino
         - name: trino-common-init-script
           mountPath: /tmp/common
@@ -50,14 +50,14 @@ spec:
         - name: healthcheck-script
           mountPath: /tmp/healthcheck
       volumes:
-      - name: trino-init-script
-        configMap:
-          name: trino-init-script
-          defaultMode: 0755
+      - name: trino-artifacts
+        hostPath:
+          path: {{ printf "%s/init/trino/" .Values.projectRoot }}
+          type: DirectoryOrCreate
       - name: trino-common-init-script
-        configMap:
-          name: trino-common-init-script
-          defaultMode: 0755
+        hostPath:
+          path: {{ printf "%s/init/common/" .Values.projectRoot }}
+          type: DirectoryOrCreate
       - name: healthcheck-script
         configMap:
           name: trino-healthcheck-script
@@ -74,28 +74,6 @@ spec:
   - port: 8080
     targetPort: 8080
     name: http
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: trino-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/trino/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: trino-common-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/common/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}
-
 ---
 apiVersion: v1
 kind: ConfigMap

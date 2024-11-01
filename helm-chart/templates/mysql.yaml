@@ -31,14 +31,15 @@ spec:
         - --explicit_defaults_for_timestamp=true
         - --lower_case_table_names=1
         volumeMounts:
-        - name: init-script
+        - name: mysql-artifacts
           mountPath: /docker-entrypoint-initdb.d
         resources:
           {{- toYaml .Values.mysql.resources | nindent 12 }}
       volumes:
-      - name: init-script
-        configMap:
-          name: mysql-init-script
+      - name: mysql-artifacts
+        hostPath:
+          path: {{ printf "%s/init/mysql/" .Values.projectRoot }}
+          type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -50,10 +51,3 @@ spec:
   ports:
   - port: 3306
     targetPort: 3306
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-init-script
-data:
-{{ (.Files.Glob "init/mysql/*").AsConfig | indent 4 }}

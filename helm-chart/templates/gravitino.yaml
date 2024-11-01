@@ -26,12 +26,10 @@ spec:
         env:
           {{- toYaml .Values.gravitino.env | nindent 12 }}
         volumeMounts:
-        - name: init-script
-          mountPath: /tmp/gravitino
         - name: healthcheck-script
           mountPath: /tmp/healthcheck
-        - name: artifacts
-          mountPath: /tmp/gravitino/data/pdfs
+        - name: gravitino-artifacts
+          mountPath: /tmp/gravitino
         readinessProbe:
           exec:
             command:
@@ -61,11 +59,7 @@ spec:
         - name: healthcheck-script
           mountPath: /tmp/healthcheck
       volumes:
-      - name: init-script
-        configMap:
-          name: gravitino-init-script
-          defaultMode: 0755
-      - name: artifacts
+      - name: gravitino-artifacts
         hostPath:
           path: {{ printf "%s/init/gravitino/" .Values.projectRoot }}
           type: DirectoryOrCreate
@@ -88,16 +82,6 @@ spec:
   - port: 9001
     targetPort: 9001
     name: debug
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gravitino-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/gravitino/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap

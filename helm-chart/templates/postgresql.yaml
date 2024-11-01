@@ -29,10 +29,10 @@ spec:
         resources:
           {{- toYaml .Values.postgresql.resources | nindent 12 }}
       volumes:
-      - name: postgresql-init-script
-        configMap:
-          name: postgresql-init-script
-          defaultMode: 0755
+      - name: postgres-artifacts
+        hostPath:
+          path: {{ printf "%s/init/postgres/" .Values.projectRoot }}
+          type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -44,13 +44,3 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgresql-init-script
-data:
-  {{- range $path, $_ := .Files.Glob "init/postgres/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}

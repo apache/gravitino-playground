@@ -82,10 +82,10 @@ gravitino:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 1.5Gi
     requests:
       cpu: 300m
-      memory: 500Mi
+      memory: 1.5Gi
   env:
     - name: HIVE_HOST_IP
       value: *hive_host_ip
