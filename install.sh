@@ -18,20 +18,6 @@
 # under the License.
 #
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null
-then
-    echo "Docker is not installed. Please install Docker before proceeding."
-    exit 1
-fi
-
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null
-then
-    echo "Docker Compose is not installed. Please install Docker Compose before proceeding."
-    exit 1
-fi
-
 # Download the source code for gravitino-playground directly from GitHub.
 echo "Downloading gravitino-playground..."
 curl -L -O https://github.com/apache/gravitino-playground/archive/refs/heads/main.zip
