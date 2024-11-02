@@ -22,5 +22,8 @@
 *.tmproj
 .vscode/
 
-# Ignore init/jupyter/data because it's too large, we use local-path pv to mount it into Pod
-init/jupyter/data/
+# Ignore these directories because they are too large, we use local-path pv to mount it into Pod
+init/*/data/
+init/*/packages/
+
+

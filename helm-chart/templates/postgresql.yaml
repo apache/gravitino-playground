@@ -24,12 +24,12 @@ spec:
         env:
           {{- toYaml .Values.postgresql.env | nindent 12 }}
         volumeMounts:
-        - name: postgresql-init-script
+        - name: postgresql-artifacts
           mountPath: /docker-entrypoint-initdb.d
         resources:
           {{- toYaml .Values.postgresql.resources | nindent 12 }}
       volumes:
-      - name: postgres-artifacts
+      - name: postgresql-artifacts
         hostPath:
           path: {{ printf "%s/init/postgres/" .Values.projectRoot }}
           type: DirectoryOrCreate

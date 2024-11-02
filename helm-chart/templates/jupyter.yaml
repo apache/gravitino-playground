@@ -29,7 +29,7 @@ spec:
           volumeMounts:
             - name: jupyter-artifacts
               mountPath: /tmp/gravitino
-            - name: healthcheck-script
+            - name: jupyter-healthcheck-scripts
               mountPath: /tmp/healthcheck
           resources:
             {{- toYaml .Values.jupyter.resources | nindent 12 }}
@@ -40,7 +40,7 @@ spec:
           env:
             {{- toYaml .Values.jupyter.env | nindent 12 }}
           volumeMounts:
-            - name: healthcheck-script
+            - name: jupyter-healthcheck-scripts
               mountPath: /tmp/healthcheck
         - name: wait-for-hive
           image: "{{ .Values.hive.image.repository }}:{{ .Values.hive.image.tag }}"
@@ -48,7 +48,7 @@ spec:
           env:
             {{- toYaml .Values.jupyter.env | nindent 12 }}
           volumeMounts:
-            - name: healthcheck-script
+            - name: jupyter-healthcheck-scripts
               mountPath: /tmp/healthcheck
         - name: wait-for-trino
           image: "{{ .Values.trino.image.repository }}:{{ .Values.trino.image.tag }}"
@@ -56,17 +56,17 @@ spec:
           env:
             {{- toYaml .Values.jupyter.env | nindent 12 }}
           volumeMounts:
-            - name: healthcheck-script
+            - name: jupyter-healthcheck-scripts
               mountPath: /tmp/healthcheck
       volumes:
         - name: jupyter-artifacts
           hostPath:
             path: {{ printf "%s/init/jupyter/" .Values.projectRoot }}
             type: DirectoryOrCreate
-        - name: healthcheck-script
-          configMap:
-            name: healthcheck-script
-            defaultMode: 0755
+        - name: jupyter-healthcheck-scripts
+          hostPath:
+            path: {{ printf "%s/healthcheck/" .Values.projectRoot }}
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -78,13 +78,3 @@ spec:
   ports:
     - port: 8888
       targetPort: 8888
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: healthcheck-script
-data:
-  {{- range $path, $_ := .Files.Glob "healthcheck/*" }}
-  {{ base $path }}: |-
-    {{- $.Files.Get $path | nindent 4 }}
-  {{- end }}
