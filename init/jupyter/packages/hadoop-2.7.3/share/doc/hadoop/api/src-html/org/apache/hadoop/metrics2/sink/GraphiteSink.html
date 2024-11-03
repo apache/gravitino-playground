@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * or more contributor license agreements.  See the NOTICE file<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * distributed with this work for additional information<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * regarding copyright ownership.  The ASF licenses this file<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * to you under the Apache License, Version 2.0 (the<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * "License"); you may not use this file except in compliance<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * with the License.  You may obtain a copy of the License at<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *     http://www.apache.org/licenses/LICENSE-2.0<a name="line.10"></a>
+<span class="sourceLineNo">011</span> *<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * Unless required by applicable law or agreed to in writing, software<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * See the License for the specific language governing permissions and<a name="line.15"></a>
+<span class="sourceLineNo">016</span> * limitations under the License.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> */<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>package org.apache.hadoop.metrics2.sink;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.apache.commons.configuration.SubsetConfiguration;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.apache.commons.io.Charsets;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.commons.logging.Log;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.commons.logging.LogFactory;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.hadoop.classification.InterfaceAudience;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.hadoop.classification.InterfaceStability;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.hadoop.metrics2.AbstractMetric;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.hadoop.metrics2.MetricsException;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.hadoop.metrics2.MetricsRecord;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.hadoop.metrics2.MetricsSink;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.hadoop.metrics2.MetricsTag;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>import java.io.Closeable;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import java.io.IOException;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import java.io.OutputStreamWriter;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import java.io.Writer;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import java.net.Socket;<a name="line.37"></a>
+<span class="sourceLineNo">038</span><a name="line.38"></a>
+<span class="sourceLineNo">039</span>/**<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * A metrics sink that writes to a Graphite server<a name="line.40"></a>
+<span class="sourceLineNo">041</span> */<a name="line.41"></a>
+<span class="sourceLineNo">042</span>@InterfaceAudience.Public<a name="line.42"></a>
+<span class="sourceLineNo">043</span>@InterfaceStability.Evolving<a name="line.43"></a>
+<span class="sourceLineNo">044</span>public class GraphiteSink implements MetricsSink, Closeable {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private static final Log LOG = LogFactory.getLog(GraphiteSink.class);<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    private static final String SERVER_HOST_KEY = "server_host";<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private static final String SERVER_PORT_KEY = "server_port";<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    private static final String METRICS_PREFIX = "metrics_prefix";<a name="line.48"></a>
+<span class="sourceLineNo">049</span>    private String metricsPrefix = null;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    private Graphite graphite = null;<a name="line.50"></a>
+<span class="sourceLineNo">051</span><a name="line.51"></a>
+<span class="sourceLineNo">052</span>    @Override<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    public void init(SubsetConfiguration conf) {<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        // Get Graphite host configurations.<a name="line.54"></a>
+<span class="sourceLineNo">055</span>        final String serverHost = conf.getString(SERVER_HOST_KEY);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>        final int serverPort = Integer.parseInt(conf.getString(SERVER_PORT_KEY));<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>        // Get Graphite metrics graph prefix.<a name="line.58"></a>
+<span class="sourceLineNo">059</span>        metricsPrefix = conf.getString(METRICS_PREFIX);<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        if (metricsPrefix == null)<a name="line.60"></a>
+<span class="sourceLineNo">061</span>            metricsPrefix = "";<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>        graphite = new Graphite(serverHost, serverPort);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        graphite.connect();<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    @Override<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    public void putMetrics(MetricsRecord record) {<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        StringBuilder lines = new StringBuilder();<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        StringBuilder metricsPathPrefix = new StringBuilder();<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>        // Configure the hierarchical place to display the graph.<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        metricsPathPrefix.append(metricsPrefix).append(".")<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                .append(record.context()).append(".").append(record.name());<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>        for (MetricsTag tag : record.tags()) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            if (tag.value() != null) {<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                metricsPathPrefix.append(".");<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                metricsPathPrefix.append(tag.name());<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                metricsPathPrefix.append("=");<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                metricsPathPrefix.append(tag.value());<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            }<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>        // The record timestamp is in milliseconds while Graphite expects an epoc time in seconds.<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        long timestamp = record.timestamp() / 1000L;<a name="line.86"></a>
+<span class="sourceLineNo">087</span><a name="line.87"></a>
+<span class="sourceLineNo">088</span>        // Collect datapoints.<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        for (AbstractMetric metric : record.metrics()) {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            lines.append(<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                    metricsPathPrefix.toString() + "."<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                            + metric.name().replace(' ', '.')).append(" ")<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                    .append(metric.value()).append(" ").append(timestamp)<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                    .append("\n");<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        }<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>        try {<a name="line.97"></a>
+<span class="sourceLineNo">098</span>          graphite.write(lines.toString());<a name="line.98"></a>
+<span class="sourceLineNo">099</span>        } catch (Exception e) {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>          LOG.warn("Error sending metrics to Graphite", e);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>          try {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>            graphite.close();<a name="line.102"></a>
+<span class="sourceLineNo">103</span>          } catch (Exception e1) {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            throw new MetricsException("Error closing connection to Graphite", e1);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>          }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        }<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    }<a name="line.107"></a>
+<span class="sourceLineNo">108</span><a name="line.108"></a>
+<span class="sourceLineNo">109</span>    @Override<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    public void flush() {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>      try {<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        graphite.flush();<a name="line.112"></a>
+<span class="sourceLineNo">113</span>      } catch (Exception e) {<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        LOG.warn("Error flushing metrics to Graphite", e);<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        try {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>          graphite.close();<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        } catch (Exception e1) {<a name="line.117"></a>
+<span class="sourceLineNo">118</span>          throw new MetricsException("Error closing connection to Graphite", e1);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        }<a name="line.119"></a>
+<span class="sourceLineNo">120</span>      }<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    }<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>    @Override<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    public void close() throws IOException {<a name="line.124"></a>
+<span class="sourceLineNo">125</span>      graphite.close();<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>    public static class Graphite {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>      private final static int MAX_CONNECTION_FAILURES = 5;<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>      private String serverHost;<a name="line.131"></a>
+<span class="sourceLineNo">132</span>      private int serverPort;<a name="line.132"></a>
+<span class="sourceLineNo">133</span>      private Writer writer = null;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>      private Socket socket = null;<a name="line.134"></a>
+<span class="sourceLineNo">135</span>      private int connectionFailures = 0;<a name="line.135"></a>
+<span class="sourceLineNo">136</span><a name="line.136"></a>
+<span class="sourceLineNo">137</span>      public Graphite(String serverHost, int serverPort) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        this.serverHost = serverHost;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        this.serverPort = serverPort;<a name="line.139"></a>
+<span class="sourceLineNo">140</span>      }<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>      public void connect() {<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        if (isConnected()) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>          throw new MetricsException("Already connected to Graphite");<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        if (tooManyConnectionFailures()) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>          // return silently (there was ERROR in logs when we reached limit for the first time)<a name="line.147"></a>
+<span class="sourceLineNo">148</span>          return;<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        }<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        try {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>          // Open a connection to Graphite server.<a name="line.151"></a>
+<span class="sourceLineNo">152</span>          socket = new Socket(serverHost, serverPort);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>          writer = new OutputStreamWriter(socket.getOutputStream(), Charsets.UTF_8);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        } catch (Exception e) {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>          connectionFailures++;<a name="line.155"></a>
+<span class="sourceLineNo">156</span>          if (tooManyConnectionFailures()) {<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            // first time when connection limit reached, report to logs<a name="line.157"></a>
+<span class="sourceLineNo">158</span>            LOG.error("Too many connection failures, would not try to connect again.");<a name="line.158"></a>
+<span class="sourceLineNo">159</span>          }<a name="line.159"></a>
+<span class="sourceLineNo">160</span>          throw new MetricsException("Error creating connection, "<a name="line.160"></a>
+<span class="sourceLineNo">161</span>              + serverHost + ":" + serverPort, e);<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        }<a name="line.162"></a>
+<span class="sourceLineNo">163</span>      }<a name="line.163"></a>
+<span class="sourceLineNo">164</span><a name="line.164"></a>
+<span class="sourceLineNo">165</span>      public void write(String msg) throws IOException {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        if (!isConnected()) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>          connect();<a name="line.167"></a>
+<span class="sourceLineNo">168</span>        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>        if (isConnected()) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>          writer.write(msg);<a name="line.170"></a>
+<span class="sourceLineNo">171</span>        }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>      }<a name="line.172"></a>
+<span class="sourceLineNo">173</span><a name="line.173"></a>
+<span class="sourceLineNo">174</span>      public void flush() throws IOException {<a name="line.174"></a>
+<span class="sourceLineNo">175</span>        if (isConnected()) {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>          writer.flush();<a name="line.176"></a>
+<span class="sourceLineNo">177</span>        }<a name="line.177"></a>
+<span class="sourceLineNo">178</span>      }<a name="line.178"></a>
+<span class="sourceLineNo">179</span><a name="line.179"></a>
+<span class="sourceLineNo">180</span>      public boolean isConnected() {<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        return socket != null &amp;&amp; socket.isConnected() &amp;&amp; !socket.isClosed();<a name="line.181"></a>
+<span class="sourceLineNo">182</span>      }<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>      public void close() throws IOException {<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        try {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>          if (writer != null) {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            writer.close();<a name="line.187"></a>
+<span class="sourceLineNo">188</span>          }<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        } catch (IOException ex) {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>          if (socket != null) {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>            socket.close();<a name="line.191"></a>
+<span class="sourceLineNo">192</span>          }<a name="line.192"></a>
+<span class="sourceLineNo">193</span>        } finally {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>          socket = null;<a name="line.194"></a>
+<span class="sourceLineNo">195</span>          writer = null;<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>      }<a name="line.197"></a>
+<span class="sourceLineNo">198</span><a name="line.198"></a>
+<span class="sourceLineNo">199</span>      private boolean tooManyConnectionFailures() {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        return connectionFailures &gt; MAX_CONNECTION_FAILURES;<a name="line.200"></a>
+<span class="sourceLineNo">201</span>      }<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>    }<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>}<a name="line.205"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
