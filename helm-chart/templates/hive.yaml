@@ -17,6 +17,11 @@ spec:
       labels:
         app: {{ .Values.hive.serviceName }}
     spec:
+      # we need this, otherwise, the hive hostname at location of spark table will
+      # be the pod name, not service name:
+      #    Location|hdfs://hive-6c8fbfcf8f-482r4:9000/...|
+      # which cause pyspark unable to connect to hive
+      hostname: hive
       containers:
       - name: hive
         image: "{{ .Values.hive.image.repository }}:{{ .Values.hive.image.tag }}"

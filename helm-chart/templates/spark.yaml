@@ -35,7 +35,7 @@ spec:
       volumes:
       - name: spark-artifacts
         hostPath:
-          path: {{ printf "%s/init/postgres/" .Values.projectRoot }}
+          path: {{ printf "%s/init/spark/" .Values.projectRoot }}
           type: DirectoryOrCreate
       - name: spark-common-artifacts
         hostPath:
