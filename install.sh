@@ -20,8 +20,8 @@
 
 # Download the source code for gravitino-playground directly from GitHub.
 echo "Downloading gravitino-playground..."
-curl -L -O https://github.com/apache/gravitino-playground/archive/refs/heads/main.zip
-unzip main.zip
+curl -L -o gravitino-playground-main.zip https://github.com/apache/gravitino-playground/archive/refs/heads/main.zip
+unzip gravitino-playground-main.zip
 
 while true; do
     # Prompt the user
