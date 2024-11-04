@@ -27,12 +27,12 @@ playground_dir="$(
 )"
 
 testDocker() {
-  echo "Testing Docker environment by running hello-world..."
+  echo "INFO: Testing Docker environment by running hello-world..."
   docker run --pull always hello-world >/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    echo "Docker is working correctly!"
+    echo "INFO: Docker is working correctly!"
   else
-    echo "There was an issue running the hello-world container. Please check your Docker installation."
+    echo "ERROR: There was an issue running the hello-world container. Please check your Docker installation."
     exit 1
   fi
 }
@@ -41,9 +41,9 @@ testK8s() {
   echo "Testing K8s environment ..."
   kubectl cluster-info
   if [ $? -eq 0 ]; then
-    echo "K8s is working correctly!"
+    echo "INFO: K8s is working correctly!"
   else
-    echo "There was an issue running kubectl cluster-info, please check you K8s cluster."
+    echo "ERROR: There was an issue running kubectl cluster-info, please check you K8s cluster."
     exit 1
   fi
 }
@@ -86,8 +86,6 @@ checkHelm() {
   fi
 }
 
-
-
 checkPortInUse() {
   local port=$1
   if [[ "$(uname)" == "Darwin" ]]; then
@@ -96,26 +94,30 @@ checkPortInUse() {
     openPort=$(sudo lsof -i :$port -sTCP:LISTEN)
   fi
   if [ -z "${openPort}" ]; then
-    echo "Port $port is ok."
+    echo "INFO: Port $port is ok."
   else
-    echo "Port $port is in use. Please check it."
+    echo "ERROR: Port $port is in use. Please check it."
     exit 1
   fi
 }
 
 start() {
-  echo "Starting the playground..."
-  testDocker
-  testK8s
-  checkHelm
-  checkCompose
+  echo "INFO: Starting the playground..."
 
-  if [[ $engine == "docker" ]]; then 
+  case "$runtime" in
+  k8s)
+    testK8s
+    checkHelm
+    ;;
+  docker)
+    testDocker
+    checkCompose
     ports=(8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
     for port in "${ports[@]}"; do
       checkPortInUse ${port}
     done
-  fi
+    ;;
+  esac
 
   cd ${playground_dir}
   echo "Preparing packages..."
@@ -123,39 +125,59 @@ start() {
   ./init/gravitino/gravitino-dependency.sh
   ./init/jupyter/jupyter-dependency.sh
 
-  if [[ $engine == "docker" ]]; then
+  case "$runtime" in
+  k8s)
+    helm upgrade --install gravitino-playground ./helm-chart/ \
+      --create-namespace --namespace gravitino-playground \
+      --set projectRoot=$(pwd)
+    ;;
+  docker)
     logSuffix=$(date +%Y%m%d%H%m%s)
     docker-compose up --detach
     docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
     echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
-  else
-    helm upgrade --install gravitino-playground ./helm-chart/ \
-      --create-namespace --namespace gravitino-playground \
-      --set projectRoot=$(pwd)
-  fi
+    ;;
+  esac
 }
 
 status() {
-  docker-compose ps -a
+  case "$runtime" in
+  k8s)
+    kubectl get svc -o wide
+    ;;
+  docker)
+    docker-compose ps -a
+    ;;
+  esac
 }
 
 stop() {
-  echo "Stopping the playground..."
-  docker-compose down
-  if [ $? -eq 0 ]; then
-    echo "Playground stopped!"
-  fi
+  echo "INFO: Stopping the playground..."
+
+  case "$runtime" in
+  k8s)
+    kubectl get svc -o wide
+    ;;
+  docker)
+    docker-compose down
+    if [ $? -eq 0 ]; then
+      echo "INFO: Playground stopped!"
+    fi
+    ;;
+  esac
 }
 
-engine=""
+runtime=""
 
 case "$1" in
 k8s)
-  engine="k8s";
+  runtime="k8s";
+  ;;
+docker)
+  runtime="docker";
   ;;
 *)
-  engine="docker";
-  ;;
+  echo "ERROR: please specify which runtime you want to use, available runtime: [docker|k8s]" 
 esac
 
 case "$2" in
@@ -172,7 +194,7 @@ start)
     exit 0
     ;;
   *)
-    echo "Invalid input!"
+    echo "ERROR: Invalid input!"
     exit 1
     ;;
   esac
