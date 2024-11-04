@@ -32,3 +32,14 @@ if [[ ! -d "${jupyter_dir}/packages" ]]; then
   find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
 fi
 
+FLINK_HIVE_CONNECTOR_JAR="https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-hive-2.3.10_2.12/1.20.0/flink-sql-connector-hive-2.3.10_2.12-1.20.0.jar"
+FLINK_HIVE_CONNECTOR_MD5="${FLINK_HIVE_CONNECTOR_JAR}.md5"
+download_and_verify "${FLINK_HIVE_CONNECTOR_JAR}" "${FLINK_HIVE_CONNECTOR_MD5}" "${script_dir}/packages"
+
+GRAVITINO_FLINK_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-flink-1.18_2.12/0.6.1-incubating/gravitino-flink-1.18_2.12-0.6.1-incubating.jar"
+GRAVITINO_FLINK_MD5="${GRAVITINO_FLINK_JAR}.md5"
+download_and_verify "${GRAVITINO_FLINK_JAR}" "${GRAVITINO_FLINK_MD5}" "${script_dir}/packages"
+
+GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-flink-connector-runtime-1.18_2.12/0.6.1-incubating/gravitino-flink-connector-runtime-1.18_2.12-0.6.1-incubating.jar"
+GRAVITINO_FLINK_CONNECTOR_RUNTIME_MD5="${GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR}.md5"
+download_and_verify "${GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR}" "${GRAVITINO_FLINK_CONNECTOR_RUNTIME_MD5}" "${script_dir}/packages"
