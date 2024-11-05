@@ -29,6 +29,7 @@ jupyter_dir="$(
 # Prepare download packages
 if [[ ! -d "${jupyter_dir}/packages" ]]; then
   mkdir "${jupyter_dir}/packages"
-  find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
 fi
+ls "${jupyter_dir}/packages/" | xargs -I {} rm "${jupyter_dir}/packages/"{}
+find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
 
