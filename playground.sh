@@ -17,6 +17,9 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
+set -x
+
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(
   cd "${playground_dir}" >/dev/null
