@@ -25,7 +25,7 @@ Depending on your network and computer, startup time may take 3-5 minutes. Once 
 
 ## Prerequisites
 
-Install Git, Docker, Docker Compose.
+Install Git (optional), Docker, Docker Compose.
 
 ## System Resource Requirements
 
@@ -48,7 +48,12 @@ The playground runs a number of services. The TCP ports used may clash with exis
 
 ## Playground usage
 
-### Launch playground
+### One curl command launch playground
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apache/gravitino-playground/HEAD/install.sh)"
+```
+
+### Use git download and launch playground
 
 ```shell
 git clone git@github.com:apache/gravitino-playground.git
