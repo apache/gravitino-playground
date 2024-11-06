@@ -145,6 +145,12 @@ services:
     volumes:
       - ./init/jupyter:/tmp/gravitino
     entrypoint: /bin/bash /tmp/gravitino/init.sh
+    environment:
+    - HADOOP_CLASSPATH=/tmp/gravitino/packages/hadoop-2.7.3/etc/hadoop:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/common/lib/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/common/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/hdfs:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/hdfs/lib/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/hdfs/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/yarn/lib/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/yarn/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/mapreduce/lib/*:/tmp/gravitino/packages/hadoop-2.7.3/share/hadoop/mapreduce/*:/tmp/gravitino/packages/contrib/capacity-scheduler/*.jar
+    - NB_USER=my-username        
+    - GRANT_SUDO=yes              
+    - CHOWN_HOME=yes             
+    user: root                      
     depends_on:
       hive :
         condition: service_healthy
