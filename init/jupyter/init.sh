@@ -16,16 +16,12 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-cp -r /tmp/gravitino/*.ipynb /home/jovyan
-export HADOOP_USER_NAME=root
 
-# This needs to be downloaded as root user
-wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.5.2/iceberg-spark-runtime-3.4_2.12-1.5.2.jar  -O $SPARK_HOME/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
-wget https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-spark-connector-runtime-3.4_2.12/0.6.0-incubating/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar -O $SPARK_HOME/jars/gravitino-spark-connector-runtime-3.4_2.12-0.6.0-incubating.jar
+if [ -z "$RANGER_ENABLE" ]; then
+  cp -r /tmp/gravitino/*.ipynb /home/jovyan
+else
+  cp -r /tmp/gravitino/authorization/*.ipynb /home/jovyan
+fi
 
-# in pyspark-notebook, SPARK_HOME is at /usr/local/spark, we need to link it back to /opt/spark 
-ln -s $SPARK_HOME /opt/spark
-
-su - jovyan
-
+export HADOOP_USER_NAME=anonymous
 start-notebook.sh --NotebookApp.token=''

@@ -32,4 +32,3 @@ if [[ ! -d "${jupyter_dir}/packages" ]]; then
 fi
 ls "${jupyter_dir}/packages/" | xargs -I {} rm "${jupyter_dir}/packages/"{}
 find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
-

@@ -17,11 +17,16 @@
 # under the License.
 #
 
+# remove command line `tail -f /dev/null` in the `/usr/local/sbin/start.sh`
 sed -i '$d' /usr/local/sbin/start.sh
 sed -i '$d' /usr/local/sbin/start.sh
+cp /tmp/hive/core-site.xml /tmp/hadoop-conf
 sed -i "s|hdfs://localhost:9000|hdfs://${HIVE_HOST_IP}:9000|g" /usr/local/hive/conf/hive-site.xml
 /bin/bash /usr/local/sbin/start.sh
 hdfs dfs -mkdir -p /user/gravitino
 hdfs dfs -mkdir -p /user/iceberg/warehouse
+useradd -g hdfs lisa
+useradd -g hdfs manager
+useradd -g hdfs anonymous
 hdfs dfs -chmod 777 /user/iceberg/warehouse/
 tail -f /dev/null

@@ -1,0 +1,24 @@
+{
+  "type" : "hive",
+  "tagUpdateTime" : 12345,
+  "description" : "...",
+  "name" : "hiveDev",
+  "policyVersion" : 12345,
+  "policyUpdateTime" : 12345,
+  "displayName" : "hiveDev",
+  "tagVersion" : 12345,
+  "configs" : {
+    "username" : "admin",
+    "password" : "admin",
+    "jdbc.driverClassName" : "org.apache.hive.jdbc.HiveDriver",
+    "jdbc.url" : "jdbc:hive2://hive:10000"
+  },
+  "guid" : "100",
+  "isEnabled" : true,
+  "createTime" : 12345,
+  "createdBy" : "...",
+  "updatedBy" : "...",
+  "id" : 12345,
+  "updateTime" : 12345,
+  "version" : 12345
+}

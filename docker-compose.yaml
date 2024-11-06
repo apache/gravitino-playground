@@ -18,7 +18,7 @@
 #
 services:
   hive:
-    image: apache/gravitino-playground:hive-2.7.3
+    image: apache/gravitino-playground:hive-2.7.3.1
     ports:
       - "3307:3306"
       - "19000:9000"
@@ -37,6 +37,27 @@ services:
       retries: 5
       start_period: 20s
 
+  ranger:
+    image: apache/gravitino-playground:ranger-0.1.0
+    ports:
+      - "6080:6080"
+    container_name: playground-ranger
+    entrypoint: /bin/bash /tmp/ranger/init.sh
+    volumes:
+      - ./healthcheck:/tmp/healthcheck
+      - ./init/ranger:/tmp/ranger
+    healthcheck:
+      test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
+
   gravitino:
     image: apache/gravitino:0.7.0-incubating
     entrypoint: /bin/bash /tmp/gravitino/init.sh
@@ -48,7 +69,9 @@ services:
       - MYSQL_HOST_IP=mysql
       - HIVE_HOST_IP=hive
     depends_on:
-      hive:
+      ranger :
+        condition: service_healthy
+      hive :
         condition: service_healthy
       mysql:
         condition: service_healthy
@@ -183,6 +206,3 @@ services:
       - ./init/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./init/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - ./init/grafana/dashboards:/etc/grafana/provisioning/dashboards
-
-volumes:
-  spark_jars:

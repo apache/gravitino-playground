@@ -25,6 +25,7 @@ download_and_verify() {
   local jar_file=$(basename "${jar_url}")
   local md5_file="${jar_file}.md5"
   echo "Downloading ${jar_file} to ${download_dir}/packages"
+
   # If md5 file doesn't exist, then download it
   if [ ! -f "${download_dir}/packages/${md5_file}" ]; then
     curl -L -o "${download_dir}/packages/${md5_file}" "${md5_url}"
@@ -56,3 +57,4 @@ download_and_verify() {
     exit 1
   fi
 }
+

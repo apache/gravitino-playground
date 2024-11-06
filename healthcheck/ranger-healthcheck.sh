@@ -17,22 +17,24 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-gravitino_dir="$(dirname "${BASH_SOURCE-$0}")"
-gravitino_dir="$(
-  cd "${gravitino_dir}" >/dev/null
-  pwd
-)"
-. "${gravitino_dir}/../common/common.sh"
+set -ex
 
-if [[ ! -d "${gravitino_dir}/packages" ]]; then
-  mkdir -p "${gravitino_dir}/packages"
-fi
-# Prepare download packages
-MYSQL_CONNECTOR_JAVA_JAR="https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar"
-MYSQL_CONNECTOR_JAVA_MD5="${MYSQL_CONNECTOR_JAVA_JAR}.md5"
-download_and_verify "${MYSQL_CONNECTOR_JAVA_JAR}" "${MYSQL_CONNECTOR_JAVA_MD5}" "${gravitino_dir}"
+max_attempts=3
+attempt=0
 
-POSTGRESQL_JAR="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.7/postgresql-42.2.7.jar"
-POSTGRESQL_MD5="${POSTGRESQL_JAR}.md5"
-download_and_verify "${POSTGRESQL_JAR}" "${POSTGRESQL_MD5}" "${gravitino_dir}"
+while [ $attempt -lt $max_attempts ]; do
+  response=$(curl -s -o /dev/null -w "%{http_code}" -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/plugins/info)
+  
+  echo "Ranger health check ${response}"
 
+  if [[ ${response} -eq 200 ]]; then
+    exit 0
+  else
+    echo "Attempt $((attempt + 1)) failed..."
+    sleep 1
+  fi
+  
+  ((attempt++))
+done
+
+exit 1

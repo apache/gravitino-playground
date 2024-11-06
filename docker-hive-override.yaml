@@ -1,0 +1,68 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+services:
+  hive:
+    image: apache/gravitino-ci:hive-0.1.14
+    ports:
+      - "3307:3306"
+      - "19000:9000"
+      - "19083:9083"
+      - "60070:50070"
+    container_name: playground-hive
+    environment:
+      - HADOOP_USER_NAME=root
+      - HIVE_RUNTIME_VERSION=hive3
+      - RANGER_SERVER_URL=http://ranger:6080
+      - RANGER_HIVE_REPOSITORY_NAME=hiveDev
+      - RANGER_HDFS_REPOSITORY_NAME=hdfsDev
+    entrypoint: /bin/bash /tmp/hive/init.sh
+    volumes:
+      - ./init/hive:/tmp/hive
+    healthcheck:
+      test: ["CMD", "/tmp/check-status.sh"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 20s
+
+  ranger:
+    image: apache/gravitino-ci:ranger-0.1.1
+    ports:
+      - "6080:6080"
+    container_name: playground-ranger
+    entrypoint: /bin/bash /tmp/ranger/init.sh
+    volumes:
+      - ./healthcheck:/tmp/healthcheck
+      - ./init/ranger:/tmp/ranger
+    healthcheck:
+      test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
+          
+  jupyter:
+    environment:
+      - RANGER_ENABLE=true
+    
