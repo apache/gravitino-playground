@@ -141,7 +141,7 @@ services:
     image: jupyter/pyspark-notebook:spark-3.4.1
     container_name: playground-jupyter
     ports:
-      - 18888:8888
+      - "18888:8888"
     volumes:
       - ./init/jupyter:/tmp/gravitino
     entrypoint: /bin/bash /tmp/gravitino/init.sh
@@ -150,6 +150,24 @@ services:
         condition: service_healthy
       gravitino :
         condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: playground-prometheus
+    ports:
+      - "19090:9090"
+    volumes:
+      - ./init/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:11.3.0-ubuntu
+    container_name: playground-grafana
+    ports:
+      - "13000:3000"
+    volumes:
+      - ./init/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./init/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./init/grafana/dashboards:/etc/grafana/provisioning/dashboards
 
 volumes:
   spark_jars:

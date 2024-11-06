@@ -35,14 +35,16 @@ Install Git, Docker, Docker Compose.
 
 The playground runs a number of services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
 
-| Docker container      | Ports used           |
-|-----------------------|----------------------|
-| playground-gravitino  | 8090 9001            |
+| Docker container      | Ports used             |
+|-----------------------|------------------------|
+| playground-gravitino  | 8090 9001              |
 | playground-hive       | 3307 19000 19083 60070 |
-| playground-mysql      | 13306                |
-| playground-postgresql | 15342                |
-| playground-trino      | 18080                |
-| playground-jupyter    | 18888                |
+| playground-mysql      | 13306                  |
+| playground-postgresql | 15342                  |
+| playground-trino      | 18080                  |
+| playground-jupyter    | 18888                  |
+| playground-prometheus | 19090                  |
+| playground-grafana    | 13000                  |
 
 ## Playground usage
 
@@ -100,6 +102,14 @@ docker exec -it playground-spark bash
 ```shell
 spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql 
 ```
+
+## Monitoring Gravitino
+
+1. Open the Grafana in the browser at [http://localhost:13000](http://localhost:13000).
+
+2. In the navigation menu, click **Dashboards** -> **Gravitino Playground**.
+
+3. Experiment with the default template.
 
 ## Example
 
