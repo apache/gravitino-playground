@@ -37,10 +37,6 @@ FLINK_HIVE_CONNECTOR_JAR="https://repo1.maven.org/maven2/org/apache/flink/flink-
 FLINK_HIVE_CONNECTOR_MD5="${FLINK_HIVE_CONNECTOR_JAR}.md5"
 download_and_verify "${FLINK_HIVE_CONNECTOR_JAR}" "${FLINK_HIVE_CONNECTOR_MD5}" "${jupyter_dir}"
 
-GRAVITINO_FLINK_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-flink-1.18_2.12/0.6.1-incubating/gravitino-flink-1.18_2.12-0.6.1-incubating.jar"
-GRAVITINO_FLINK_MD5="${GRAVITINO_FLINK_JAR}.md5"
-download_and_verify "${GRAVITINO_FLINK_JAR}" "${GRAVITINO_FLINK_MD5}" "${jupyter_dir}"
-
 GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR="https://repo1.maven.org/maven2/org/apache/gravitino/gravitino-flink-connector-runtime-1.18_2.12/0.6.1-incubating/gravitino-flink-connector-runtime-1.18_2.12-0.6.1-incubating.jar"
 GRAVITINO_FLINK_CONNECTOR_RUNTIME_MD5="${GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR}.md5"
 download_and_verify "${GRAVITINO_FLINK_CONNECTOR_RUNTIME_JAR}" "${GRAVITINO_FLINK_CONNECTOR_RUNTIME_MD5}" "${jupyter_dir}"
@@ -57,3 +53,6 @@ tar -xzf "${jupyter_dir}/packages/hadoop-${HADOOP_VERSION}.tar.gz" -C "${jupyter
 rm "${jupyter_dir}/packages/hadoop-${HADOOP_VERSION}.tar.gz"
 
 echo "Hadoop ${HADOOP_VERSION} downloaded and extracted to ${jupyter_dir}/packages/hadoop-${HADOOP_VERSION}"
+
+
+
