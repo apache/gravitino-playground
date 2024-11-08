@@ -156,7 +156,7 @@ stop() {
 
   case "$runtime" in
   k8s)
-	helm uninstall gravitino-playground 
+	helm uninstall --namespace gravitino-playground gravitino-playground 
     ;;
   docker)
     docker-compose down
