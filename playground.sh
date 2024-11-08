@@ -143,7 +143,7 @@ start() {
 status() {
   case "$runtime" in
   k8s)
-    kubectl get svc -o wide
+    kubectl -n gravitino-playground get pods -o wide
     ;;
   docker)
     docker-compose ps -a
@@ -156,7 +156,7 @@ stop() {
 
   case "$runtime" in
   k8s)
-    kubectl get svc -o wide
+	helm uninstall gravitino-playground 
     ;;
   docker)
     docker-compose down
