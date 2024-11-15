@@ -26,7 +26,7 @@ Depending on your network and computer, startup time may take 3-5 minutes. Once 
 ## Prerequisites
 
 Install Git (optional), Docker, Docker Compose.
-Docker Desktop (or Orbstack) with Kubenetes enabled, and helm CLI are required if you use helm-chart to deploy services.
+Docker Desktop (or Orbstack) with Kubernetes enabled and helm CLI is required if you use helm-chart to deploy services.
 
 ## System Resource Requirements
 
@@ -34,7 +34,7 @@ Docker Desktop (or Orbstack) with Kubenetes enabled, and helm CLI are required i
 
 ## TCP ports used
 
-The playground runs a number of services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
+The playground runs several services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
 
 | Docker container      | Ports used             |
 | --------------------- | ---------------------- |
@@ -84,7 +84,7 @@ cd gravitino-playground
 
 Enable Kubernetes in Docker Desktop or Orbstack.
 
-In Project root directory, execute this command:
+In the project root directory, execute this command:
 
 ```
 helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --namespace gravitino-playground --set projectRoot=$(pwd)
@@ -103,7 +103,7 @@ helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --n
 
 ##### Port Forwarding 
 
-To access pods or services at `localhost`, you needs to do these steps:
+To access the pods or services at `localhost`, you need to do these steps:
 
 1. Log in to the Gravitino playground Trino pod using the following command:
 
@@ -118,13 +118,13 @@ SPARK_POD=$(kubectl get pods --namespace gravitino-playground -l app=spark -o js
 kubectl exec $SPARK_POD -n gravitino-playground -it -- /bin/bash
 ```
 
-3. Port-forwarding Gravitino Service, so that you can access it at `localhost:8090`.
+3. Port-forward the Gravitino service to access it at `localhost:8090`.
 
 ```
 kubectl port-forward svc/gravitino -n gravitino-playground 8090:8090      
 ```
 
-4. Port-forwarding Jupyter Notebook Service, so that you can access it at `localhost:8888`.
+4. Port-forward the Jupyter Notebook service to access it at `localhost:8888`.
 
 ```
 kubectl port-forward svc/jupyternotebook -n gravitino-playground 8888:8888
@@ -220,7 +220,7 @@ SHOW TABLES from catalog_hive.company;
 
 ### Cross-catalog queries
 
-In a company, there may be different departments using different data stacks. In this example, the HR department uses Apache Hive to store its data and the sales department uses PostgreSQL. You can run some interesting queries by joining the two departments' data together with Gravitino.
+In a company, there may be different departments using different data stacks. In this example, the HR department uses Apache Hive to store its data, and the sales department uses PostgreSQL. You can run some interesting queries by joining the two departments' data together with Gravitino.
 
 To know which employee has the largest sales amount, run this SQL:
 
@@ -259,7 +259,7 @@ GROUP BY e.employee_id,  given_name, family_name;
 
 ### Using Spark and Trino
 
-You might consider generating data with SparkSQL and then querying this data using Trino. Give it a try with Gravitino:
+You might also consider generating data with SparkSQL and then querying this data using Trino. Give it a try with Gravitino:
 
 1. Login Spark container and execute the SQLs:
 
@@ -288,13 +288,13 @@ INSERT OVERWRITE TABLE employees PARTITION(department='Marketing') VALUES (3, 'M
 SELECT * FROM catalog_hive.product.employees WHERE department = 'Engineering';
 ```
 
-The demo is located in the `jupyter` folder, you can open the `gravitino-spark-trino-example.ipynb`
+The demo is located in the `jupyter` folder, and you can open the `gravitino-spark-trino-example.ipynb`
 demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 ### Using Apache Iceberg REST service
 
-If you want to migrate your business from Hive to Iceberg. Some tables will use Hive, and the other tables will use Iceberg.
-Gravitino provides an Iceberg REST catalog service, too. You can use Spark to access REST catalog to write the table data.
+Suppose you want to migrate your business from Hive to Iceberg. Some tables will use Hive, and the other tables will use Iceberg.
+Gravitino provides an Iceberg REST catalog service, too. You can use Spark to access the REST catalog to write the table data.
 Then, you can use Trino to read the data from the Hive table joining the Iceberg table.
 
 `spark-defaults.conf` is as follows (It's already configured in the playground):
@@ -307,7 +307,7 @@ spark.sql.catalog.catalog_rest.uri http://gravitino:9001/iceberg/
 spark.locality.wait.node 0
 ```
 
-Please note that `catalog_rest` in SparkSQL and `catalog_iceberg` in Gravitino and Trino share the same Iceberg JDBC backend, which implies that they can access the same dataset.
+Please note that `catalog_rest` in SparkSQL and `catalog_iceberg` in Gravitino and Trino share the same Iceberg JDBC backend, implying they can access the same dataset.
 
 1. Login Spark container and execute the steps.
 
@@ -351,20 +351,20 @@ demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 ### Using Gravitino with LlamaIndex
 
-Gravitino playground also provides a simple RAG demo with LlamaIndex. This demo will show you the
-ability of using Gravitino to manage both tabular and non-tabular dataset, connecting to
+The Gravitino Playground also provides a simple RAG demo with LlamaIndex. This demo will show you the
+the ability to use Gravitino to manage both tabular and non-tabular datasets, connecting to
 LlamaIndex as a unified data source, then use LlamaIndex and LLM to query both tabular and
 non-tabular data with one natural language query.
 
-The demo is located in the `jupyter` folder, you can open the `gravitino_llama_index_demo.ipynb`
+The demo is located in the `jupyter` folder, and you can open the `gravitino_llama_index_demo.ipynb`
 demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
 The scenario of this demo is that basic structured city statistics data is stored in MySQL, and
 detailed city introductions are stored in PDF files. The user wants to know the answers to the
 cities both in the structured data and the PDF files.
 
-In this demo, you will use Gravitino to manage the MySQL table using relational catalog, pdf
-files using fileset catalog, treated Gravitino as a unified data source for LlamaIndex to build
+In this demo, you will use Gravitino to manage the MySQL table using a relational catalog, pdf
+files using a fileset catalog, treating Gravitino as a unified data source for LlamaIndex to build
 indexes on both tabular and non-tabular data. Then you will use LLM to query the data with natural
 language queries.
 
