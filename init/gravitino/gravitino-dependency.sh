@@ -35,4 +35,3 @@ download_and_verify "${MYSQL_CONNECTOR_JAVA_JAR}" "${MYSQL_CONNECTOR_JAVA_MD5}" 
 POSTGRESQL_JAR="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.7/postgresql-42.2.7.jar"
 POSTGRESQL_MD5="${POSTGRESQL_JAR}.md5"
 download_and_verify "${POSTGRESQL_JAR}" "${POSTGRESQL_MD5}" "${gravitino_dir}"
-
