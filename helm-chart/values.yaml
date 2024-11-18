@@ -77,7 +77,7 @@ gravitino:
   serviceName: &gravitino_host_ip gravitino
   image:
     repository: apache/gravitino
-    tag: 0.6.1-incubating
+    tag: 0.7.0-incubating
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -97,7 +97,7 @@ trino:
   serviceName: &trino_host_ip trino
   image:
     repository: apache/gravitino-playground
-    tag: trino-435-gravitino-0.6.1-incubating
+    tag: trino-435-gravitino-0.7.0-incubating
     pullPolicy: IfNotPresent
   resources:
     limits:
