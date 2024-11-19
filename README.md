@@ -386,13 +386,13 @@ For example, there are a manager and staffs in your company. Manager creates a H
 The manager can give different roles to different staffs.
 
 You can run the command 
+
 ```shell
 ./playground.sh start --enable-ranger
 ```
 
 The demo is located in the `jupyter` folder, you can open the `gravitino-access-control-example.ipynb`
 demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
-
 
 ## ASF Incubator disclaimer
 
