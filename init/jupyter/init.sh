@@ -23,5 +23,4 @@ else
   cp -r /tmp/gravitino/authorization/*.ipynb /home/jovyan
 fi
 
-export HADOOP_USER_NAME=anonymous
 start-notebook.sh --NotebookApp.token=''
