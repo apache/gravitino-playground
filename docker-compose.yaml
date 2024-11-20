@@ -18,7 +18,7 @@
 #
 services:
   hive:
-    image: apache/gravitino-playground:hive-2.7.3.1
+    image: apache/gravitino-playground:hive-0.1.14
     ports:
       - "3307:3306"
       - "19000:9000"
