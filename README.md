@@ -36,20 +36,19 @@ Docker Desktop (or Orbstack) with Kubernetes enabled and helm CLI is required if
 
 The playground runs several services. The TCP ports used may clash with existing services you run, such as MySQL or Postgres.
 
-| Docker container      | Ports used             |
-| --------------------- | ---------------------- |
-| playground-gravitino  | 8090 9001              |
-| playground-hive       | 3307 19000 19083 60070 |
-| playground-mysql      | 13306                  |
-| playground-postgresql | 15342                  |
-| playground-trino      | 18080                  |
-| playground-jupyter    | 18888                  |
-| playground-prometheus | 19090                  |
-| playground-grafana    | 13000                  |
+| Container             | Ports bind to host machine by Docker Compose | Ports used by container |
+| --------------------- | -------------------------------------------- | ----------------------- |
+| playground-gravitino  | 8090, 9001                                   | 8090, 9001              |
+| playground-hive       | 3307, 19000, 19083, 60070                    | 3306, 9000, 9083, 50070 |
+| playground-mysql      | 13306                                        | 3306                    |
+| playground-postgresql | 15432                                        | 5432                    |
+| playground-trino      | 18080                                        | 8080                    |
+| playground-spark      | 14040                                        | 4040                    |
+| playground-jupyter    | 18888                                        | 8888                    |
+| playground-prometheus | 19090                                        | 9090                    |
+| playground-grafana    | 13000                                        | 3000                    |
 
 ## Playground usage
-
-
 
 ### One curl command launch playground
 ```shell
@@ -63,100 +62,87 @@ git clone git@github.com:apache/gravitino-playground.git
 cd gravitino-playground
 ```
 
+### Commands
+
+Command will be automatically detected runtime environment and execute corresponding commands.
+
+#### Start
+
+```shell
+./playground.sh start
+```
+
+#### Check status
+```shell
+./playground.sh status
+```
+
+#### Stop
+```shell
+./playground.sh stop
+```
+
+### Port Forwarding
+
 #### Docker
 
-##### Start
-
-```
-./playground.sh docker start
-```
-
-##### Check status
-```shell 
-./playground.sh docker status
-```
-##### Stop playground
-```shell
-./playground.sh docker stop
-```
+Will actomaticaly forward the ports to localhost.
 
 #### Kubernetes
 
-Enable Kubernetes in Docker Desktop or Orbstack.
+Currently, need to manually port-forward the ports to localhost.
 
-In the project root directory, execute this command:
+Command format: `kubectl port-forward svc/<service-name> -n <namespace> <port>:<target-port>`
 
-```
-helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --namespace gravitino-playground --set projectRoot=$(pwd)
-```
+Please refer to the [TCP ports used](#tcp-ports-used) section for the target-port.
 
-##### Start
+for example:
 
-```
-./playground.sh k8s start
-```
-
-##### Check status
-```shell 
-./playground.sh k8s status
-```
-
-##### Port Forwarding 
-
-To access the pods or services at `localhost`, you need to do these steps:
-
-1. Log in to the Gravitino playground Trino pod using the following command:
-
-```
-TRINO_POD=$(kubectl get pods --namespace gravitino-playground -l app=trino -o jsonpath="{.items[0].metadata.name}")
-kubectl exec $TRINO_POD -n gravitino-playground -it -- /bin/bash
-```
-2. Log in to the Gravitino playground Spark pod using the following command:
-
-```
-SPARK_POD=$(kubectl get pods --namespace gravitino-playground -l app=spark -o jsonpath="{.items[0].metadata.name}")
-kubectl exec $SPARK_POD -n gravitino-playground -it -- /bin/bash
-```
-
-3. Port-forward the Gravitino service to access it at `localhost:8090`.
-
-```
-kubectl port-forward svc/gravitino -n gravitino-playground 8090:8090      
-```
-
-4. Port-forward the Jupyter Notebook service to access it at `localhost:8888`.
-
-```
-kubectl port-forward svc/jupyternotebook -n gravitino-playground 8888:8888
-```
-
-##### Stop playground
 ```shell
-./playground.sh k8s stop
+# gravitino
+kubectl port-forward svc/gravitino -n gravitino-playground 8090:8090
+# jupyternotebook
+kubectl port-forward svc/jupyternotebook -n gravitino-playground 18888:8888
 ```
-
-
-
 
 ## Experiencing Apache Gravitino with Trino SQL
 
-### Using Trino CLI in Docker Container
+### Using Trino CLI
 
-1. Login to the Gravitino playground Trino Docker container using the following command:
+1. Login to the Gravitino playground Trino service using the following command:
 
 ```shell
+# Docker
 docker exec -it playground-trino bash
-````
+```
+
+```shell
+# Kubernetes
+TRINO_POD=$(kubectl get pods --namespace gravitino-playground -l app=trino -o jsonpath="{.items[0].metadata.name}")
+kubectl exec $TRINO_POD -n gravitino-playground -it -- /bin/bash
+```
 
 2. Open the Trino CLI in the container.
 
 ```shell
-trino@container_id:/$ trino
+trino
 ```
 
 ## Using Jupyter Notebook
 
-1. Open the Jupyter Notebook in the browser at [http://localhost:18888](http://localhost:18888).
+first, port-forward the jupyternotebook service to localhost:
+
+```shell
+# Docker
+# Not necessary, because it will be automatically forwarded to localhost
+```
+
+```shell
+# Kubernetes
+kubectl port-forward svc/jupyternotebook -n gravitino-playground 18888:8888
+```
+
+1. Open the Jupyter Notebook in the browser [http://localhost:18888](http://localhost:18888).
 
 2. Open the `gravitino-trino-example.ipynb` notebook.
 
@@ -167,16 +153,25 @@ trino@container_id:/$ trino
 1. Login to the Gravitino playground Spark Docker container using the following command:
 
 ```shell
+# Docker
 docker exec -it playground-spark bash
-````
+```
+
+```shell
+# Kubernetes
+SPARK_POD=$(kubectl get pods --namespace gravitino-playground -l app=spark -o jsonpath="{.items[0].metadata.name}")
+kubectl exec $SPARK_POD -n gravitino-playground -it -- /bin/bash
+```
 
 2. Open the Spark SQL client in the container.
 
 ```shell
-spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql
+cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
-## Monitoring Gravitino
+## Monitoring Gravitino(Docker only)
+
+Currently, not supported in Kubernetes.
 
 1. Open the Grafana in the browser at [http://localhost:13000](http://localhost:13000).
 
