@@ -22,8 +22,15 @@ sed -i '$d' /tmp/start-ranger-services.sh
 sed -i '$d' /tmp/start-ranger-services.sh
 /tmp/start-ranger-services.sh
 
-# https://ranger.apache.org/apidocs/resource_PublicAPIsv2.html#resource_PublicAPIsv2_createService_POST
-sleep 5s
+status=0
+while [ $status -ne 1 ]; do
+    status=$(curl -iv -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/service 2> /dev/null | grep -c '200 OK')
+
+    if [ "$status" -ne '1' ]; then
+        sleep 5
+    fi
+done
+
 curl -iv -u admin:rangerR0cks! -d @/tmp/ranger/hiveDev.json -H "Content-Type: application/json" -X POST http://127.0.0.1:6080/service/public/v2/api/service
 curl -iv -u admin:rangerR0cks! -d @/tmp/ranger/hdfsDev.json -H "Content-Type: application/json" -X POST http://127.0.0.1:6080/service/public/v2/api/service
 curl -iv -u admin:rangerR0cks! -H "Content-Type: application/json" -X DELETE http://localhost:6080/service/plugins/policies/1

@@ -10,11 +10,6 @@
   </property>
 
   <property>
-    <name>hadoop.http.staticuser.user</name>
-    <value>hadoopuser</value>
-  </property>
-
-  <property>
     <name>hadoop.proxyuser.hive.hosts</name>
     <value>*</value>
   </property>
