@@ -378,6 +378,22 @@ os.environ["OPENAI_API_KEY"] = ""
 os.environ["OPENAI_API_BASE"] = ""
 ```
 
+### Using Gravitino with Ranger authorization
+
+Gravitino supports to provide the ability of access control for Hive tables using Ranger plugin.
+
+For example, there are a manager and staffs in your company. Manager creates a Hive catalog and create different roles.
+The manager can give different roles to different staffs.
+
+You can run the command 
+
+```shell
+./playground.sh start --enable-ranger
+```
+
+The demo is located in the `jupyter` folder, you can open the `gravitino-access-control-example.ipynb`
+demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
+
 ## ASF Incubator disclaimer
 
 Apache Gravitino is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.

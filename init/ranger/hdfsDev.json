@@ -1,0 +1,26 @@
+{
+  "type" : "hdfs",
+  "tagUpdateTime" : 12345,
+  "description" : "...",
+  "name" : "hdfsDev",
+  "policyVersion" : 12345,
+  "policyUpdateTime" : 12345,
+  "displayName" : "hdfsDev",
+  "tagVersion" : 12345,
+  "configs" : {
+    "username" : "admin",
+    "password" : "admin",
+    "hadoop.security.authentication" : "simple",
+    "hadoop.rpc.protection" : "authentication",
+    "hadoop.security.authorization" : false,
+    "fs.default.name" : "hdfs://hive:9000"
+  },
+  "guid" : "101",
+  "isEnabled" : true,
+  "createTime" : 12345,
+  "createdBy" : "...",
+  "updatedBy" : "...",
+  "id" : 12345,
+  "updateTime" : 12345,
+  "version" : 12345
+}

@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -18,17 +17,24 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+set -ex
 
-jupyter_dir="$(dirname "${BASH_SOURCE-$0}")"
-jupyter_dir="$(
-  cd "${jupyter_dir}" >/dev/null
-  pwd
-)"
-. "${jupyter_dir}/../common/common.sh"
+max_attempts=3
+attempt=0
 
-# Prepare download packages
-if [[ ! -d "${jupyter_dir}/packages" ]]; then
-  mkdir "${jupyter_dir}/packages"
-fi
-ls "${jupyter_dir}/packages/" | xargs -I {} rm "${jupyter_dir}/packages/"{}
-find "${jupyter_dir}/../spark/packages/" | grep jar | xargs -I {} ln {} "${jupyter_dir}/packages/"
+while [ $attempt -lt $max_attempts ]; do
+  response=$(curl -s -o /dev/null -w "%{http_code}" -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/plugins/info)
+  
+  echo "Ranger health check ${response}"
+
+  if [[ ${response} -eq 200 ]]; then
+    exit 0
+  else
+    echo "Attempt $((attempt + 1)) failed..."
+    sleep 1
+  fi
+  
+  ((attempt++))
+done
+
+exit 1

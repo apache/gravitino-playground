@@ -133,7 +133,12 @@ start() {
     ;;
   docker)
     logSuffix=$(date +%Y%m%d%H%m%s)
-    docker-compose up --detach
+    if [ "$enableRanger" == true ]; then
+        docker-compose -f docker-compose.yaml -f docker-hive-override.yaml up --detach
+    else
+        docker-compose up --detach
+    fi
+    
     docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
     echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
     ;;
@@ -188,6 +193,13 @@ start)
     echo "The playground requires 2 CPU cores, 8 GB of RAM, and 25 GB of disk storage to operate efficiently."
     read -r -p "Confirm the requirement is available in your OS [Y/n]:" input
   fi
+
+  if [[ "$4" == "--enable-ranger" || "$3" == "--enable-ranger" ]]; then
+    enableRanger=true
+  else
+    enableRanger=false
+  fi
+
   case $input in
   [yY][eE][sS] | [yY]) ;;
   [nN][oO] | [nN])
