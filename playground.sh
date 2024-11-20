@@ -32,7 +32,7 @@ dockerComposeCommand=""
 requiredDiskSpaceGB=25
 requiredRamGB=8
 requiredCpuCores=2
-requiredPorts=(8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
+requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
 
 testDocker() {
   echo "[INFO] Testing Docker environment by running hello-world..."
@@ -319,7 +319,12 @@ checkCurrentRuntime() {
 }
 
 start() {
-  echo "[INFO] Starting the playground..."
+  if [ "${enableRanger}" == true ]; then
+    echo "[INFO] Starting the playground with Ranger..."
+  else
+    echo "[INFO] Starting the playground..."
+  fi
+
   echo "[INFO] The playground requires ${requiredCpuCores} CPU cores, ${requiredRamGB} GB of RAM, and ${requiredDiskSpaceGB} GB of disk storage to operate efficiently."
 
   checkCurrentRuntime
@@ -362,8 +367,8 @@ start() {
     ;;
   docker)
     logSuffix=$(date +%Y%m%d%H%M%s)
-    if [ "$enableRanger" == true ]; then
-      ${dockerComposeCommand} -p ${playgroundRuntimeName} -f docker-compose.yaml -f docker-hive-override.yaml up --detach
+    if [ "${enableRanger}" == true ]; then
+      ${dockerComposeCommand} -f docker-compose.yaml -f docker-hive-override.yaml -p ${playgroundRuntimeName} up --detach
     else
       ${dockerComposeCommand} -p ${playgroundRuntimeName} up --detach
     fi
@@ -414,7 +419,7 @@ stop() {
 
 case "$1" in
 start)
-  if [["$3" == "--enable-ranger" ]]; then
+  if [[ "$2" == "--enable-ranger" ]]; then
     enableRanger=true
   else
     enableRanger=false

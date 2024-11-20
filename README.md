@@ -47,6 +47,7 @@ The playground runs several services. The TCP ports used may clash with existing
 | playground-jupyter    | 18888                                        | 8888                    |
 | playground-prometheus | 19090                                        | 9090                    |
 | playground-grafana    | 13000                                        | 3000                    |
+| playground-ranger     | 6080                                         | 6080                    |
 
 ## Playground usage
 
@@ -380,7 +381,7 @@ Gravitino supports to provide the ability of access control for Hive tables usin
 For example, there are a manager and staffs in your company. Manager creates a Hive catalog and create different roles.
 The manager can give different roles to different staffs.
 
-You can run the command 
+You can run the command
 
 ```shell
 ./playground.sh start --enable-ranger
