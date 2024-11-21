@@ -134,7 +134,7 @@ start() {
   docker)
     logSuffix=$(date +%Y%m%d%H%m%s)
     if [ "$enableRanger" == true ]; then
-        docker-compose -f docker-compose.yaml -f docker-hive-override.yaml up --detach
+        docker-compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
     else
         docker-compose up --detach
     fi
