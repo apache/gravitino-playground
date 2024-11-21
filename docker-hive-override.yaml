@@ -41,27 +41,6 @@ services:
       retries: 5
       start_period: 20s
 
-  ranger:
-    image: apache/gravitino-ci:ranger-0.1.1
-    ports:
-      - "6080:6080"
-    container_name: playground-ranger
-    entrypoint: /bin/bash /tmp/ranger/init.sh
-    volumes:
-      - ./healthcheck:/tmp/healthcheck
-      - ./init/ranger:/tmp/ranger
-    healthcheck:
-      test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
-      interval: 5s
-      timeout: 60s
-      retries: 5
-      start_period: 120s
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 500M
-          
   jupyter:
     environment:
       - RANGER_ENABLE=true
