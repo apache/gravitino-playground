@@ -21,7 +21,6 @@
 sed -i '$d' /usr/local/sbin/start.sh
 sed -i '$d' /usr/local/sbin/start.sh
 cp /tmp/hive/core-site.xml /tmp/hadoop-conf
-sed -i "s|hdfs://localhost:9000|hdfs://${HIVE_HOST_IP}:9000|g" /usr/local/hive/conf/hive-site.xml
 /bin/bash /usr/local/sbin/start.sh
 hdfs dfs -mkdir -p /user/gravitino
 hdfs dfs -mkdir -p /user/iceberg/warehouse
