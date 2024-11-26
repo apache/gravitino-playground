@@ -102,16 +102,16 @@ stop() {
 	fi
 }
 
-case "$2" in
+case "$1" in
 start)
-  if [[ "$3" == "-y" ]]; then
+  if [[ "$2" == "-y" ]]; then
     input="y"
   else
     echo "The playground requires 2 CPU cores, 8 GB of RAM, and 25 GB of disk storage to operate efficiently."
     read -r -p "Confirm the requirement is available in your OS [Y/n]:" input
   fi
 
-  if [[ "$4" == "--enable-ranger" || "$3" == "--enable-ranger" ]]; then
+  if [[ "$3" == "--enable-ranger" || "$3" == "--enable-ranger" ]]; then
     enableRanger=true
   else
     enableRanger=false
@@ -136,7 +136,7 @@ stop)
   stop
   ;;
 *)
-  echo "Usage: $0 [k8s|docker] [start | status | stop]"
+  echo "Usage: $0 [start | status | stop]"
   exit 1
   ;;
 esac
