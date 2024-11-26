@@ -19,12 +19,8 @@
 #
 set -ex
 
-# Set Hive connection details
-HOST_IP=${HIVE_HOST_IP:-localhost}
-HIVE_PORT="10000"
-
 # Attempt to connect to Hive using curl
-curl -s -o /dev/null -w "%{http_code}" http://${HOST_IP}:${HIVE_PORT}
+curl -s -o /dev/null -w "%{http_code}" http://localhost:10000
 
 # Check the HTTP status code
 if [ $? -eq 0 ]; then
