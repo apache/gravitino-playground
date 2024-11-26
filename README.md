@@ -26,7 +26,6 @@ Depending on your network and computer, startup time may take 3-5 minutes. Once 
 ## Prerequisites
 
 Install Git (optional), Docker, Docker Compose.
-Docker Desktop (or Orbstack) with Kubernetes enabled and helm CLI is required if you use helm-chart to deploy services.
 
 ## System Resource Requirements
 
