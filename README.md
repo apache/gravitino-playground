@@ -62,80 +62,20 @@ git clone git@github.com:apache/gravitino-playground.git
 cd gravitino-playground
 ```
 
-#### Docker
-
-##### Start
+### Start
 
 ```
 ./playground.sh docker start
 ```
 
-##### Check status
+### Check status
 ```shell 
 ./playground.sh docker status
 ```
-##### Stop playground
+### Stop playground
 ```shell
 ./playground.sh docker stop
 ```
-
-#### Kubernetes
-
-Enable Kubernetes in Docker Desktop or Orbstack.
-
-In the project root directory, execute this command:
-
-```
-helm upgrade --install gravitino-playground ./helm-chart/ --create-namespace --namespace gravitino-playground --set projectRoot=$(pwd)
-```
-
-##### Start
-
-```
-./playground.sh k8s start
-```
-
-##### Check status
-```shell 
-./playground.sh k8s status
-```
-
-##### Port Forwarding 
-
-To access the pods or services at `localhost`, you need to do these steps:
-
-1. Log in to the Gravitino playground Trino pod using the following command:
-
-```
-TRINO_POD=$(kubectl get pods --namespace gravitino-playground -l app=trino -o jsonpath="{.items[0].metadata.name}")
-kubectl exec $TRINO_POD -n gravitino-playground -it -- /bin/bash
-```
-2. Log in to the Gravitino playground Spark pod using the following command:
-
-```
-SPARK_POD=$(kubectl get pods --namespace gravitino-playground -l app=spark -o jsonpath="{.items[0].metadata.name}")
-kubectl exec $SPARK_POD -n gravitino-playground -it -- /bin/bash
-```
-
-3. Port-forward the Gravitino service to access it at `localhost:8090`.
-
-```
-kubectl port-forward svc/gravitino -n gravitino-playground 8090:8090      
-```
-
-4. Port-forward the Jupyter Notebook service to access it at `localhost:8888`.
-
-```
-kubectl port-forward svc/jupyternotebook -n gravitino-playground 8888:8888
-```
-
-##### Stop playground
-```shell
-./playground.sh k8s stop
-```
-
-
-
 
 ## Experiencing Apache Gravitino with Trino SQL
 
