@@ -111,7 +111,7 @@ start)
     read -r -p "Confirm the requirement is available in your OS [Y/n]:" input
   fi
 
-  if [[ "$3" == "--enable-ranger" ]]; then
+  if [[ "$2" == "--enable-ranger" || "$3" == "--enable-ranger" ]]; then
     enableRanger=true
   else
     enableRanger=false
