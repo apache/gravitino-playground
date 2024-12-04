@@ -21,6 +21,9 @@
 sed -i '$d' /usr/local/sbin/start.sh
 sed -i '$d' /usr/local/sbin/start.sh
 cp /tmp/hive/core-site.xml /tmp/hadoop-conf
+# replace __REPLACE__HOST_NAME by hive
+# Ref: https://github.com/apache/gravitino/blob/v0.7.0-incubating/dev/docker/hive/hive-site.xml#L42
+sed -i "s|hdfs://__REPLACE__HOST_NAME:9000|hdfs://hive:9000|g" /usr/local/hive/conf/hive-site.xml
 /bin/bash /usr/local/sbin/start.sh
 hdfs dfs -mkdir -p /user/gravitino
 hdfs dfs -mkdir -p /user/iceberg/warehouse
