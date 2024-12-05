@@ -65,9 +65,6 @@ services:
       - "8090:8090"
       - "9001:9001"
     container_name: playground-gravitino
-    environment:
-      - MYSQL_HOST_IP=mysql
-      - HIVE_HOST_IP=hive
     depends_on:
       ranger :
         condition: service_healthy
