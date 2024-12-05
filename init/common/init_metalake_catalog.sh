@@ -17,11 +17,11 @@
 # under the License.
 #
 
-response=$(curl http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo)
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo)
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
-  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"metalake_demo","comment":"comment","properties":{}}' http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes)
+  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"metalake_demo","comment":"comment","properties":{}}' http://gravitino:8090/api/metalakes)
   if echo "$response" | grep -q "\"code\":0"; then
     true # Placeholder, do nothing
   else
@@ -30,12 +30,12 @@ else
   fi
 fi
 
-response=$(curl http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs/catalog_hive)
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_hive)
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
   # Create Hive catalog for experience Gravitino service
-  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://'${HIVE_HOST_IP}':9083" }}' http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs)
+  response=$(curl -X POST -H "Content-Type: application/json" -d '{"name":"catalog_hive","type":"RELATIONAL", "provider":"hive", "comment":"comment","properties":{"metastore.uris":"thrift://'${HIVE_HOST_IP}':9083" }}' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   if echo "$response" | grep -q "\"code\":0"; then
     true # Placeholder, do nothing
   else
@@ -44,12 +44,12 @@ else
   fi
 fi
 
-response=$(curl http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs/catalog_postgres)
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_postgres)
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
   # Create Postgresql catalog for experience Gravitino service
-  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_postgres", "type":"RELATIONAL", "provider":"jdbc-postgresql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:postgresql://postgresql/db", "jdbc-user":"postgres", "jdbc-password":"postgres", "jdbc-database":"db", "jdbc-driver": "org.postgresql.Driver" } }' http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs)
+  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_postgres", "type":"RELATIONAL", "provider":"jdbc-postgresql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:postgresql://postgresql/db", "jdbc-user":"postgres", "jdbc-password":"postgres", "jdbc-database":"db", "jdbc-driver": "org.postgresql.Driver" } }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   if echo "$response" | grep -q "\"code\":0"; then
     true # Placeholder, do nothing
   else
@@ -58,12 +58,12 @@ else
   fi
 fi
 
-response=$(curl http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs/catalog_mysql)
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_mysql)
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
   # Create Mysql catalog for experience Gravitino service
-  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_mysql", "type":"RELATIONAL", "provider":"jdbc-mysql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:mysql://'${MYSQL_HOST_IP}':3306", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver": "com.mysql.cj.jdbc.Driver" } }' http://${GRAVITINO_HOST_IP}:8090/api/metalakes/metalake_demo/catalogs)
+  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_mysql", "type":"RELATIONAL", "provider":"jdbc-mysql", "comment":"comment", "properties":{ "jdbc-url":"jdbc:mysql://'${MYSQL_HOST_IP}':3306", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver": "com.mysql.cj.jdbc.Driver" } }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   
   if echo "$response" | grep -q "catalog_mysql"; then
     true # Placeholder, do nothing
@@ -73,12 +73,12 @@ else
   fi
 fi
 
-response=$(curl http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs/catalog_iceberg)
+response=$(curl http://gravitino:8090/api/metalakes/metalake_demo/catalogs/catalog_iceberg)
 if echo "$response" | grep -q "\"code\":0"; then
   true
 else
   # Create Iceberg catalog for experience Gravitino service
-  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_iceberg", "type":"RELATIONAL", "provider":"lakehouse-iceberg", "comment":"comment", "properties":{ "uri":"jdbc:mysql://'${MYSQL_HOST_IP}':3306/db", "catalog-backend":"jdbc", "warehouse":"hdfs://'${HIVE_HOST_IP}':9000/user/iceberg/warehouse/", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver":"com.mysql.cj.jdbc.Driver"} }' http://${GRAVITINO_HOST_IP}:${GRAVITINO_HOST_PORT}/api/metalakes/metalake_demo/catalogs)
+  response=$(curl -X POST -H "Accept: application/vnd.gravitino.v1+json" -H "Content-Type: application/json" -d '{ "name":"catalog_iceberg", "type":"RELATIONAL", "provider":"lakehouse-iceberg", "comment":"comment", "properties":{ "uri":"jdbc:mysql://'${MYSQL_HOST_IP}':3306/db", "catalog-backend":"jdbc", "warehouse":"hdfs://'${HIVE_HOST_IP}':9000/user/iceberg/warehouse/", "jdbc-user":"mysql", "jdbc-password":"mysql", "jdbc-driver":"com.mysql.cj.jdbc.Driver"} }' http://gravitino:8090/api/metalakes/metalake_demo/catalogs)
   if echo "$response" | grep -q "\"code\":0"; then
     true # Placeholder, do nothing
   else
