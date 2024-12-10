@@ -19,8 +19,7 @@
 #
 set -ex
 
-HOST_IP=${MYSQL_HOST_IP:-localhost}
-mysqladmin ping -h ${HOST_IP} -p${MYSQL_ROOT_PASSWORD}
+mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD}
 if [ $? -eq 0 ]; then
   echo "MySQL container started successfully."
   exit 0
