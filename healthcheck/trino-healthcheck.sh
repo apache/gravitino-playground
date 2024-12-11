@@ -20,7 +20,7 @@
 set -ex
 
 # Because trino-connector must first synchronize a default metalake from the Gravitino server
-response=$(trino --server ${TRINO_HOST_IP}:8080 --execute "SHOW CATALOGS LIKE 'catalog_hive'")
+response=$(trino --server localhost:8080 --execute "SHOW CATALOGS LIKE 'catalog_hive'")
 if echo "$response" | grep -q catalog_hive; then
   echo "Gravitino Trino connector has finished synchronizing metadata"
 else
