@@ -17,10 +17,9 @@
 # under the License.
 #
 
-# remove command line `tail -f /dev/null` in the `/usr/local/sbin/start.sh`, so we can run subsequent commands
-if [[ $(tail -n 1 /usr/local/sbin/start.sh) == 'tail -f /dev/null' ]]; then
-	sed -i '$d' /usr/local/sbin/start.sh
-fi
+# remove command `tail -f /dev/null` in `/usr/local/sbin/start.sh`, so we can run subsequent commands
+sed -i -E 's/tail -f \/dev\/null/\s/g' /usr/local/sbin/start.sh
+
 cp /tmp/hive/core-site.xml /tmp/hadoop-conf
 /bin/bash /usr/local/sbin/start.sh
 hdfs dfs -mkdir -p /user/gravitino
