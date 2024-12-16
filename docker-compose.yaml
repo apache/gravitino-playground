@@ -65,9 +65,6 @@ services:
       - "8090:8090"
       - "9001:9001"
     container_name: playground-gravitino
-    environment:
-      - MYSQL_HOST_IP=mysql
-      - HIVE_HOST_IP=hive
     depends_on:
       ranger :
         condition: service_healthy
@@ -160,10 +157,6 @@ services:
     entrypoint: /bin/bash /tmp/spark/init.sh
     environment:
       - HADOOP_USER_NAME=root
-      - GRAVITINO_HOST_IP=gravitino
-      - GRAVITINO_HOST_PORT=8090
-      - HIVE_HOST_IP=hive
-      - TRINO_HOST_IP=trino
     ports:
       - "14040:4040"
     volumes:
@@ -173,11 +166,6 @@ services:
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1
     container_name: playground-jupyter
-    environment:
-      - GRAVITINO_HOST_IP=gravitino
-      - HIVE_HOST_IP=hive
-      - TRINO_HOST_IP=trino
-      - POSTGRES_HOST_IP=postgresql
     ports:
       - "18888:8888"
     volumes:
