@@ -18,21 +18,28 @@
 # under the License.
 #
 
-set -x
-
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(
-  cd "${playground_dir}" >/dev/null
+  cd "${playground_dir}" >/dev/null || exit 1
   pwd
 )"
 
+playgroundRuntimeName="gravitino-playground"
+requiredDiskSpaceGB=25
+requiredRamGB=8
+requiredCpuCores=2
+requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
+dockerComposeCommand=""
+
 testDocker() {
-  echo "INFO: Testing Docker environment by running hello-world..."
-  docker run --pull always hello-world:latest >/dev/null 2>&1
+  echo "[INFO] Testing Docker environment by running hello-world..."
+  # Use `always` to test network connection
+  docker run --rm --pull always hello-world:linux >/dev/null 2>&1
+
   if [ $? -eq 0 ]; then
-    echo "INFO: Docker is working correctly!"
+    echo "[INFO] Docker check passed: Docker is working correctly!"
   else
-    echo "ERROR: There was an issue running the hello-world container. Please check your Docker installation."
+    echo "[ERROR] Docker check failed: There was an issue running the hello-world container. Please check your Docker installation."
     exit 1
   fi
   for containerId in $(docker ps -a | grep hello-world | awk '{print $1}'); do
@@ -43,97 +50,177 @@ testDocker() {
   done
 }
 
-checkCompose() {
-  isExist=$(which docker-compose)
-  if [ $isExist ]; then
-    true # Placeholder, do nothing
+checkDockerCompose() {
+  dockerComposeCommand=""
+  if command -v docker >/dev/null 2>&1 && command -v docker compose >/dev/null 2>&1; then
+    dockerComposeCommand="docker compose"
+  elif command -v docker-compose >/dev/null 2>&1; then
+    dockerComposeCommand="docker-compose"
   else
-    echo "ERROR: No docker service environment found. Please install docker-compose."
-    exit
+    echo "[ERROR] Docker compose check failed: There was an issue running the docker compose command. Please check your docker compose installation."
+    exit 1
+  fi
+  echo "[INFO] Docker compose check passed: Docker compose is working correctly using ${dockerComposeCommand} command!"
+}
+
+checkPlaygroundNotRunning() {
+  if ${dockerComposeCommand} ls | grep -q "${playgroundRuntimeName}"; then
+    echo "[ERROR] Playground runtime is already running. Please stop it first."
+    exit 1
   fi
 }
 
-checkPortInUse() {
-  local port=$1
-  if [[ "$(uname)" == "Darwin" ]]; then
-    openPort=$(lsof -i :$port -sTCP:LISTEN)
-  elif [[ "$(uname)" == "Linux" ]]; then
-    echo "Checking ports with sudo permission ..."
-    openPort=$(sudo lsof -i :$port -sTCP:LISTEN)
+checkPlaygroundRunning() {
+  if ! ${dockerComposeCommand} ls | grep -q "${playgroundRuntimeName}"; then
+    echo "[ERROR] Playground runtime is not running. Please start it first."
+    exit 1
   fi
-  if [ -z "${openPort}" ]; then
-    echo "INFO: Port $port is ok."
+}
+
+checkDockerDisk() {
+  # Step 1: Get Docker Root Directory
+  local dockerRootDir="$(docker info 2>/dev/null | grep "Docker Root Dir" | awk '{print $NF}')"
+
+  # Step 2: Check if the Docker directory exists
+  if [ -z "${dockerRootDir}" ]; then
+    echo "[ERROR] Docker disk check failed: Docker is not running or Docker Root Directory not found."
+    exit 1
+  fi
+
+  local availableSpaceKB
+
+  if [ -d "${dockerRootDir}" ]; then
+    # Check available space in the Docker directory's partition
+    availableSpaceKB=$(df -k "${dockerRootDir}" | awk 'NR==2 {print $4}')
   else
-    echo "ERROR: Port $port is in use. Please check it."
+    # Check available space in the root partition if the directory doesn't exist (special case for WSL)
+    availableSpaceKB=$(df -k / | awk 'NR==2 {print $4}')
+  fi
+
+  # Step 3: Check if available space is greater than required
+  local availableSpaceGB=$((${availableSpaceKB} / 1024 / 1024))
+
+  if [ "${availableSpaceGB}" -ge "${requiredDiskSpaceGB}" ]; then
+    echo "[INFO] Docker disk check passed: ${availableSpaceGB} GB available."
+  else
+    echo "[ERROR] Docker disk check failed: Only ${availableSpaceGB} GB available, required ${requiredDiskSpaceGB} GB or more."
+    exit 1
+  fi
+}
+
+checkDockerRam() {
+  local totalRamBytes=$(docker info --format '{{.MemTotal}}')
+  # Convert from bytes to GB
+  local totalRamGB=$((totalRamBytes / 1024 / 1024 / 1024))
+
+  if [ "${totalRamGB}" -ge "${requiredRamGB}" ]; then
+    echo "[INFO] Docker RAM check passed: ${totalRamGB} GB available."
+  else
+    echo "[ERROR] Docker RAM check failed: Only ${totalRamGB} GB available, required ${requiredRamGB} GB or more."
+    exit 1
+  fi
+}
+
+checkDockerCpu() {
+  local cpuCores=$(docker info --format '{{.NCPU}}')
+
+  if [ "${cpuCores}" -ge "${requiredCpuCores}" ]; then
+    echo "[INFO] Docker CPU check passed: ${cpuCores} cores available."
+  else
+    echo "[ERROR] Docker CPU check failed: Only ${cpuCores} cores available, required ${requiredCpuCores} cores or more."
+    exit 1
+  fi
+}
+
+checkPortsInUse() {
+  local usedPorts=()
+  local availablePorts=()
+
+  for port in "${requiredPorts[@]}"; do
+    if [[ "$(uname)" == "Darwin" ]]; then
+      openPort=$(lsof -i :${port} -sTCP:LISTEN)
+    # Use sudo only when necessary
+    elif [[ "$(uname)" == "Linux" ]]; then
+      openPort=$(sudo lsof -i :${port} -sTCP:LISTEN)
+    fi
+
+    if [ -z "${openPort}" ]; then
+      availablePorts+=("${port}")
+    else
+      usedPorts+=("${port}")
+    fi
+  done
+
+  echo "[INFO] Port status check results:"
+
+  if [ ${#availablePorts[@]} -gt 0 ]; then
+    echo "[INFO] Available ports: ${availablePorts[*]}"
+  fi
+
+  if [ ${#usedPorts[@]} -gt 0 ]; then
+    echo "[ERROR] Ports in use: ${usedPorts[*]}"
+    echo "[ERROR] Please check these ports."
     exit 1
   fi
 }
 
 start() {
-  echo "INFO: Starting the playground..."
+  if [ "${enableRanger}" == true ]; then
+    echo "[INFO] Starting the playground with Ranger..."
+  else
+    echo "[INFO] Starting the playground..."
+  fi
 
+  echo "[INFO] The playground requires ${requiredCpuCores} CPU cores, ${requiredRamGB} GB of RAM, and ${requiredDiskSpaceGB} GB of disk storage to operate efficiently."
+
+  checkPortsInUse
   testDocker
-  checkCompose
-  ports=(8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
-  for port in "${ports[@]}"; do
-    checkPortInUse ${port}
-  done
+  checkDockerCompose
+  checkPlaygroundNotRunning
+  checkDockerDisk
+  checkDockerRam
+  checkDockerCpu
 
   cd ${playground_dir}
-  echo "Preparing packages..."
+  echo "[INFO] Preparing packages..."
   ./init/spark/spark-dependency.sh
   ./init/gravitino/gravitino-dependency.sh
   ./init/jupyter/jupyter-dependency.sh
 
-  logSuffix=$(date +%Y%m%d%H%m%s)
-  if [ "$enableRanger" == true ]; then
-    docker-compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
+  logSuffix=$(date +%Y%m%d%H%M%s)
+  if [ "${enableRanger}" == true ]; then
+    ${dockerComposeCommand} -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml -p ${playgroundRuntimeName} up --detach
   else
-    docker-compose up --detach
+    ${dockerComposeCommand} -p ${playgroundRuntimeName} up --detach
   fi
-
-  docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
-  echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
+  ${dockerComposeCommand} -p ${playgroundRuntimeName} logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
+  echo "[INFO] Check log details: ${playground_dir}/playground-${logSuffix}.log"
 }
 
 status() {
-  docker-compose ps -a
+  checkDockerCompose
+  checkPlaygroundRunning
+  ${dockerComposeCommand} ps -a
 }
 
 stop() {
-  echo "INFO: Stopping the playground..."
+  checkDockerCompose
+  checkPlaygroundRunning
+  echo "[INFO] Stopping the playground..."
 
-  docker-compose down
+  ${dockerComposeCommand} down
   if [ $? -eq 0 ]; then
-    echo "INFO: Playground stopped!"
+    echo "[INFO] Playground stopped!"
   fi
 }
 
 case "$1" in
 start)
-  if [[ "$2" == "-y" ]]; then
-    input="y"
-  else
-    echo "The playground requires 2 CPU cores, 8 GB of RAM, and 25 GB of disk storage to operate efficiently."
-    read -r -p "Confirm the requirement is available in your OS [Y/n]:" input
-  fi
-
-  if [[ "$2" == "--enable-ranger" || "$3" == "--enable-ranger" ]]; then
+  if [[ "$2" == "--enable-ranger" ]]; then
     enableRanger=true
   else
     enableRanger=false
   fi
-
-  case $input in
-  [yY][eE][sS] | [yY]) ;;
-  [nN][oO] | [nN])
-    exit 0
-    ;;
-  *)
-    echo "ERROR: Invalid input!"
-    exit 1
-    ;;
-  esac
   start
   ;;
 status)
@@ -143,7 +230,7 @@ stop)
   stop
   ;;
 *)
-  echo "Usage: $0 [start | status | stop]"
+  echo "Usage: $0 <start|status|stop> [--enable-ranger]"
   exit 1
   ;;
 esac
