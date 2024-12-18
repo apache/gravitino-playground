@@ -48,8 +48,6 @@ The playground runs several services. The TCP ports used may clash with existing
 
 ## Playground usage
 
-
-
 ### One curl command launch playground
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apache/gravitino-playground/HEAD/install.sh)"
@@ -64,17 +62,18 @@ cd gravitino-playground
 
 ### Start
 
-```
-./playground.sh docker start
+```shell
+./playground.sh start
 ```
 
 ### Check status
-```shell 
-./playground.sh docker status
-```
-### Stop playground
 ```shell
-./playground.sh docker stop
+./playground.sh status
+```
+
+### Stop
+```shell
+./playground.sh stop
 ```
 
 ## Experiencing Apache Gravitino with Trino SQL
@@ -85,12 +84,12 @@ cd gravitino-playground
 
 ```shell
 docker exec -it playground-trino bash
-````
+```
 
 2. Open the Trino CLI in the container.
 
 ```shell
-trino@container_id:/$ trino
+trino
 ```
 
 ## Using Jupyter Notebook
@@ -112,7 +111,7 @@ docker exec -it playground-spark bash
 2. Open the Spark SQL client in the container.
 
 ```shell
-spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql
+cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
 ## Monitoring Gravitino
@@ -324,7 +323,7 @@ Gravitino supports to provide the ability of access control for Hive tables usin
 For example, there are a manager and staffs in your company. Manager creates a Hive catalog and create different roles.
 The manager can give different roles to different staffs.
 
-You can run the command 
+You can run the command
 
 ```shell
 ./playground.sh start --enable-ranger
