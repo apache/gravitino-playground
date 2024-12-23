@@ -201,6 +201,12 @@ You might also consider generating data with SparkSQL and then querying this dat
 
 1. Login Spark container and execute the SQLs:
 
+Before running the spark-shells, you need to set the `HADOOP_USER_NAME` environment variable to `anonymous`.
+
+```shell
+export HADOOP_USER_NAME=anonymous
+```
+
 ```sql
 // using Hive catalog to create Hive table
 USE catalog_hive;
