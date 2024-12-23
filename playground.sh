@@ -65,12 +65,12 @@ checkPortInUse() {
 start() {
   echo "INFO: Starting the playground..."
 
-	testDocker
-	checkCompose
-	ports=(8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
-	for port in "${ports[@]}"; do
-		checkPortInUse ${port}
-	done
+  testDocker
+  checkCompose
+  ports=(8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
+  for port in "${ports[@]}"; do
+    checkPortInUse ${port}
+  done
 
   cd ${playground_dir}
   echo "Preparing packages..."
@@ -78,28 +78,28 @@ start() {
   ./init/gravitino/gravitino-dependency.sh
   ./init/jupyter/jupyter-dependency.sh
 
-	logSuffix=$(date +%Y%m%d%H%m%s)
-	if [ "$enableRanger" == true ]; then
-			docker-compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
-	else
-			docker-compose up --detach
-	fi
+  logSuffix=$(date +%Y%m%d%H%m%s)
+  if [ "$enableRanger" == true ]; then
+    docker-compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
+  else
+    docker-compose up --detach
+  fi
 	
-	docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
-	echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
+  docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
+  echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
 }
 
 status() {
-	docker-compose ps -a
+  docker-compose ps -a
 }
 
 stop() {
   echo "INFO: Stopping the playground..."
 
-	docker-compose down
-	if [ $? -eq 0 ]; then
-		echo "INFO: Playground stopped!"
-	fi
+  docker-compose down
+  if [ $? -eq 0 ]; then
+    echo "INFO: Playground stopped!"
+  fi
 }
 
 case "$1" in
