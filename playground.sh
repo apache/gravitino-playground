@@ -52,6 +52,7 @@ checkPortInUse() {
   if [[ "$(uname)" == "Darwin" ]]; then
     openPort=$(lsof -i :$port -sTCP:LISTEN)
   elif [[ "$(uname)" == "Linux" ]]; then
+    echo "Checking ports with sudo permission ...'
     openPort=$(sudo lsof -i :$port -sTCP:LISTEN)
   fi
   if [ -z "${openPort}" ]; then
