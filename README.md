@@ -65,16 +65,16 @@ cd gravitino-playground
 ### Start
 
 ```
-./playground.sh docker start
+./playground.sh start
 ```
 
 ### Check status
 ```shell 
-./playground.sh docker status
+./playground.sh status
 ```
 ### Stop playground
 ```shell
-./playground.sh docker stop
+./playground.sh stop
 ```
 
 ## Experiencing Apache Gravitino with Trino SQL
