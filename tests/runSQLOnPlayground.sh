@@ -54,7 +54,7 @@ else
   exit 1
 fi
 
-for fileName in $(docker exec playground-spark ls  /opt/spark/jars/ | grep gravitino-spark-connector);do
+for fileName in $(docker exec playground-spark ls /opt/spark/jars/ | grep gravitino-spark-connector); do
   docker exec playground-spark rm -rf /opt/spark/jars/${fileName}
 done
 aws s3 cp s3://gravitino-spark-connector/3.4_2.12/ /tmp/gravitino-spark-connector/3.4_2.12 --recursive
@@ -70,7 +70,7 @@ else
   echo "run spark-simple.sql failed"
   exit 1
 fi
-docker exec playground-spark bash /opt/spark/bin/spark-sql -f  union.sql | sort >> /tmp/union-spark.sql.log
+docker exec playground-spark bash /opt/spark/bin/spark-sql -f union.sql | sort >>/tmp/union-spark.sql.log
 if [[ -z $(diff ./union-spark.sql.out /tmp/union-spark.sql.log) ]]; then
   echo "run union.sql in spark successfully"
 else
