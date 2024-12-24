@@ -48,7 +48,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
           cd ${{ github.workspace }}
           ls
-          nohup ./playground.sh docker start -y --enable-ranger > /tmp/playground.log 2>&1 &
+          nohup ./playground.sh start -y --enable-ranger > /tmp/playground.log 2>&1 &
           # wait for gravitino trino ready to use
           i=0
           while [[ ! $(curl -sk http://127.0.0.1:8090) || ! $(curl -sk http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
