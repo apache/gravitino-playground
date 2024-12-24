@@ -5,7 +5,7 @@ on:
     branches:
       - "**"
 jobs:
-  linter:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -30,12 +30,18 @@ jobs:
         run: |
           find . -name '*.xml' -print0 | xargs -0 xmllint --noout
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - uses: KengoTODA/actions-setup-docker-compose@v1
         with:
           version: "2.14.2"
 
-      - name: Deploy
-        id: deploy
+      - name: Run Gravitino Playground Services
+        id: run-gravitino-playground-services
         timeout-minutes: 40
         run: |
           sudo curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
