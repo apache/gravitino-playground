@@ -85,7 +85,7 @@ start() {
   else
     docker-compose up --detach
   fi
-	
+
   docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
   echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
 }
