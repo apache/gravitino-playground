@@ -30,9 +30,6 @@ jobs:
         run: |
           find . -name '*.xml' -print0 | xargs -0 xmllint --noout
 
-      - name: Checkout gravitino-playground
-        uses: actions/checkout@v4
-
       - uses: KengoTODA/actions-setup-docker-compose@v1
         with:
           version: "2.14.2"
