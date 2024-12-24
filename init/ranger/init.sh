@@ -24,11 +24,11 @@ sed -i '$d' /tmp/start-ranger-services.sh
 
 status=0
 while [ $status -ne 1 ]; do
-    status=$(curl -iv -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/service 2> /dev/null | grep -c '200 OK')
+  status=$(curl -iv -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/service 2>/dev/null | grep -c '200 OK')
 
-    if [ "$status" -ne '1' ]; then
-        sleep 5
-    fi
+  if [ "$status" -ne '1' ]; then
+    sleep 5
+  fi
 done
 
 curl -iv -u admin:rangerR0cks! -d @/tmp/ranger/hiveDev.json -H "Content-Type: application/json" -X POST http://127.0.0.1:6080/service/public/v2/api/service

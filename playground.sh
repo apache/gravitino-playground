@@ -52,7 +52,7 @@ checkPortInUse() {
   if [[ "$(uname)" == "Darwin" ]]; then
     openPort=$(lsof -i :$port -sTCP:LISTEN)
   elif [[ "$(uname)" == "Linux" ]]; then
-    echo "Checking ports with sudo permission ...'
+    echo "Checking ports with sudo permission ..."
     openPort=$(sudo lsof -i :$port -sTCP:LISTEN)
   fi
   if [ -z "${openPort}" ]; then
@@ -85,7 +85,7 @@ start() {
   else
     docker-compose up --detach
   fi
-	
+
   docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
   echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
 }

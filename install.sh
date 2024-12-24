@@ -24,20 +24,20 @@ curl -L -o gravitino-playground-main.zip https://github.com/apache/gravitino-pla
 unzip gravitino-playground-main.zip
 
 while true; do
-    # Prompt the user
-    read -p "Would you like to run gravitino-playground immediately? [Y/N]: " choice
+  # Prompt the user
+  read -p "Would you like to run gravitino-playground immediately? [Y/N]: " choice
 
-    # Convert choice to uppercase using `tr`
-    choice=$(echo "$choice" | tr '[:lower:]' '[:upper:]')
+  # Convert choice to uppercase using `tr`
+  choice=$(echo "$choice" | tr '[:lower:]' '[:upper:]')
 
-    if [[ "$choice" == "Y" ]]; then
-        echo "Starting gravitino-playground..."
-        cd ./gravitino-playground-main && ./playground.sh start
-        break
-    elif [[ "$choice" == "N" ]]; then
-        echo "Download complete. You can start gravitino-playground later by running './playground.sh start'."
-        break
-    else
-        echo "Invalid input. Please enter Y or N."
-    fi
+  if [[ "$choice" == "Y" ]]; then
+    echo "Starting gravitino-playground..."
+    cd ./gravitino-playground-main && ./playground.sh start
+    break
+  elif [[ "$choice" == "N" ]]; then
+    echo "Download complete. You can start gravitino-playground later by running './playground.sh start'."
+    break
+  else
+    echo "Invalid input. Please enter Y or N."
+  fi
 done
