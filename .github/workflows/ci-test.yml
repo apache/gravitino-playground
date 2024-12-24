@@ -50,15 +50,16 @@ jobs:
           nohup ./playground.sh docker start -y > /tmp/playground.log 2>&1 &
           # wait for gravitino trino ready to use
           i=0
-          while [[ ! $(curl -k http://127.0.0.1:8090) || ! $(curl -k http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
-          sleep 5
-          i=$(expr $i + 1)
+          while [[ ! $(curl -sk http://127.0.0.1:8090) || ! $(curl -sk http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
+            echo "Waiting for Gravitino playground to be ready..."
+            sleep 5
+            i=$(expr $i + 1)
           done
           docker ps
-          if [[ $(curl -k http://127.0.0.1:8090) && $(curl -k http://127.0.0.1:18080/v1/info) ]]; then
-            echo "gravitino and trino are ready to use"
+          if [[ $(curl -sk http://127.0.0.1:8090) && $(curl -sk http://127.0.0.1:18080/v1/info) ]]; then
+            echo "Gravitino and Trino are ready to use"
           else
-            echo "gravitino or trino not ready"
+            echo "Gravitino or Trino is not ready"
             exit 1
           fi
 
