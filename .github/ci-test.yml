@@ -1,12 +1,9 @@
 name: "[CI]"
+
 on:
-  pull_request:
+  push:
     branches:
-      - main
-    paths:
-      - "**.sh"
-      - "**.xml"
-      - "helm-chart/**"
+      - "**"
 jobs:
   linter:
     runs-on: ubuntu-latest
