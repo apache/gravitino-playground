@@ -19,13 +19,13 @@ done
 
 # check trino catalog loaded
 j=0
-rm -rf /tmp/trino-test.sql.log
-trino --server http://127.0.0.1:18080 -f ./trino-test.sql >>/tmp/trino-test.sql.log
-while [[ -n $(diff ./trino-test.sql.out /tmp/trino-test.sql.log) && $j -le 200 ]]; do
+rm -rf /tmp/playground-log/trino-test.sql.log
+trino --server http://127.0.0.1:18080 -f ./trino-test.sql >>/tmp/playground-log/trino-test.sql.log
+while [[ -n $(diff ./trino-test.sql.out /tmp/playground-log/trino-test.sql.log) && $j -le 200 ]]; do
   sleep 5
   j=$(expr $j + 1)
-  rm -rf /tmp/trino-test.sql.log
-  trino --server http://127.0.0.1:18080 -f ./trino-test.sql >>/tmp/trino-test.sql.log
+  rm -rf /tmp/playground-log/trino-test.sql.log
+  trino --server http://127.0.0.1:18080 -f ./trino-test.sql >>/tmp/playground-log/trino-test.sql.log
 done
 
 # run sql and check results
@@ -45,9 +45,9 @@ while [[ ${num} -lt 42 && $i -le 200 ]]; do
   i=$(expr $i + 1)
   num=$(trino --server http://127.0.0.1:18080 -f ./trino-cross-catalog.sql | wc -l)
 done
-rm -rf /tmp/trino-cross-catalog.sql.log
-trino --server http://127.0.0.1:18080 -f ./trino-cross-catalog.sql | sort >>/tmp/trino-cross-catalog.sql.log
-if [[ -z $(diff ./trino-cross-catalog.sql.out /tmp/trino-cross-catalog.sql.log) ]]; then
+rm -rf /tmp/playground-log/trino-cross-catalog.sql.log
+trino --server http://127.0.0.1:18080 -f ./trino-cross-catalog.sql | sort >>/tmp/playground-log/trino-cross-catalog.sql.log
+if [[ -z $(diff ./trino-cross-catalog.sql.out /tmp/playground-log/trino-cross-catalog.sql.log) ]]; then
   echo "run trino-cross-catalog.sql successfully"
 else
   echo "run trino-cross-catalog.sql failed"
@@ -59,7 +59,7 @@ for fileName in $(docker exec playground-spark ls /opt/spark/jars/ | grep gravit
 done
 aws s3 cp s3://gravitino-spark-connector/3.4_2.12/ /tmp/gravitino-spark-connector/3.4_2.12 --recursive
 docker cp /tmp/gravitino-spark-connector/3.4_2.12/gravitino-spark-connector-*.jar playground-spark:/opt/spark/jars/
-rm -rf /tmp/spark-simple.sql.log /tmp/union-spark.sql.log
+rm -rf /tmp/playground-log/spark-simple.sql.log /tmp/playground-log/union-spark.sql.log
 docker cp ./union.sql playground-spark:/opt/spark/work-dir/
 docker cp ./spark-simple.sql playground-spark:/opt/spark/work-dir/
 sleep 2
@@ -70,8 +70,8 @@ else
   echo "run spark-simple.sql failed"
   exit 1
 fi
-docker exec playground-spark bash /opt/spark/bin/spark-sql -f union.sql | sort >>/tmp/union-spark.sql.log
-if [[ -z $(diff ./union-spark.sql.out /tmp/union-spark.sql.log) ]]; then
+docker exec playground-spark bash /opt/spark/bin/spark-sql -f union.sql | sort >>/tmp/playground-log/union-spark.sql.log
+if [[ -z $(diff ./union-spark.sql.out /tmp/playground-log/union-spark.sql.log) ]]; then
   echo "run union.sql in spark successfully"
 else
   echo "run union.sql in spark failed"
@@ -85,9 +85,9 @@ while [[ ${num} -lt 12 && $i -le 200 ]]; do
   i=$(expr $i + 1)
   num=$(trino --server http://127.0.0.1:18080 -f ./union.sql | wc -l)
 done
-rm -rf /tmp/union.sql.log
-trino --server http://127.0.0.1:18080 -f ./union.sql | sort >>/tmp/union.sql.log
-if [[ -z $(diff ./union-trino.sql.out /tmp/union.sql.log) ]]; then
+rm -rf /tmp/playground-log/union.sql.log
+trino --server http://127.0.0.1:18080 -f ./union.sql | sort >>/tmp/playground-log/union.sql.log
+if [[ -z $(diff ./union-trino.sql.out /tmp/playground-log/union.sql.log) ]]; then
   echo "run union.sql in trino successfully"
 else
   echo "run union.sql in trino failed"

@@ -44,16 +44,18 @@ jobs:
         id: run-gravitino-playground-services
         timeout-minutes: 40
         run: |
+          mkdir -p /tmp/playground-log
+
           sudo curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
           cd ${{ github.workspace }}
           ls
-          nohup ./playground.sh start -y --enable-ranger > /tmp/playground.log 2>&1 &
+          nohup ./playground.sh start -y --enable-ranger > /tmp/playground-log/playground.log 2>&1 &
+          docker compose logs -f >> /tmp/playground-log/docker-compose.log &
           # wait for gravitino trino ready to use
           i=0
           while [[ ! $(curl -sk http://127.0.0.1:8090) || ! $(curl -sk http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
             echo "Waiting for Gravitino playground to be ready..."
-            docker compose ps
             sleep 5
             i=$(expr $i + 1)
           done
@@ -77,5 +79,5 @@ jobs:
         with:
           name: test-artifacts
           path: |
-            /tmp/*.log
+            /tmp/playground-log
           retention-days: 7
