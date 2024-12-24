@@ -50,7 +50,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
           cd ${{ github.workspace }}
           ls
-          nohup ./playground.sh start -y --enable-ranger > /tmp/playground-log/playground.log 2>&1 &
+          nohup ./playground.sh start -y > /tmp/playground-log/playground.log 2>&1 &
           docker compose logs -f >> /tmp/playground-log/docker-compose.log &
           # wait for gravitino trino ready to use
           i=0
