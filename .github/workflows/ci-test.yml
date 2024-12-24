@@ -52,6 +52,7 @@ jobs:
           i=0
           while [[ ! $(curl -sk http://127.0.0.1:8090) || ! $(curl -sk http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
             echo "Waiting for Gravitino playground to be ready..."
+            docker compose ps
             sleep 5
             i=$(expr $i + 1)
           done
