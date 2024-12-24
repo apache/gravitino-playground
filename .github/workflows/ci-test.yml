@@ -24,7 +24,7 @@ jobs:
 
       - name: Lint Shell Scripts
         run: |
-          find . -name '*.sh' -print0 | xargs -0 shfmt -d -i 2
+          find . -name '*.sh' -print0 | xargs -0 shfmt -d
 
       - name: Lint XML Files
         run: |
