@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
-          cd ${{ github.workspace }}/gravitino-playground
+          cd ${{ github.workspace }}
           nohup ./playground.sh docker start -y > /tmp/playground.log 2>&1 &
           # wait for gravitino trino ready to use
           i=0
