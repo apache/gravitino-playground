@@ -38,11 +38,11 @@ testDocker() {
 }
 
 checkCompose() {
-  isExist=$(which docker-compose)
-  if [ $isExist ]; then
+  isExist=$(docker --help | grep compose)
+  if [[ $isExist ]]; then
     true # Placeholder, do nothing
   else
-    echo "ERROR: No docker service environment found. Please install docker-compose."
+    echo "ERROR: No docker service environment found. Please install compose plugin first."
     exit
   fi
 }
@@ -81,9 +81,9 @@ start() {
 
   logSuffix=$(date +%Y%m%d%H%m%s)
   if [ "$enableRanger" == true ]; then
-    docker-compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
+    docker compose -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml up --detach
   else
-    docker-compose up --detach
+    docker compose up --detach
   fi
 	
   docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
@@ -91,13 +91,13 @@ start() {
 }
 
 status() {
-  docker-compose ps -a
+  docker compose ps -a
 }
 
 stop() {
   echo "INFO: Stopping the playground..."
 
-  docker-compose down
+  docker compose down
   if [ $? -eq 0 ]; then
     echo "INFO: Playground stopped!"
   fi
