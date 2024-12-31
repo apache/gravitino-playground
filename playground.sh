@@ -28,13 +28,19 @@ playground_dir="$(
 
 testDocker() {
   echo "INFO: Testing Docker environment by running hello-world..."
-  docker run --pull always hello-world >/dev/null 2>&1
+  docker run --pull always hello-world:latest >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo "INFO: Docker is working correctly!"
   else
     echo "ERROR: There was an issue running the hello-world container. Please check your Docker installation."
     exit 1
   fi
+  for containerId in $(docker ps -a | grep hello-world | awk '{print $1}'); do
+    docker rm $containerId
+  done
+  for imageTag in $(docker images | grep hello-world | awk '{print $2}'); do
+    docker rmi hello-world:$imageTag
+  done
 }
 
 checkCompose() {
@@ -85,7 +91,7 @@ start() {
   else
     docker-compose up --detach
   fi
-	
+
   docker compose logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
   echo "Check log details: ${playground_dir}/playground-${logSuffix}.log"
 }
