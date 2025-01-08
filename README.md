@@ -48,8 +48,6 @@ The playground runs several services. The TCP ports used may clash with existing
 
 ## Playground usage
 
-
-
 ### One curl command launch playground
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apache/gravitino-playground/HEAD/install.sh)"
@@ -64,15 +62,16 @@ cd gravitino-playground
 
 ### Start
 
-```
+```shell
 ./playground.sh start
 ```
 
 ### Check status
-```shell 
+```shell
 ./playground.sh status
 ```
-### Stop playground
+
+### Stop
 ```shell
 ./playground.sh stop
 ```
@@ -85,12 +84,12 @@ cd gravitino-playground
 
 ```shell
 docker exec -it playground-trino bash
-````
+```
 
 2. Open the Trino CLI in the container.
 
 ```shell
-trino@container_id:/$ trino
+trino
 ```
 
 ## Using Jupyter Notebook
@@ -112,7 +111,7 @@ docker exec -it playground-spark bash
 2. Open the Spark SQL client in the container.
 
 ```shell
-spark@container_id:/$ cd /opt/spark && /bin/bash bin/spark-sql
+cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
 ## Monitoring Gravitino
@@ -269,7 +268,7 @@ insert into customers (customer_id, customer_name, customer_email) values (12,'J
 ```
 
 2. Login Trino container and execute the steps.
-You can get all the customers from both the Hive and Iceberg table.
+   You can get all the customers from both the Hive and Iceberg table.
 
 ```shell
 docker exec -it playground-trino bash
@@ -324,7 +323,7 @@ Gravitino supports to provide the ability of access control for Hive tables usin
 For example, there are a manager and staffs in your company. Manager creates a Hive catalog and create different roles.
 The manager can give different roles to different staffs.
 
-You can run the command 
+You can run the command
 
 ```shell
 ./playground.sh start --enable-ranger
