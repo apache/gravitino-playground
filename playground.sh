@@ -42,6 +42,7 @@ testDocker() {
     echo "[ERROR] Docker check failed: There was an issue running the hello-world container. Please check your Docker installation."
     exit 1
   fi
+
   for containerId in $(docker ps -a | grep hello-world | awk '{print $1}'); do
     docker rm $containerId
   done
