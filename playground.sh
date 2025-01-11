@@ -165,6 +165,11 @@ checkPortsInUse() {
   fi
 }
 
+pruneOldLogs() {
+  # delete all log files except the latest 3
+  ls -tp playground-*.log | grep -v '/$' | tail -n +4 | xargs -I {} rm -- {}
+}
+
 start() {
   if [ "${enableRanger}" == true ]; then
     echo "[INFO] Starting the playground with Ranger..."
@@ -196,6 +201,7 @@ start() {
   fi
   ${dockerComposeCommand} -p ${playgroundRuntimeName} logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
   echo "[INFO] Check log details: ${playground_dir}/playground-${logSuffix}.log"
+  pruneOldLogs
 }
 
 status() {
