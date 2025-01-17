@@ -18,6 +18,7 @@
 #
 mkdir -p /opt/spark/conf
 cp /tmp/spark/spark-defaults.conf /opt/spark/conf
+cp /tmp/spark/spark-env.sh /opt/spark/conf
 
 cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.5.2.jar /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
 cp /tmp/spark/packages/gravitino-spark-connector-runtime-3.4_2.12-0.7.0-incubating.jar /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.7.0-incubating.jar
