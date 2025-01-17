@@ -201,9 +201,6 @@ You might also consider generating data with SparkSQL and then querying this dat
 
 1. Login Spark container and execute the SQLs:
 
-```shell
-export HADOOP_USER_NAME=anonymous
-```
 
 ```sql
 // using Hive catalog to create Hive table
