@@ -184,7 +184,6 @@ start() {
   checkDockerCompose
   checkPlaygroundNotRunning
   checkDockerDisk
-  checkDockerRam
   checkDockerCpu
 
   cd ${playground_dir}
