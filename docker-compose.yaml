@@ -48,9 +48,9 @@ services:
       - ./init/ranger:/tmp/ranger
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
-      interval: 5s
-      timeout: 60s
-      retries: 5
+      interval: 10s
+      timeout: 120s
+      retries: 10
       start_period: 120s
 
   gravitino:
