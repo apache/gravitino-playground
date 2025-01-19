@@ -48,8 +48,8 @@ services:
       - ./init/ranger:/tmp/ranger
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
-      interval: 10s
-      timeout: 120s
+      interval: 5s
+      timeout: 180s
       retries: 10
       start_period: 120s
 
