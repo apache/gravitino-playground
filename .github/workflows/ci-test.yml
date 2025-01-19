@@ -71,7 +71,9 @@ jobs:
         id: test-sql
         timeout-minutes: 40
         run: |
-          cd ${{ github.workspace }}/gravitino-playground/test
+          cd ${{ github.workspace }}
+          ls
+          cd tests/
           bash -x ./runSQLOnPlayground.sh
       - name: Upload test artifacts
         if: always()
