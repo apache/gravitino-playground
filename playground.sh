@@ -18,6 +18,8 @@
 # under the License.
 #
 
+set -e
+
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(
   cd "${playground_dir}" >/dev/null || exit 1
