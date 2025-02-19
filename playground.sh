@@ -18,8 +18,6 @@
 # under the License.
 #
 
-set -e
-
 playground_dir="$(dirname "${BASH_SOURCE-$0}")"
 playground_dir="$(
   cd "${playground_dir}" >/dev/null || exit 1
@@ -28,7 +26,7 @@ playground_dir="$(
 
 playgroundRuntimeName="gravitino-playground"
 requiredDiskSpaceGB=25
-requiredRamGB=8
+requiredRamGB=6
 requiredCpuCores=2
 requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
 dockerComposeCommand=""
