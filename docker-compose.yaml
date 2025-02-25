@@ -52,11 +52,6 @@ services:
       timeout: 60s
       retries: 5
       start_period: 120s
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 500M
 
   gravitino:
     image: apache/gravitino:0.8.0-incubating
