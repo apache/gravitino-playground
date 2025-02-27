@@ -54,10 +54,10 @@ else
   exit 1
 fi
 
-for fileName in $(docker exec playground-spark ls /opt/spark/jars/ | grep gravitino-spark-connector); do
-  docker exec playground-spark rm -rf /opt/spark/jars/${fileName}
-done
-docker cp /tmp/gravitino-spark-connector/3.4_2.12/gravitino-spark-connector-*.jar playground-spark:/opt/spark/jars/
+# for fileName in $(docker exec playground-spark ls /opt/spark/jars/ | grep gravitino-spark-connector); do
+#   docker exec playground-spark rm -rf /opt/spark/jars/${fileName}
+# done
+# docker cp /tmp/gravitino-spark-connector/3.4_2.12/gravitino-spark-connector-*.jar playground-spark:/opt/spark/jars/
 rm -rf /tmp/playground-log/spark-simple.sql.log /tmp/playground-log/union-spark.sql.log
 docker cp ./union.sql playground-spark:/opt/spark/work-dir/
 docker cp ./spark-simple.sql playground-spark:/opt/spark/work-dir/
