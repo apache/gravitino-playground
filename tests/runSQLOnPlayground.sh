@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # install trino cli
+echo "Installing Trino client..."
 if [[ -n $(trino --version) ]]; then
   echo "Trino client installed"
 else
@@ -11,6 +12,7 @@ else
 fi
 
 # check trino connection
+echo "Checking Trino connection..."
 i=0
 while [[ ! $(trino --server http://127.0.0.1:18080 -f ./trino-test.sql) && $i -le 200 ]]; do
   sleep 5
@@ -18,6 +20,7 @@ while [[ ! $(trino --server http://127.0.0.1:18080 -f ./trino-test.sql) && $i -l
 done
 
 # check trino catalog loaded
+echo "Checking Trino catalog loaded..."
 j=0
 rm -rf /tmp/playground-log/trino-test.sql.log
 trino --server http://127.0.0.1:18080 -f ./trino-test.sql >>/tmp/playground-log/trino-test.sql.log
@@ -29,6 +32,7 @@ while [[ -n $(diff ./trino-test.sql.out /tmp/playground-log/trino-test.sql.log) 
 done
 
 # run sql and check results
+echo "Running Trino SQL and checking results..."
 rm -rf /tmp/trino-simple.sql.log
 trino --server http://127.0.0.1:18080 -f ./trino-simple.sql >>/tmp/trino-simple.sql.log
 if [[ -z $(diff ./trino-simple.sql.out /tmp/trino-simple.sql.log) ]]; then
@@ -38,6 +42,7 @@ else
   exit 1
 fi
 
+echo "Running Trino cross-catalog SQL and checking results..."
 i=0
 num=$(trino --server http://127.0.0.1:18080 -f ./trino-cross-catalog.sql | wc -l)
 while [[ ${num} -lt 42 && $i -le 200 ]]; do
@@ -54,10 +59,7 @@ else
   exit 1
 fi
 
-# for fileName in $(docker exec playground-spark ls /opt/spark/jars/ | grep gravitino-spark-connector); do
-#   docker exec playground-spark rm -rf /opt/spark/jars/${fileName}
-# done
-# docker cp /tmp/gravitino-spark-connector/3.4_2.12/gravitino-spark-connector-*.jar playground-spark:/opt/spark/jars/
+echo "Running Spark simple SQL and checking results..."
 rm -rf /tmp/playground-log/spark-simple.sql.log /tmp/playground-log/union-spark.sql.log
 docker cp ./union.sql playground-spark:/opt/spark/work-dir/
 docker cp ./spark-simple.sql playground-spark:/opt/spark/work-dir/
@@ -69,6 +71,8 @@ else
   echo "run spark-simple.sql failed"
   exit 1
 fi
+
+echo "Running Spark union SQL and checking results..."
 docker exec playground-spark bash /opt/spark/bin/spark-sql -f union.sql | sort >>/tmp/playground-log/union-spark.sql.log
 if [[ -z $(diff ./union-spark.sql.out /tmp/playground-log/union-spark.sql.log) ]]; then
   echo "run union.sql in spark successfully"
@@ -77,6 +81,7 @@ else
   exit 1
 fi
 
+echo "Running Trino union SQL and checking results..."
 i=0
 num=$(trino --server http://127.0.0.1:18080 -f ./union.sql | wc -l)
 while [[ ${num} -lt 12 && $i -le 200 ]]; do
