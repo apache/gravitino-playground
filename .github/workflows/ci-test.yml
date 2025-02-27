@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Gravitino Playground Services
         id: run-gravitino-playground-services
-        timeout-minutes: 40
+        timeout-minutes: 10
         run: |
           mkdir -p /tmp/playground-log
 
@@ -69,7 +69,7 @@ jobs:
 
       - name: Test sql
         id: test-sql
-        timeout-minutes: 40
+        timeout-minutes: 10
         run: |
           cd ${{ github.workspace }}
           ls
