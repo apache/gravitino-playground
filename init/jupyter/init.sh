@@ -17,10 +17,7 @@
 # under the License.
 #
 
-if [ -z "$RANGER_ENABLE" ]; then
-  cp -r /tmp/gravitino/*.ipynb /home/jovyan
-else
-  cp -r /tmp/gravitino/authorization/*.ipynb /home/jovyan
-fi
+cp -r /tmp/gravitino/*.ipynb /home/jovyan
+cp /tmp/gravitino/authorization/*.ipynb /home/jovyan
 
 start-notebook.sh --NotebookApp.token=''
