@@ -157,6 +157,9 @@ services:
     volumes:
       - ./init/spark:/tmp/spark
       - ./init/common:/tmp/common
+    depends_on:
+      gravitino:
+        condition: service_healthy
 
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1
