@@ -17,7 +17,7 @@
 # under the License.
 #
 
-echo 'Copying config files ...'
+echo 'Copying config files...'
 
 mkdir -p /opt/spark/conf
 
@@ -26,13 +26,13 @@ cp /tmp/spark/spark-env.sh /opt/spark/conf
 
 echo 'Done.'
 
-echo 'Copying jars for spark ...'
+echo 'Copying jars for spark...'
 
 cp -v /tmp/spark/packages/*.jar /opt/spark/jars/
 
 echo 'Done.'
 
-echo 'Running init_metalake_catalog.sh ...'
+echo 'Running init_metalake_catalog.sh...'
 
 sh /tmp/common/init_metalake_catalog.sh
 if [ $? -ne 0 ]; then
