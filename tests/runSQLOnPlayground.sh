@@ -86,7 +86,7 @@ while [[ ${num} -lt 12 && $i -le 200 ]]; do
 done
 rm -rf /tmp/playground-log/union.sql.log
 trino --server http://127.0.0.1:18080 -f ./union.sql | sort >>/tmp/playground-log/union.sql.log
-if [[ -z $(diff ./union-trino.sql.out /tmp/playground-log/union.sql.log) ]]; then
+if [[ -z $(diff ./union.sql.out /tmp/playground-log/union.sql.log) ]]; then
   echo "run union.sql in trino successfully"
 else
   echo "run union.sql in trino failed"
