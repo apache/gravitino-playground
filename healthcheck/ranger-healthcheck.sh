@@ -24,7 +24,6 @@ attempt=0
 
 while [ $attempt -lt $max_attempts ]; do
   response=$(curl -s -o /dev/null -w "%{http_code}" -u admin:rangerR0cks! -H "Content-Type: application/json" -X GET http://127.0.0.1:6080/service/public/v2/api/plugins/info)
-
   echo "Ranger health check ${response}"
 
   if [[ ${response} -eq 200 ]]; then
@@ -33,7 +32,6 @@ while [ $attempt -lt $max_attempts ]; do
     echo "Attempt $((attempt + 1)) failed..."
     sleep 1
   fi
-
   ((attempt++))
 done
 
