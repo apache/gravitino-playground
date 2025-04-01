@@ -149,6 +149,9 @@ services:
   spark:
     image: spark:3.4.1-scala2.12-java11-ubuntu
     container_name: playground-spark
+    depends_on:
+      gravitino:
+        condition: service_healthy
     entrypoint: /bin/bash /tmp/spark/init.sh
     environment:
       - HADOOP_USER_NAME=root
