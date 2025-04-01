@@ -17,10 +17,16 @@
 # under the License.
 #
 
-if [ -z "$RANGER_ENABLE" ]; then
-  cp -r /tmp/gravitino/*.ipynb /home/jovyan
+if [ -n "$(find /home/jovyan -maxdepth 1 -name "*.ipynb" -print -quit)" ]; then
+    echo "Already have .ipynb files in the directory, skip copying"
 else
-  cp -r /tmp/gravitino/authorization/*.ipynb /home/jovyan
+    echo "No .ipynb files in the directory, copy the default .ipynb files"
+
+    if [ -z "$RANGER_ENABLE" ]; then
+      cp -r /tmp/gravitino/*.ipynb /home/jovyan
+    else
+      cp -r /tmp/gravitino/authorization/*.ipynb /home/jovyan
+    fi
 fi
 
 start-notebook.sh --NotebookApp.token=''
