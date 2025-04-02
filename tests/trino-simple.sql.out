@@ -1,0 +1,22 @@
+"catalog_hive"
+"catalog_iceberg"
+"catalog_mysql"
+"catalog_postgres"
+"gravitino"
+"jmx"
+"memory"
+"system"
+"tpcds"
+"tpch"
+"CREATE SCHEMA catalog_hive.company
+WITH (
+   location = 'hdfs://hive:9000/user/hive/warehouse/company.db'
+)"
+"Sam Evans","55000.00"
+"company"
+"default"
+"information_schema"
+"sales"
+"name","varchar","",""
+"salary","decimal(10,2)","",""
+"employees"

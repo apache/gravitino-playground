@@ -16,13 +16,32 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
+echo 'Copying config files...'
+
 mkdir -p /opt/spark/conf
+
 cp /tmp/spark/spark-defaults.conf /opt/spark/conf
 cp /tmp/spark/spark-env.sh /opt/spark/conf
 
-cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.5.2.jar /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.5.2.jar
-cp /tmp/spark/packages/gravitino-spark-connector-runtime-3.4_2.12-0.8.0-incubating.jar /opt/spark/jars/gravitino-spark-connector-runtime-3.4_2.12-0.8.0-incubating.jar
-cp /tmp/spark/packages/mysql-connector-java-8.0.27.jar /opt/spark/jars/mysql-connector-java-8.0.27.jar
-cp /tmp/spark/packages/kyuubi-spark-authz-shaded_2.12-1.9.2.jar /opt/spark/jars/kyuubi-spark-authz-shaded_2.12-1.9.2.jar
+echo 'Done.'
+
+echo 'Copying jars for spark...'
+
+cp -v /tmp/spark/packages/*.jar /opt/spark/jars/
+
+echo 'Done.'
+
+echo 'Running init_metalake_catalog.sh...'
+
 sh /tmp/common/init_metalake_catalog.sh
+if [ $? -ne 0 ]; then
+  echo 'Failed to initialize metalake catalog.'
+  exit 1
+fi
+
+echo 'Done.'
+
+echo 'Spark container Initialization completed.'
+
 tail -f /dev/null

@@ -18,6 +18,10 @@
 #
 
 sh /tmp/common/init_metalake_catalog.sh
+if [ $? -ne 0 ]; then
+  echo 'Failed to initialize metalake catalog.'
+  exit 1
+fi
 
 /etc/trino/update-trino-conf.sh
 nohup /usr/lib/trino/bin/run-trino &

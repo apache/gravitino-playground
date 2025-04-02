@@ -49,8 +49,8 @@ services:
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
       interval: 5s
-      timeout: 60s
-      retries: 5
+      timeout: 180s
+      retries: 10
       start_period: 120s
 
   gravitino:
@@ -160,6 +160,9 @@ services:
     volumes:
       - ./init/spark:/tmp/spark
       - ./init/common:/tmp/common
+    depends_on:
+      gravitino:
+        condition: service_healthy
 
   jupyter:
     image: jupyter/pyspark-notebook:spark-3.4.1

@@ -1,0 +1,83 @@
+name: "CI"
+
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+
+      - name: Install shfmt
+        run: |
+          curl -sSLo shfmt https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64 &&
+          chmod +x shfmt &&
+          sudo mv shfmt /usr/local/bin/shfmt
+
+      - name: Lint Shell Scripts
+        run: |
+          find . -name '*.sh' -print0 | xargs -0 shfmt -d
+
+      - name: Lint XML Files
+        run: |
+          find . -name '*.xml' -print0 | xargs -0 xmllint --noout
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: "2.14.2"
+
+      - name: Run Gravitino Playground Services
+        id: run-gravitino-playground-services
+        timeout-minutes: 10
+        run: |
+          mkdir -p /tmp/playground-log
+
+          sudo curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          cd ${{ github.workspace }}
+          nohup ./playground.sh start -y > /tmp/playground-log/playground.log 2>&1 &
+          docker compose logs -f >> /tmp/playground-log/docker-compose.log &
+          # wait for gravitino trino ready to use
+          i=0
+          while [[ ! $(curl -sk http://127.0.0.1:8090) || ! $(curl -sk http://127.0.0.1:18080/v1/info) && $i -le 300 ]]; do
+            echo "Waiting for Gravitino playground to be ready..."
+            sleep 5
+            i=$(expr $i + 1)
+          done
+          docker ps
+          if [[ $(curl -sk http://127.0.0.1:8090) && $(curl -sk http://127.0.0.1:18080/v1/info) ]]; then
+            echo "Gravitino and Trino are ready to use"
+          else
+            echo "Gravitino or Trino is not ready"
+            exit 1
+          fi
+
+      - name: Test sql
+        id: test-sql
+        timeout-minutes: 10
+        run: |
+          cd ${{ github.workspace }}
+          cd tests/
+          bash -x ./runSQLOnPlayground.sh
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            /tmp/playground-log
+          retention-days: 7
