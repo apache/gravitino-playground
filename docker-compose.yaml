@@ -70,7 +70,7 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
-      - ./data/gravitino/data:/root/gravitino/data
+      - ./data/gravitino/db:/root/gravitino/data
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
