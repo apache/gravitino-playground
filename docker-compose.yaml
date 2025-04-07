@@ -70,6 +70,7 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
+      - ./data/gravitino/db:/root/gravitino/data
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
@@ -168,6 +169,7 @@ services:
       - "18888:8888"
     volumes:
       - ./init/jupyter:/tmp/gravitino
+      - ./data/jupyter/data:/home/jovyan
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     depends_on:
       hive:
