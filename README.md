@@ -39,8 +39,10 @@ The playground runs several services. The TCP ports used may clash with existing
 | --------------------- | ---------------------- |
 | playground-gravitino  | 8090 9001              |
 | playground-hive       | 3307 19000 19083 60070 |
+| playground-ranger     | 6080                   |
 | playground-mysql      | 13306                  |
-| playground-postgresql | 15342                  |
+| playground-spark      | 14040                  |
+| playground-postgresql | 15432                  |
 | playground-trino      | 18080                  |
 | playground-jupyter    | 18888                  |
 | playground-prometheus | 19090                  |
