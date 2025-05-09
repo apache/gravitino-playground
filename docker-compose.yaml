@@ -54,7 +54,7 @@ services:
       start_period: 120s
 
   gravitino:
-    image: apache/gravitino:0.8.0-incubating
+    image: apache/gravitino:0.9.0-incubating
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -79,7 +79,7 @@ services:
       start_period: 20s
 
   trino:
-    image: apache/gravitino-playground:trino-435-gravitino-0.8.0-incubating
+    image: apache/gravitino-playground:trino-435-gravitino-0.9.0-incubating
     ports:
       - "18080:8080"
     container_name: playground-trino
@@ -156,6 +156,8 @@ services:
     entrypoint: /bin/bash /tmp/spark/init.sh
     environment:
       - HADOOP_USER_NAME=root
+      - HIVE_HOST_IP=hive
+      - MYSQL_HOST_IP=mysql
     ports:
       - "14040:4040"
     volumes:

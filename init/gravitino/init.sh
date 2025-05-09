@@ -25,13 +25,7 @@ cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /roo
 cp /root/gravitino/catalogs/jdbc-postgresql/libs/postgresql-42.2.7.jar /root/gravitino/iceberg-rest-server/libs
 cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /root/gravitino/iceberg-rest-server/libs
 
-
-if test -e "/root/gravitino/conf/gravitino.conf"; then
-    echo "/root/gravitino/conf/gravitino.conf exists. Skip copying."
-else
-    cp /tmp/gravitino/gravitino.conf /root/gravitino/conf
-fi
-
+cp /tmp/gravitino/gravitino.conf /root/gravitino/conf
 
 echo "Finish downloading"
 echo "Start the Gravitino Server"
