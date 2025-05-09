@@ -334,6 +334,10 @@ You can run the command
 The demo is located in the `jupyter` folder, you can open the `gravitino-access-control-example.ipynb`
 demo via Jupyter Notebook by [http://localhost:18888](http://localhost:18888).
 
+## NOTICE
+
+If you want to clean cache files, you can delete the directory `data` of this repo.
+
 ## ASF Incubator disclaimer
 
 Apache Gravitino is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
