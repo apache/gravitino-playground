@@ -18,7 +18,7 @@
 #
 services:
   hive:
-    image: apache/gravitino-playground:hive-0.1.15
+    image: apache/gravitino-playground:${HIVE_IMAGE_TAG}
     ports:
       - "3307:3306"
       - "19000:9000"
@@ -38,7 +38,7 @@ services:
       start_period: 20s
 
   ranger:
-    image: apache/gravitino-playground:ranger-0.1.0
+    image: apache/gravitino-playground:${RANGER_IMAGE_TAG}
     ports:
       - "6080:6080"
     container_name: playground-ranger
@@ -54,16 +54,16 @@ services:
       start_period: 120s
 
   gravitino:
-    image: apache/gravitino:0.9.0-incubating
+    image: apache/gravitino:${GRAVITINO_IMAGE_TAG}
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
       - "9001:9001"
     container_name: playground-gravitino
     depends_on:
-      ranger :
+      ranger:
         condition: service_healthy
-      hive :
+      hive:
         condition: service_healthy
       mysql:
         condition: service_healthy
@@ -79,7 +79,7 @@ services:
       start_period: 20s
 
   trino:
-    image: apache/gravitino-playground:trino-435-gravitino-0.9.0-incubating
+    image: apache/gravitino-playground:${TRINO_IMAGE_TAG}
     ports:
       - "18080:8080"
     container_name: playground-trino
@@ -109,7 +109,7 @@ services:
       start_period: 20s
 
   postgresql:
-    image: postgres:13
+    image: postgres:${POSTGRESQL_IMAGE_TAG}
     container_name: playground-postgresql
     restart: always
     environment:
@@ -122,7 +122,7 @@ services:
       - ./init/postgres:/docker-entrypoint-initdb.d/
 
   mysql:
-    image: mysql:8.0
+    image: mysql:${MYSQL_IMAGE_TAG}
     container_name: playground-mysql
     environment:
       - MYSQL_ROOT_PASSWORD=mysql
@@ -148,7 +148,7 @@ services:
       start_period: 20s
 
   spark:
-    image: spark:3.4.1-scala2.12-java11-ubuntu
+    image: spark:${SPARK_IMAGE_TAG}
     container_name: playground-spark
     depends_on:
       gravitino:
@@ -158,6 +158,8 @@ services:
       - HADOOP_USER_NAME=root
       - HIVE_HOST_IP=hive
       - MYSQL_HOST_IP=mysql
+      - SPARK_CONNECTOR_JAR=${SPARK_CONNECTOR_JAR}
+      - GRAVITINO_VERSION=${GRAVITINO_VERSION}
     ports:
       - "14040:4040"
     volumes:
@@ -165,7 +167,7 @@ services:
       - ./init/common:/tmp/common
 
   jupyter:
-    image: jupyter/pyspark-notebook:spark-3.4.1
+    image: jupyter/pyspark-notebook:${JUPYTER_IMAGE_TAG}
     container_name: playground-jupyter
     ports:
       - "18888:8888"
@@ -173,6 +175,8 @@ services:
       - ./init/jupyter:/tmp/gravitino
       - ./data/jupyter/data:/home/jovyan
     entrypoint: /bin/bash /tmp/gravitino/init.sh
+    environment:
+      - SPARK_CONNECTOR_JAR=${SPARK_CONNECTOR_JAR}
     depends_on:
       hive:
         condition: service_healthy
@@ -180,7 +184,7 @@ services:
         condition: service_healthy
 
   prometheus:
-    image: prom/prometheus:v2.55.0
+    image: prom/prometheus:${PROMETHEUS_IMAGE_TAG}
     container_name: playground-prometheus
     ports:
       - "19090:9090"
@@ -188,7 +192,7 @@ services:
       - ./init/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
-    image: grafana/grafana:11.3.0-ubuntu
+    image: grafana/grafana:${GRAFANA_IMAGE_TAG}
     container_name: playground-grafana
     ports:
       - "13000:3000"
