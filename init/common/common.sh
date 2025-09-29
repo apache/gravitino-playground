@@ -18,6 +18,16 @@
 # under the License.
 #
 
+echo "common $(dirname "${BASH_SOURCE-$0}")"
+common_dir="$(dirname "${BASH_SOURCE-$0}")"
+common_dir="$(
+  cd "${common_dir}" >/dev/null || exit 1
+  pwd
+)"
+
+# Load environment variables
+. "${common_dir}/../../.env"
+
 download_and_verify() {
   local jar_url=$1
   local md5_url=$2
