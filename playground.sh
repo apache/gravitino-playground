@@ -177,6 +177,9 @@ start() {
     echo "[INFO] Starting the playground..."
   fi
 
+  # Clean up previous data
+  rm -rf data/
+
   echo "[INFO] The playground requires ${requiredCpuCores} CPU cores, ${requiredRamGB} GB of RAM, and ${requiredDiskSpaceGB} GB of disk storage to operate efficiently."
 
   checkPortsInUse
