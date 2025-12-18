@@ -27,6 +27,14 @@ cp /root/gravitino/catalogs/jdbc-mysql/libs/mysql-connector-java-8.0.27.jar /roo
 
 cp /tmp/gravitino/gravitino.conf /root/gravitino/conf
 
+# If auth is enabled, remove the PassThroughAuthorizer configuration
+if [ "${GRAVITINO_AUTH_ENABLE}" == "true" ]; then
+  echo "Auth is enabled, removing PassThroughAuthorizer configuration..."
+  sed -i '/gravitino.authorization.impl = org.apache.gravitino.server.authorization.PassThroughAuthorizer/d' /root/gravitino/conf/gravitino.conf
+fi
+
+apt-get install jq -y
+
 echo "Finish downloading"
 echo "Start the Gravitino Server"
 /bin/bash /root/gravitino/bin/gravitino.sh start &

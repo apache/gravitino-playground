@@ -194,11 +194,17 @@ start() {
   ./init/jupyter/jupyter-dependency.sh
 
   logSuffix=$(date +%Y%m%d%H%M%s)
+
+  # Build docker-compose command with appropriate override files
+  composeFiles="-f docker-compose.yaml"
   if [ "${enableRanger}" == true ]; then
-    ${dockerComposeCommand} -f docker-compose.yaml -f docker-enable-ranger-hive-override.yaml -p ${playgroundRuntimeName} up --detach
-  else
-    ${dockerComposeCommand} -p ${playgroundRuntimeName} up --detach
+    composeFiles="${composeFiles} -f docker-enable-ranger-hive-override.yaml"
   fi
+  if [ "${enableAuth}" == true ]; then
+    composeFiles="${composeFiles} -f docker-enable-auth-override.yaml"
+  fi
+
+  ${dockerComposeCommand} ${composeFiles} -p ${playgroundRuntimeName} up --detach
   ${dockerComposeCommand} -p ${playgroundRuntimeName} logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
   echo "[INFO] Check log details: ${playground_dir}/playground-${logSuffix}.log"
   pruneLegacyLogs
@@ -223,11 +229,35 @@ stop() {
 
 case "$1" in
 start)
-  if [[ "$2" == "--enable-ranger" ]]; then
-    enableRanger=true
-  else
-    enableRanger=false
+  enableRanger=false
+  enableAuth=false
+
+  # Parse options
+  shift
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --enable-ranger)
+        enableRanger=true
+        shift
+        ;;
+      --enable-auth)
+        enableAuth=true
+        shift
+        ;;
+      *)
+        echo "Unknown option: $1"
+        echo "Usage: playground.sh start [--enable-ranger | --enable-auth]"
+        exit 1
+        ;;
+    esac
+  done
+
+  # Check for mutually exclusive options
+  if [ "${enableRanger}" == true ] && [ "${enableAuth}" == true ]; then
+    echo "[ERROR] --enable-ranger and --enable-auth cannot be used together. Please choose one."
+    exit 1
   fi
+
   start
   ;;
 status)
@@ -237,7 +267,7 @@ stop)
   stop
   ;;
 *)
-  echo "Usage: $0 <start|status|stop> [--enable-ranger]"
+  echo "Usage: $0 <start|status|stop> [--enable-ranger | --enable-auth]"
   exit 1
   ;;
 esac
