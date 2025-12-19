@@ -34,7 +34,10 @@ if [ "${GRAVITINO_AUTH_ENABLE}" == "true" ]; then
 fi
 
 apt-get install jq -y
-
+apt-get install host -y
+# Resolve hive hostname to IP address and add to /etc/hosts
+IP=$(host hive | awk '/has address/ {print $4; exit}')
+echo "$IP hive" >> /etc/hosts
 echo "Finish downloading"
 echo "Start the Gravitino Server"
 /bin/bash /root/gravitino/bin/gravitino.sh start &

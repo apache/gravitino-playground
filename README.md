@@ -428,8 +428,7 @@ Try to query the table (this should FAIL):
 ```sql
 USE catalog__rest.demo_db;
 
--- This should FAIL - no SELECT_TABLE privilege yet
-SELECT * FROM employees;
+-- This should FAIL - schema doesn't exist, because we don't have USE_SCHEMA privilege
 ```
 
 **Step 5: Create Role with Privileges and Assign to User**
@@ -470,8 +469,9 @@ curl -X POST -H "Accept: application/vnd.gravitino.v1+json" \
 
 # Assign role to user
 curl -X PUT -H "Accept: application/vnd.gravitino.v1+json" \
-  -H "Content-Type: application/json" \
-  http://localhost:8090/api/metalakes/metalake_demo/users/data_analyst/grant/analyst_role
+  -H "Content-Type: application/json" -d '{
+    "roleNames": ["analyst_role"]
+}' http://localhost:8090/api/metalakes/metalake_demo/permissions/users/data_analyst/grant
 ```
 
 Start spark-sql as data_analyst again and test:
