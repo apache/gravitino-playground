@@ -246,7 +246,7 @@ start)
         ;;
       *)
         echo "Unknown option: $1"
-        echo "Usage: playground.sh start [--enable-ranger | --enable-auth]"
+        echo "Usage: playground.sh start [--enable-ranger] [--enable-auth]"
         exit 1
         ;;
     esac
@@ -267,7 +267,7 @@ stop)
   stop
   ;;
 *)
-  echo "Usage: $0 <start|status|stop> [--enable-ranger | --enable-auth]"
+  echo "Usage: $0 <start|status|stop> [--enable-ranger] [--enable-auth]"
   exit 1
   ;;
 esac
