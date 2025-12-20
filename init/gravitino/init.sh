@@ -33,10 +33,22 @@ if [ "${GRAVITINO_AUTH_ENABLE}" == "true" ]; then
   sed -i '/gravitino.authorization.impl = org.apache.gravitino.server.authorization.PassThroughAuthorizer/d' /root/gravitino/conf/gravitino.conf
 fi
 
-apt-get install jq -y
-apt-get install host -y
+# Ensure jq is installed; install quietly if missing
+if ! command -v jq >/dev/null 2>&1; then
+  apt-get update -qq && apt-get install -y -qq jq || { echo "Failed to install jq" >&2; exit 1; }
+fi
+
+# Ensure host command is installed; install quietly if missing
+if ! command -v host >/dev/null 2>&1; then
+  apt-get update -qq && apt-get install -y -qq host || { echo "Failed to install host package" >&2; exit 1; }
+fi
+
 # Resolve hive hostname to IP address and add to /etc/hosts
-IP=$(host hive | awk '/has address/ {print $4; exit}')
+IP=$(host hive 2>/dev/null | awk '/has address/ {print $4; exit}')
+if [ -z "$IP" ]; then
+  echo "Failed to resolve hostname 'hive'" >&2
+  exit 1
+fi
 echo "$IP hive" >> /etc/hosts
 echo "Finish downloading"
 echo "Start the Gravitino Server"

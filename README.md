@@ -341,8 +341,9 @@ authorization for Iceberg tables without requiring external authorization servic
 This feature allows you to manage user permissions through Gravitino's unified API with native 
 access control enforcement at the REST API level.
 
-**Note on Authentication**: The Iceberg REST catalog uses HTTP Basic Authentication to pass the username through the `Authorization` header. The password is not verified by Gravitino currently, but the username is used to identify the user for access control enforcement.
+**Security note (authentication)**: The Iceberg REST catalog examples shown here use HTTP Basic Authentication only as a transport to pass the username through the `Authorization` header. Gravitino currently **does not verify the Basic Auth password** and instead fully trusts the username provided in the header for access control decisions. As a result, this mechanism **does not provide real authentication**: any client that can reach the REST endpoint could impersonate any user by choosing their username in the header.
 
+This behavior is intended **for local/demo use only** (such as when running the playground) and **must not be relied upon in production** or any environment exposed to untrusted clients. For secure deployments, you must front the Iceberg REST server with a real authentication mechanism (for example, an authenticating reverse proxy, API gateway, or other identity provider) and configure Gravitino to validate the authenticated identity, rather than trusting arbitrary usernames from the `Authorization` header.
 #### Demo Steps
 
 **Step 1: Start the Playground with Auth Enabled**
@@ -388,7 +389,7 @@ docker exec -it playground-spark bash
 Start spark-sql as manager:
 
 ```shell
-cd /opt/spark && /bin/bash bin/spark-sql --conf spark.sql.catalog.catalog_rest.rest.auth.type=manager --conf spark.sql.catalog.catalog_rest.rest.auth.basic.username=data_analyst --conf spark.sql.catalog.catalog_rest.rest.auth.basic.password=123
+cd /opt/spark && /bin/bash bin/spark-sql --conf spark.sql.catalog.catalog_rest.rest.auth.type=basic --conf spark.sql.catalog.catalog_rest.rest.auth.basic.username=manager --conf spark.sql.catalog.catalog_rest.rest.auth.basic.password=123
 ```
 
 Create database and table:
@@ -426,7 +427,7 @@ cd /opt/spark
 Try to query the table (this should FAIL):
 
 ```sql
-USE catalog__rest.demo_db;
+USE catalog_rest.demo_db;
 
 -- This should FAIL - schema doesn't exist, because we don't have USE_SCHEMA privilege
 ```
@@ -480,7 +481,7 @@ Start spark-sql as data_analyst again and test:
 cd /opt/spark && /bin/bash bin/spark-sql \
   --conf spark.sql.catalog.catalog_rest.rest.auth.type=basic \
   --conf spark.sql.catalog.catalog_rest.rest.auth.basic.username=data_analyst \
-  --conf spark.sql.catalog.catalog_iceberg_rest.rest.auth.basic.password=123
+  --conf spark.sql.catalog.catalog_rest.rest.auth.basic.password=123
 ```
 
 Try to query the table again (this should SUCCEED now):
