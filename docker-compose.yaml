@@ -55,6 +55,7 @@ services:
 
   gravitino:
     image: apache/gravitino:${GRAVITINO_IMAGE_TAG}
+    user: root
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     ports:
       - "8090:8090"
@@ -70,13 +71,13 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/gravitino:/tmp/gravitino
-      - ./data/gravitino/db:/root/gravitino/data
+      - ./data/gravitino/db:/opt/gravitino/data
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/gravitino-healthcheck.sh"]
       interval: 5s
       timeout: 60s
       retries: 5
-      start_period: 20s
+      start_period: 60s
 
   trino:
     image: apache/gravitino-playground:${TRINO_IMAGE_TAG}
