@@ -169,6 +169,7 @@ services:
 
   jupyter:
     image: jupyter/pyspark-notebook:${JUPYTER_IMAGE_TAG}
+    user: root
     container_name: playground-jupyter
     ports:
       - "18888:8888"
@@ -177,6 +178,9 @@ services:
       - ./data/jupyter/data:/home/jovyan
     entrypoint: /bin/bash /tmp/gravitino/init.sh
     environment:
+      - CHOWN_HOME=yes
+      - CHOWN_HOME_OPTS=-R
+      - GRANT_SUDO=yes
       - SPARK_CONNECTOR_JAR=${SPARK_CONNECTOR_JAR}
     depends_on:
       hive:
