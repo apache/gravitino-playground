@@ -50,32 +50,44 @@ The playground runs several services. The TCP ports used may clash with existing
 
 ## Playground usage
 
-### One curl command launch playground
-```shell
+There are two ways to get the playground. Use one or the other, not both.
+
+### Option 1: One-command install and launch
+
+Downloads the playground and starts it in a single step:
+
+```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apache/gravitino-playground/HEAD/install.sh)"
 ```
 
-### Use git to download and launch playground
+### Option 2: Clone and launch with git
 
-```shell
-git clone git@github.com:apache/gravitino-playground.git
+```bash
+git clone https://github.com/apache/gravitino-playground.git
 cd gravitino-playground
-```
-
-### Start
-
-```shell
 ./playground.sh start
 ```
 
+The start command accepts optional flags for the access control demos described below: `--enable-auth` or `--enable-ranger` (the two cannot be combined).
+
 ### Check status
-```shell
+
+```bash
 ./playground.sh status
 ```
 
+When all containers are healthy, open the Gravitino Web UI at <http://localhost:8090>.
+
 ### Stop
-```shell
+
+```bash
 ./playground.sh stop
+```
+
+Stopping keeps container data. To remove all data and start completely fresh:
+
+```bash
+docker compose -p gravitino-playground down -v
 ```
 
 ## Experiencing Apache Gravitino with Trino SQL
