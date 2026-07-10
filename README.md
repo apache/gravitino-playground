@@ -104,7 +104,7 @@ When all containers are healthy, open the Gravitino Web UI at <http://localhost:
 ./playground.sh stop
 ```
 
-Stopping removes the containers. Gravitino's metadata survives in the `data` directory of this repo, but MySQL and HDFS contents live in container volumes and do not persist across a stop, so catalog data is lost; the Iceberg seed re-creates its demo table on the next start. To remove all state and start completely fresh:
+Stopping keeps all data: Gravitino metadata in the `data` directory of this repo, and MySQL, PostgreSQL, and HDFS contents in named Docker volumes. To remove everything and start completely fresh:
 
 ```bash
 docker compose -p gravitino-playground down -v
