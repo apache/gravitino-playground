@@ -24,9 +24,10 @@ set -u
 
 SPARK_HOME=/opt/spark
 SEED_SQL=/tmp/spark/iceberg-seed.sql
-AUTH_CONFS="--conf spark.sql.catalog.catalog_rest.rest.auth.type=basic \
-  --conf spark.sql.catalog.catalog_rest.rest.auth.basic.username=admin \
-  --conf spark.sql.catalog.catalog_rest.rest.auth.basic.password=123"
+# The metalake and catalogs are created unauthenticated at startup, so that
+# identity owns them. The seed uses the same identity, which works both with
+# and without --enable-auth.
+AUTH_CONFS=""
 
 echo "[seed] Waiting for the Iceberg REST service on gravitino:9001..."
 for i in $(seq 1 60); do
