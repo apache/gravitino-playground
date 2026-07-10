@@ -317,6 +317,23 @@ Note that `catalog_rest` in Spark and `catalog_iceberg` in Gravitino and Trino s
 
 The demo is also available as `gravitino-spark-trino-example.ipynb` in Jupyter at [http://localhost:18888](http://localhost:18888).
 
+The playground also seeds the Iceberg catalog with a demo table at startup: `analytics.orders`,
+partitioned by region and written in two commits, so the table has snapshot history from the
+first query you run:
+
+```sql
+SELECT region, SUM(amount) FROM catalog_iceberg.analytics.orders GROUP BY region;
+
+SELECT * FROM catalog_iceberg."analytics"."orders$snapshots";
+```
+
+The second query lists the table's snapshots; pick a `snapshot_id` from it to read the table
+as of an earlier commit:
+
+```sql
+SELECT COUNT(*) FROM catalog_iceberg.analytics.orders FOR VERSION AS OF <snapshot_id>;
+```
+
 ### Iceberg REST server access control
 
 Gravitino provides built-in access control for the Iceberg REST server, enforcing catalog,
