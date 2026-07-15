@@ -30,6 +30,8 @@ services:
     entrypoint: /bin/bash /tmp/hive/init.sh
     volumes:
       - ./init/hive:/tmp/hive
+      - hive-hdfs:/tmp/hadoop-root
+      - hive-metastore-db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "/tmp/check-status.sh"]
       interval: 10s
@@ -121,6 +123,7 @@ services:
       - "15432:5432"
     volumes:
       - ./init/postgres:/docker-entrypoint-initdb.d/
+      - postgres-data:/var/lib/postgresql/data
 
   mysql:
     image: mysql:${MYSQL_IMAGE_TAG}
@@ -133,6 +136,7 @@ services:
     ports:
       - "13306:3306"
     volumes:
+      - mysql-data:/var/lib/mysql
       - ./init/mysql:/docker-entrypoint-initdb.d/
       - ./healthcheck:/tmp/healthcheck
     command: 
@@ -201,3 +205,9 @@ services:
       - ./init/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./init/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - ./init/grafana/dashboards:/etc/grafana/provisioning/dashboards
+
+volumes:
+  mysql-data:
+  postgres-data:
+  hive-hdfs:
+  hive-metastore-db:

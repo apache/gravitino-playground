@@ -27,3 +27,23 @@ CREATE TABLE IF NOT EXISTS `demo_llamaindex`.`city_stats`  (
 INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Toronto", 2930000, "Canada");
 INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Tokyo", 13960000, "Japan");
 INSERT INTO `demo_llamaindex`.`city_stats` (city_name, population, country) VALUES ("Berlin", 3645000, "Germany");
+
+CREATE DATABASE IF NOT EXISTS `db`;
+
+CREATE TABLE IF NOT EXISTS `db`.`iceberg_tables` (
+  `catalog_name` VARCHAR(255) NOT NULL,
+  `table_namespace` VARCHAR(255) NOT NULL,
+  `table_name` VARCHAR(255) NOT NULL,
+  `metadata_location` VARCHAR(1000),
+  `previous_metadata_location` VARCHAR(1000),
+  `iceberg_type` VARCHAR(5),
+  PRIMARY KEY (`catalog_name`, `table_namespace`, `table_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `db`.`iceberg_namespace_properties` (
+  `catalog_name` VARCHAR(255) NOT NULL,
+  `namespace` VARCHAR(255) NOT NULL,
+  `property_key` VARCHAR(255) NOT NULL,
+  `property_value` VARCHAR(1000),
+  PRIMARY KEY (`catalog_name`, `namespace`, `property_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

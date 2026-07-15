@@ -25,4 +25,5 @@ cp /tmp/spark/packages/${SPARK_CONNECTOR_JAR} /opt/spark/jars/${SPARK_CONNECTOR_
 cp /tmp/spark/packages/mysql-connector-java-8.0.27.jar /opt/spark/jars/mysql-connector-java-8.0.27.jar
 cp /tmp/spark/packages/kyuubi-spark-authz-shaded_2.12-1.9.2.jar /opt/spark/jars/kyuubi-spark-authz-shaded_2.12-1.9.2.jar
 sh /tmp/common/init_metalake_catalog.sh
+/bin/bash /tmp/spark/iceberg-seed.sh > /tmp/iceberg-seed.log 2>&1 &
 tail -f /dev/null

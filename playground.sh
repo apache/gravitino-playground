@@ -26,9 +26,9 @@ playground_dir="$(
 
 playgroundRuntimeName="gravitino-playground"
 requiredDiskSpaceGB=25
-requiredRamGB=6
+requiredRamGB=8
 requiredCpuCores=2
-requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15342 18080 18888 19090 13000)
+requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15432 14040 18080 18888 19090 13000)
 dockerComposeCommand=""
 
 testDocker() {
@@ -43,11 +43,11 @@ testDocker() {
     exit 1
   fi
 
-  for containerId in $(docker ps -a | grep hello-world | awk '{print $1}'); do
-    docker rm $containerId
+  for containerId in $(docker ps -aq --filter ancestor=hello-world); do
+    docker rm "${containerId}" >/dev/null 2>&1
   done
-  for imageTag in $(docker images | grep hello-world | awk '{print $2}'); do
-    docker rmi hello-world:$imageTag
+  for imageId in $(docker images -q hello-world); do
+    docker rmi -f "${imageId}" >/dev/null 2>&1
   done
 }
 
