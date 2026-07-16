@@ -48,6 +48,7 @@ services:
     volumes:
       - ./healthcheck:/tmp/healthcheck
       - ./init/ranger:/tmp/ranger
+      - ranger-db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "/tmp/healthcheck/ranger-healthcheck.sh"]
       interval: 5s
@@ -186,6 +187,8 @@ services:
       - CHOWN_HOME_OPTS=-R
       - GRANT_SUDO=yes
       - SPARK_CONNECTOR_JAR=${SPARK_CONNECTOR_JAR}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     depends_on:
       hive:
         condition: service_healthy
@@ -215,3 +218,4 @@ volumes:
   postgres-data:
   hive-hdfs:
   hive-metastore-db:
+  ranger-db:

@@ -29,6 +29,7 @@ requiredDiskSpaceGB=25
 requiredRamGB=8
 requiredCpuCores=2
 requiredPorts=(6080 8090 9001 3307 19000 19083 60070 13306 15432 14040 18080 18888 19090 13000)
+mcpPort=8000
 dockerComposeCommand=""
 
 testDocker() {
@@ -71,8 +72,17 @@ checkPlaygroundNotRunning() {
   fi
 }
 
+# True when the project exists but all its containers are stopped (present under
+# 'ls -a' yet absent from the default running-only 'ls').
+playgroundStoppedExists() {
+  ${dockerComposeCommand} ls -a | grep -q "${playgroundRuntimeName}" && \
+    ! ${dockerComposeCommand} ls | grep -q "${playgroundRuntimeName}"
+}
+
+# Present at all (running or stopped). Used by stop/down/status so they work on a
+# stopped-but-not-removed project.
 checkPlaygroundRunning() {
-  if ! ${dockerComposeCommand} ls | grep -q "${playgroundRuntimeName}"; then
+  if ! ${dockerComposeCommand} ls -a | grep -q "${playgroundRuntimeName}"; then
     echo "[ERROR] Playground runtime is not running. Please start it first."
     exit 1
   fi
@@ -136,8 +146,13 @@ checkDockerCpu() {
 checkPortsInUse() {
   local usedPorts=()
   local availablePorts=()
+  local portsToCheck=("${requiredPorts[@]}")
 
-  for port in "${requiredPorts[@]}"; do
+  if [ "${enableMcp}" == true ]; then
+    portsToCheck+=("${mcpPort}")
+  fi
+
+  for port in "${portsToCheck[@]}"; do
     if [[ "$(uname)" == "Darwin" ]]; then
       openPort=$(lsof -i :${port} -sTCP:LISTEN)
     # Use sudo only when necessary
@@ -171,6 +186,21 @@ pruneLegacyLogs() {
 }
 
 start() {
+  checkDockerCompose
+
+  # Fast path: a previously started project that was halted with 'stop' still has
+  # its containers on disk. Resume them with 'compose start' instead of a full
+  # 'up', which skips re-running init and re-waiting on health checks.
+  if playgroundStoppedExists; then
+    echo "[INFO] Resuming stopped playground (fast restart, containers preserved)..."
+    logSuffix=$(date +%Y%m%d%H%M%s)
+    ${dockerComposeCommand} -p ${playgroundRuntimeName} start
+    ${dockerComposeCommand} -p ${playgroundRuntimeName} logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
+    echo "[INFO] Check log details: ${playground_dir}/playground-${logSuffix}.log"
+    pruneLegacyLogs
+    return
+  fi
+
   if [ "${enableRanger}" == true ]; then
     echo "[INFO] Starting the playground with Ranger..."
   else
@@ -181,7 +211,6 @@ start() {
 
   checkPortsInUse
   testDocker
-  checkDockerCompose
   checkPlaygroundNotRunning
   checkDockerDisk
   checkDockerRam
@@ -203,6 +232,9 @@ start() {
   if [ "${enableAuth}" == true ]; then
     composeFiles="${composeFiles} -f docker-enable-auth-override.yaml"
   fi
+  if [ "${enableMcp}" == true ]; then
+    composeFiles="${composeFiles} -f docker-mcp-override.yaml"
+  fi
 
   ${dockerComposeCommand} ${composeFiles} -p ${playgroundRuntimeName} up --detach
   ${dockerComposeCommand} -p ${playgroundRuntimeName} logs -f >${playground_dir}/playground-${logSuffix}.log 2>&1 &
@@ -219,11 +251,22 @@ status() {
 stop() {
   checkDockerCompose
   checkPlaygroundRunning
-  echo "[INFO] Stopping the playground..."
+  echo "[INFO] Stopping the playground (containers preserved for fast restart)..."
 
-  ${dockerComposeCommand} down
+  ${dockerComposeCommand} -p ${playgroundRuntimeName} stop
   if [ $? -eq 0 ]; then
-    echo "[INFO] Playground stopped!"
+    echo "[INFO] Playground stopped! Use 'playground.sh start' to resume quickly, or 'playground.sh down' to remove containers."
+  fi
+}
+
+down() {
+  checkDockerCompose
+  checkPlaygroundRunning
+  echo "[INFO] Tearing down the playground (containers and network removed)..."
+
+  ${dockerComposeCommand} -p ${playgroundRuntimeName} down
+  if [ $? -eq 0 ]; then
+    echo "[INFO] Playground torn down!"
   fi
 }
 
@@ -231,6 +274,7 @@ case "$1" in
 start)
   enableRanger=false
   enableAuth=false
+  enableMcp=true
 
   # Parse options
   shift
@@ -244,9 +288,18 @@ start)
         enableAuth=true
         shift
         ;;
+      --enable-mcp)
+        # MCP is on by default; accepted for explicitness/back-compat.
+        enableMcp=true
+        shift
+        ;;
+      --disable-mcp)
+        enableMcp=false
+        shift
+        ;;
       *)
         echo "Unknown option: $1"
-        echo "Usage: playground.sh start [--enable-ranger] [--enable-auth]"
+        echo "Usage: playground.sh start [--enable-ranger] [--enable-auth] [--disable-mcp]"
         exit 1
         ;;
     esac
@@ -266,8 +319,15 @@ status)
 stop)
   stop
   ;;
+down)
+  down
+  ;;
 *)
-  echo "Usage: $0 <start|status|stop> [--enable-ranger] [--enable-auth]"
+  echo "Usage: $0 <start|status|stop|down> [--enable-ranger] [--enable-auth] [--disable-mcp]"
+  echo "  start   bring the playground up (or resume a stopped one); MCP surface on by default"
+  echo "  stop    halt containers but keep them for a fast restart"
+  echo "  down    remove containers and network (full teardown)"
+  echo "  status  show container status"
   exit 1
   ;;
 esac
