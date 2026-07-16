@@ -70,5 +70,18 @@ echo "$IP hive" >> /etc/hosts
 echo "Finish setup"
 echo "Start the Gravitino Server"
 /bin/bash ${GRAVITINO_HOME}/bin/gravitino.sh start &
-sleep 3
-tail -f ${GRAVITINO_HOME}/logs/gravitino-server.log
+
+# Wait for log4j to create the server log before tailing it. On a cold first-run
+# disk the JVM can take well over 3 seconds to initialize logging, and a bare
+# "sleep 3; tail -f" races that: tail opens a nonexistent file, exits nonzero,
+# and kills this entrypoint (PID 1), taking the container down even though the
+# server is coming up fine. Wait for the file, then follow by name with -F so a
+# log rotation or recreate does not break the follow.
+GRAVITINO_LOG="${GRAVITINO_HOME}/logs/gravitino-server.log"
+mkdir -p "${GRAVITINO_HOME}/logs"
+for _ in $(seq 1 60); do
+  [ -f "${GRAVITINO_LOG}" ] && break
+  sleep 1
+done
+touch "${GRAVITINO_LOG}"
+tail -F "${GRAVITINO_LOG}"

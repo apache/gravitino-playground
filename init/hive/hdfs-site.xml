@@ -1,0 +1,40 @@
+<configuration>
+  <!--
+    Make HDFS hand out hostnames rather than internal container IPs/IDs to
+    clients. Without this, a client (Spark, Gravitino) that connects to the
+    NameNode is redirected to a DataNode by its container-internal identifier
+    (e.g. a container hash like 20722b179d0b), which the client cannot resolve,
+    producing UnknownHostException. Using the datanode hostname, resolvable on
+    the shared compose network as the 'hive' service, avoids that.
+  -->
+  <property>
+    <name>dfs.datanode.use.datanode.hostname</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.client.use.datanode.hostname</name>
+    <value>true</value>
+  </property>
+
+  <!--
+    Single-node playground: one replica, and don't let the NameNode refuse
+    writes if the datanode reports itself under an unexpected name.
+  -->
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+    <value>false</value>
+  </property>
+
+  <!--
+    Bind/advertise the datanode under the 'hive' service hostname so the
+    hostname handed to clients resolves on the compose network.
+  -->
+  <property>
+    <name>dfs.datanode.hostname</name>
+    <value>hive</value>
+  </property>
+</configuration>

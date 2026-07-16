@@ -21,6 +21,7 @@
 sed -i -E 's/tail -f \/dev\/null/ /g' /usr/local/sbin/start.sh
 
 cp /tmp/hive/core-site.xml /tmp/hadoop-conf
+cp /tmp/hive/hdfs-site.xml /tmp/hadoop-conf
 /bin/bash /usr/local/sbin/start.sh
 hdfs dfs -mkdir -p /user/gravitino
 hdfs dfs -mkdir -p /user/iceberg/warehouse
