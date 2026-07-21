@@ -21,7 +21,7 @@
 
 Apache Gravitino is a federated metadata catalog: it presents many different data systems, Hive, Iceberg, relational databases, object storage, files, as one governed namespace, so a single engine or agent can discover and query across all of them, with access control and audit applied at the source rather than bolted onto each tool.
 
-This playground is a complete, runnable environment for seeing that in action. It brings up `Hive`, `HDFS`, `Trino`, `Spark`, `MySQL`, `PostgreSQL`, `Ranger`, `Jupyter`, `Prometheus`, `Grafana`, and a `Gravitino` server, all wired together, so you can join data across catalogs, govern it with roles and policies, and let an AI agent reason over the same governed metadata through the [Model Context Protocol](#gravitino-mcp-server).
+This playground is a complete, runnable environment for seeing that in action. It brings up `Hive`, `HDFS`, `Trino`, `Spark`, `MySQL`, `PostgreSQL`, `Ranger`, `Jupyter`, `Prometheus`, `Grafana`, and a `Gravitino` server, all wired together, so you can join data across catalogs, govern it with roles and policies, and let an AI agent reason over the same governed metadata through the [Model Context Protocol](#mcp-servers).
 
 Depending on your network and computer, startup takes 3-5 minutes. Once it is running, open [http://localhost:8090](http://localhost:8090) for the Gravitino Web UI. The quickest way to see what the playground does is the [Jupyter notebooks](#jupyter-notebooks).
 
@@ -52,8 +52,8 @@ cd gravitino-playground
 ### Start Options
 
 ```bash
-./playground.sh start                 # full stack, MCP server on by default
-./playground.sh start --disable-mcp   # bring the stack up without the MCP server
+./playground.sh start                 # full stack, MCP servers on by default
+./playground.sh start --disable-mcp   # bring the stack up without the MCP servers
 ./playground.sh start --enable-ranger # add Ranger authorization
 ./playground.sh start --enable-auth   # enable authentication
 ```
@@ -99,7 +99,7 @@ The notebooks are the quickest way to see what the playground does, and for many
 
 ### AI
 
-- **`gravitino-mcp-demo.ipynb`** connects to the Gravitino MCP server, lists the tools Gravitino exposes, seeds governance tags, walks a governed table, and (with an LLM API key) answers plain-language questions by calling the tools itself. See the [Gravitino MCP Server](#gravitino-mcp-server) section.
+- **`gravitino-mcp-demo.ipynb`** connects to the Gravitino MCP server, lists the tools Gravitino exposes, seeds governance tags, walks a governed table, and (with an LLM API key) answers plain-language questions by calling the tools itself. See the [MCP Servers](#mcp-servers) section.
 - **`gravitino_llamaIndex_demo.ipynb`** is a retrieval-augmented generation demo that treats Gravitino as a unified data source. Structured city statistics live in MySQL (a relational catalog) and city descriptions live in PDF files (a fileset catalog); a single natural-language question is answered from both by joining a SQL index over the table with a vector index over the documents. It requires an `OPENAI_API_KEY` from an account with available credit. Set it the same way as the Anthropic key, in a `.env` file in the repo root, which Compose passes through to Jupyter (otherwise the notebook prompts for it at runtime):
 
   ```bash
@@ -117,9 +117,16 @@ The notebooks are the quickest way to see what the playground does, and for many
 - **`gravitino-fileset-example.ipynb`** manages the fileset metadata lifecycle: creating a fileset catalog and schema, registering managed and external filesets, and observing how each behaves in HDFS.
 - **`gravitino-gvfs-example.ipynb`** reads unstructured data (PDFs) through the Gravitino Virtual File System, so file access goes through a governed fileset path rather than a raw storage location. No LLM required.
 
-## Gravitino MCP Server
+## MCP Servers
 
-The playground runs the **Gravitino MCP server**, which exposes Gravitino metadata to AI agents over the [Model Context Protocol](https://modelcontextprotocol.io). An agent connected here does not get raw files; it gets governed metadata (catalogs, schemas, tables, tags, and policies) through a uniform tool surface, with every call subject to Gravitino's authorization and recorded in its audit log. It is on by default and listens on port 8000; start with `--disable-mcp` to leave it out. For more information, see the [Gravitino MCP server](https://gravitino.apache.org/docs/latest/gravitino-mcp-server/) documentation.
+The playground runs two [Model Context Protocol](https://modelcontextprotocol.io) servers, so an AI agent can both reason over governed metadata and run queries against it. Both are on by default and share the same toggle: start with `--disable-mcp` to leave them out.
+
+- **Gravitino MCP server** (port 8000) exposes Gravitino metadata: catalogs, schemas, tables, tags, and policies, through a uniform tool surface. An agent connected here does not get raw files; every call is subject to Gravitino's authorization and recorded in its audit log. For more information, see the [Gravitino MCP server](https://gravitino.apache.org/docs/latest/gravitino-mcp-server/) documentation.
+- **Trino MCP server** (port 8001, [tuannvm/mcp-trino](https://github.com/tuannvm/mcp-trino)) gives an agent a natural-language SQL path to the playground's Trino coordinator. Where the Gravitino server exposes metadata, the Trino server executes queries, so an agent answers analytical questions ("who is the employee with the largest total sales?") by generating SQL and running it across the federated catalogs. It exposes tools to list catalogs, schemas, and tables, describe and explain queries, and execute SQL.
+
+The two take different paths to the data. The Gravitino server serves governed metadata, with every call subject to Gravitino's authorization. The Trino server executes SQL against the coordinator, and the data it reads through Gravitino-managed catalogs is governed at the source, so with `--enable-auth` or `--enable-ranger` those reads are subject to the same authorization. The Trino server connects as a single fixed Trino user, so it does not distinguish one MCP caller from another.
+
+Both servers speak streamable HTTP, the Gravitino server at `http://localhost:8000/mcp` and the Trino server at `http://localhost:8001/mcp`.
 
 ### Try It with an Agent (Recommended)
 
@@ -133,25 +140,103 @@ To pre-set the key so there is no prompt (handy for your own iteration), put it 
 echo 'ANTHROPIC_API_KEY=sk-ant-...' >> .env   # do not commit this file
 ```
 
-### Connect Your Own MCP Client
+### Connect with Claude Code
 
-The server speaks streamable HTTP at `http://localhost:8000/mcp`. Point any MCP-capable client (Claude Desktop, Cursor, a custom agent) at that URL:
+[Claude Code](https://docs.claude.com/en/docs/claude-code) speaks the streamable HTTP transport natively, so it connects to either server with a single command. No proxy, stdio bridge, or TLS certificate is needed.
+
+In the commands below, use `localhost` if Claude Code runs on the same host as the playground, or the playground host's address (for example `http://<playground-host>:8000/mcp`) if it runs elsewhere. Both servers must point at the same place.
+
+Register the Gravitino MCP server:
+
+```bash
+claude mcp add --transport http gravitino http://localhost:8000/mcp
+```
+
+Register the Trino MCP server:
+
+```bash
+claude mcp add --transport http trino http://localhost:8001/mcp
+```
+
+Claude Code loads MCP servers at startup, so restart it (or run `/mcp`) after adding a server. `/mcp` shows connection status and lets you browse each server's tools. A healthy server appears connected and lists its tools; a failure there points at reachability rather than Claude Code.
+
+By default Claude Code prompts before every MCP tool call. To approve a whole server once instead of per tool, run `/permissions` and add a wildcard rule:
+
+```
+mcp__gravitino__*
+mcp__trino__*
+```
+
+You can also set these without opening Claude Code by editing its settings file directly. Use `~/.claude/settings.json` to apply the rules everywhere, or `<project-dir>/.claude/settings.json` to scope them to the directory the servers were registered under. Add a `permissions.allow` array, merging into any existing settings rather than overwriting them:
 
 ```json
 {
-  "mcpServers": {
-    "gravitino": { "url": "http://localhost:8000/mcp" }
+  "permissions": {
+    "allow": [
+      "mcp__gravitino__*",
+      "mcp__trino__*"
+    ]
   }
 }
 ```
 
-If your client runs on a different machine than the playground, reach the endpoint over an SSH tunnel rather than exposing the port:
+Claude Code reads the file at startup, so edit it before launching (or restart afterward). Validate the JSON before starting, since a syntax error stops the whole file from loading: `python3 -m json.tool ~/.claude/settings.json`.
 
-```bash
-ssh -L 8000:localhost:8000 <user>@<playground-host>
+With both servers connected, ask questions in plain language and Claude Code calls the tools itself. The Gravitino server answers metadata and governance questions ("which tables carry a PII tag?"), and the Trino server runs analytical queries that federate across catalogs ("who is the employee with the largest total sales?"), joining `catalog_hive.sales` and `catalog_postgres.hr` the same way the [Trino federation example](#query-across-catalogs) does.
+
+### Connect with Claude Desktop
+
+Claude Desktop does not read HTTP MCP URLs from its config file directly, and its custom-connector UI opens connections from a cloud service that cannot reach a local or private-network playground. The way to connect Desktop to the playground is the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) stdio bridge: a small local process that Desktop launches, which speaks stdio to Desktop and HTTP to the playground.
+
+You need [Node.js](https://nodejs.org) 18 or higher installed on the machine running Claude Desktop, since the bridge runs through `npx`.
+
+Open the config file from **Settings -> Developer -> Edit Config** (which creates it if needed), or edit it directly:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+Add both servers under `mcpServers`, merging into any existing entries. Use `localhost` if Desktop runs on the same host as the playground, or the playground host's address otherwise:
+
+```json
+{
+  "mcpServers": {
+    "gravitino": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:8000/mcp", "--allow-http"]
+    },
+    "trino": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:8001/mcp", "--allow-http"]
+    }
+  }
+}
 ```
 
-When authentication is enabled (`--enable-auth`), the server forwards each request's `Authorization` header to Gravitino, which authorizes the call per principal. Add the header in your client to make MCP calls run under a specific identity:
+Then fully quit Claude Desktop (quit the app, not just close the window) and reopen it so the new config loads. The gravitino and trino tools then appear in the connectors menu, and you can ask questions in plain language the same way as with Claude Code.
+
+A few details specific to Desktop:
+
+- **`--allow-http` is required for a plain-HTTP playground.** `mcp-remote` refuses non-HTTPS URLs unless the host is `localhost` or the flag is set. The playground runs without TLS, so the flag is needed whenever you point at it by address rather than `localhost`. It signals that unencrypted transport is acceptable, which is fine for a local playground you control and not for anything carrying real credentials.
+- **When authentication is off (the default), send no token.** The bridge connects with just the URL and `--allow-http`. Only add an `Authorization` header (a `"--header", "Authorization: Bearer <token>"` pair in `args`) when the playground runs with `--enable-auth`; sending a token to a no-auth server, or a stale token to an auth server, causes the connection to drop.
+- **On Windows, a bare `npx` often fails.** Claude Desktop launches config commands with a minimal PATH, so set `command` to the full path to `npx.cmd`, for example `C:\\Program Files\\nodejs\\npx.cmd`. On Windows with WSL, note that Desktop is a Windows app and runs the bridge with Windows Node, not the Node inside WSL.
+- **Test the bridge by hand before restarting Desktop.** Running the same command in a terminal shows a clear error if something is wrong, where Desktop only shows "server disconnected". For example: `npx -y mcp-remote http://localhost:8001/mcp --allow-http`. A successful run prints "Proxy established successfully" and waits.
+- **Approving tools.** By default Desktop prompts before each tool call. To stop the prompts for a trusted server, open **Settings -> Connectors**, expand the connector, and set its tools to **Always Allow**.
+
+### Connect Another MCP Client
+
+Many MCP clients (Cursor, Windsurf, custom agents) accept the same `mcpServers` config shape, though each reads it from its own file, for example `~/.cursor/mcp.json` for Cursor or `~/.codeium/windsurf/mcp_config.json` for Windsurf. Consult your client's documentation for the exact location, then add both servers in that file:
+
+```json
+{
+  "mcpServers": {
+    "gravitino": { "url": "http://localhost:8000/mcp" },
+    "trino": { "url": "http://localhost:8001/mcp" }
+  }
+}
+```
+
+When authentication is enabled (`--enable-auth`), the Gravitino server forwards each request's `Authorization` header to Gravitino, which authorizes the call per principal. Add the header in your client to make MCP calls run under a specific identity:
 
 ```json
 {
@@ -164,15 +249,27 @@ When authentication is enabled (`--enable-auth`), the server forwards each reque
 }
 ```
 
-### Verify the Endpoint with MCP Inspector
+Clients that speak only stdio, rather than HTTP, reach these servers through the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge instead, configured the same way as in the Claude Desktop section above.
 
-To confirm the server is reachable and browse its tools directly, use the [MCP Inspector](https://github.com/modelcontextprotocol/inspector):
+### Connecting from Another Machine
+
+A client reaches the servers by the playground host's address in place of `localhost`, for example `http://<playground-host>:8000/mcp`. Claude Code connects from wherever it runs, so this is all it needs.
+
+The playground has no TLS, so restrict who can reach the ports rather than exposing them broadly, for example with firewall or security-group rules scoped to the specific client address, by keeping the traffic on a private network, or over an SSH tunnel:
+
+```bash
+ssh -L 8000:localhost:8000 -L 8001:localhost:8001 <user>@<playground-host>
+```
+
+### Verify an Endpoint with MCP Inspector
+
+To confirm a server is reachable and browse its tools directly, use the [MCP Inspector](https://github.com/modelcontextprotocol/inspector):
 
 ```bash
 npx @modelcontextprotocol/inspector
 ```
 
-Open the URL it prints, set Transport Type to **Streamable HTTP**, enter `http://localhost:8000/mcp` (tunnel first if remote), and click **Connect**. Under the **Tools** tab, **List Tools** shows the full surface, and running `get_list_of_catalogs` returns the demo catalogs. A `400 Bad Request` to a plain browser `GET` on `/mcp` is expected: the protocol requires an initialize handshake, so that response confirms the server is up.
+Open the URL it prints, set Transport Type to **Streamable HTTP**, enter the server URL (`http://localhost:8000/mcp` for Gravitino, `http://localhost:8001/mcp` for Trino; tunnel first if remote), and click **Connect**. Under the **Tools** tab, **List Tools** shows the full surface. On the Gravitino server, running `get_list_of_catalogs` returns the demo catalogs. A `400 Bad Request` to a plain browser `GET` on `/mcp` is expected: the protocol requires an initialize handshake, so that response confirms the server is up.
 
 ## Trino
 
@@ -476,6 +573,7 @@ The playground runs several services. The TCP ports used may clash with existing
 | playground-prometheus    | 19090                  |
 | playground-grafana       | 13000                  |
 | playground-gravitino-mcp | 8000                   |
+| playground-trino-mcp     | 8001                   |
 
 ## Environment Configuration
 
