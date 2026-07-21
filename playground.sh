@@ -234,6 +234,7 @@ start() {
   fi
   if [ "${enableMcp}" == true ]; then
     composeFiles="${composeFiles} -f docker-mcp-override.yaml"
+    composeFiles="${composeFiles} -f docker-trino-mcp-override.yaml"
   fi
 
   ${dockerComposeCommand} ${composeFiles} -p ${playgroundRuntimeName} up --detach
