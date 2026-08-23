@@ -115,7 +115,6 @@ services:
   postgresql:
     image: postgres:${POSTGRESQL_IMAGE_TAG}
     container_name: playground-postgresql
-    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
