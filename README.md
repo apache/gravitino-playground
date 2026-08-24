@@ -329,6 +329,15 @@ Then open the Spark SQL client:
 cd /opt/spark && /bin/bash bin/spark-sql
 ```
 
+Spark initializes a catalog the first time a session references it, so `SHOW CATALOGS` in a new session lists only `spark_catalog` even though the playground configures more. Reference a catalog to bring it into the session, then list again:
+
+```sql
+USE catalog_rest;
+SHOW CATALOGS;
+```
+
+Trino enumerates differently. Its Gravitino connector creates one Trino catalog per Gravitino catalog at startup, so `SHOW CATALOGS` there lists them all immediately. The two engines see the same metadata either way.
+
 For a worked example of writing with Spark and reading the same table with Trino, see the `gravitino-spark-trino-example.ipynb` notebook in the [Jupyter Notebooks](#jupyter-notebooks) section.
 
 ## Iceberg REST Service
