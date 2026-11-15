@@ -28,10 +28,10 @@ if [[ ! -d "${gravitino_dir}/packages" ]]; then
   mkdir -p "${gravitino_dir}/packages"
 fi
 # Prepare download packages
-MYSQL_CONNECTOR_JAVA_JAR="https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.27/mysql-connector-java-8.0.27.jar"
+MYSQL_CONNECTOR_JAVA_JAR="https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar"
 MYSQL_CONNECTOR_JAVA_MD5="${MYSQL_CONNECTOR_JAVA_JAR}.md5"
 download_and_verify "${MYSQL_CONNECTOR_JAVA_JAR}" "${MYSQL_CONNECTOR_JAVA_MD5}" "${gravitino_dir}"
 
-POSTGRESQL_JAR="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.7/postgresql-42.2.7.jar"
+POSTGRESQL_JAR="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.11/postgresql-42.7.11.jar"
 POSTGRESQL_MD5="${POSTGRESQL_JAR}.md5"
 download_and_verify "${POSTGRESQL_JAR}" "${POSTGRESQL_MD5}" "${gravitino_dir}"
