@@ -37,4 +37,13 @@
     <name>dfs.datanode.hostname</name>
     <value>hive</value>
   </property>
+  <!--
+    Pin the NameNode web/WebHDFS port to 50070. That is the Hadoop 2 default,
+    but the Hadoop 3 runtime used with enable-ranger defaults to 9870, which
+    breaks the fileset notebook (WebHDFS) and the 60070:50070 port mapping.
+  -->
+  <property>
+    <name>dfs.namenode.http-address</name>
+    <value>0.0.0.0:50070</value>
+  </property>
 </configuration>

@@ -39,8 +39,10 @@
     <value>*</value>
   </property>
 
+  <!-- Single-node demo: let every playground user (anonymous, lisa, manager, ...)
+       write to directories created by the Hive metastore (owned by root). -->
   <property>
     <name>fs.permissions.umask-mode</name>
-    <value>002</value>
+    <value>000</value>
   </property>
 </configuration>
