@@ -29,18 +29,18 @@ echo "Using GRAVITINO_HOME=${GRAVITINO_HOME}"
 echo "Start to copy JDBC driver jars"
 # Copy JDBC drivers to catalog libs (1.3 image already has them via entrypoint symlinks,
 # but we ensure they exist for both old and new images)
-if [ -f /tmp/gravitino/packages/mysql-connector-java-8.0.27.jar ]; then
-  cp -f /tmp/gravitino/packages/mysql-connector-java-8.0.27.jar ${GRAVITINO_HOME}/catalogs/jdbc-mysql/libs/ 2>/dev/null || true
+if [ -f /tmp/gravitino/packages/mysql-connector-j-8.0.33.jar ]; then
+  cp -f /tmp/gravitino/packages/mysql-connector-j-8.0.33.jar ${GRAVITINO_HOME}/catalogs/jdbc-mysql/libs/ 2>/dev/null || true
 fi
-if [ -f /tmp/gravitino/packages/postgresql-42.2.7.jar ]; then
-  cp -f /tmp/gravitino/packages/postgresql-42.2.7.jar ${GRAVITINO_HOME}/catalogs/jdbc-postgresql/libs/ 2>/dev/null || true
+if [ -f /tmp/gravitino/packages/postgresql-42.7.11.jar ]; then
+  cp -f /tmp/gravitino/packages/postgresql-42.7.11.jar ${GRAVITINO_HOME}/catalogs/jdbc-postgresql/libs/ 2>/dev/null || true
 fi
 
 # Copy JDBC drivers to lakehouse-iceberg and iceberg-rest-server libs
 for target_dir in "${GRAVITINO_HOME}/catalogs/lakehouse-iceberg/libs" "${GRAVITINO_HOME}/iceberg-rest-server/libs"; do
   if [ -d "${target_dir}" ]; then
-    cp -f /tmp/gravitino/packages/mysql-connector-java-8.0.27.jar "${target_dir}/" 2>/dev/null || true
-    cp -f /tmp/gravitino/packages/postgresql-42.2.7.jar "${target_dir}/" 2>/dev/null || true
+    cp -f /tmp/gravitino/packages/mysql-connector-j-8.0.33.jar "${target_dir}/" 2>/dev/null || true
+    cp -f /tmp/gravitino/packages/postgresql-42.7.11.jar "${target_dir}/" 2>/dev/null || true
   fi
 done
 

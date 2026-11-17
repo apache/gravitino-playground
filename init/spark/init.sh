@@ -20,10 +20,10 @@ mkdir -p /opt/spark/conf
 cp /tmp/spark/spark-defaults.conf /opt/spark/conf
 cp /tmp/spark/spark-env.sh /opt/spark/conf
 
-cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.10.0.jar /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.10.0.jar
+cp /tmp/spark/packages/iceberg-spark-runtime-3.4_2.12-1.10.2.jar /opt/spark/jars/iceberg-spark-runtime-3.4_2.12-1.10.2.jar
 cp /tmp/spark/packages/${SPARK_CONNECTOR_JAR} /opt/spark/jars/${SPARK_CONNECTOR_JAR}
-cp /tmp/spark/packages/mysql-connector-java-8.0.27.jar /opt/spark/jars/mysql-connector-java-8.0.27.jar
-cp /tmp/spark/packages/kyuubi-spark-authz-shaded_2.12-1.9.2.jar /opt/spark/jars/kyuubi-spark-authz-shaded_2.12-1.9.2.jar
+cp /tmp/spark/packages/mysql-connector-j-8.0.33.jar /opt/spark/jars/mysql-connector-j-8.0.33.jar
+cp /tmp/spark/packages/kyuubi-spark-authz-shaded_2.12-1.10.2.jar /opt/spark/jars/kyuubi-spark-authz-shaded_2.12-1.10.2.jar
 sh /tmp/common/init_metalake_catalog.sh
 /bin/bash /tmp/spark/iceberg-seed.sh > /tmp/iceberg-seed.log 2>&1 &
 tail -f /dev/null
